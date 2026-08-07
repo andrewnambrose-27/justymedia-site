@@ -3,8 +3,8 @@
     ["/photography/", "Photography Portfolio", "photography"],
     ["/#design", "Graphic Design Portfolio", "design"],
     ["/phone-wallpapers/", "Freebies!!", "wallpapers"],
-    ["/about-me.html", "About", "about"],
-    ["/contact.html", "Contact", "contact"],
+    ["/about-us/", "About", "about"],
+    ["/contact-us/", "Contact", "contact"],
     ["/#blog", "Blog", "blog"],
   ];
 
@@ -13,15 +13,15 @@
     ["/photography/rush-magazine/", "RUSH Magazine"],
     ["/phone-wallpapers/", "Phone Wallpapers"],
     ["/services-pricing.html", "Services & Pricing"],
-    ["/about-me.html", "About Us"],
-    ["/contact.html", "Contact Us"],
+    ["/about-us/", "About Us"],
+    ["/contact-us/", "Contact Us"],
     ["/privacy-policy.html", "Privacy Policy"],
     ["/terms-and-conditions.html", "Terms And Conditions"],
   ];
 
   function currentSection() {
     const path = window.location.pathname;
-    if (path.includes("about-me")) return "about";
+    if (path.includes("about-me") || path.includes("about-us")) return "about";
     if (path.includes("contact")) return "contact";
     if (path.includes("phone-wallpapers")) return "wallpapers";
     if (path.includes("photography")) return "photography";
