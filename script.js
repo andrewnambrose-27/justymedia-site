@@ -1,63 +1,7 @@
-const toggle = document.querySelector(".nav-toggle");
-const menu = document.querySelector("#nav-menu");
-
-if (toggle && menu) {
-  toggle.addEventListener("click", () => {
-    const isOpen = menu.classList.toggle("is-open");
-    toggle.setAttribute("aria-expanded", String(isOpen));
-  });
-
-  menu.addEventListener("click", (event) => {
-    if (event.target instanceof HTMLAnchorElement) {
-      menu.classList.remove("is-open");
-      toggle.setAttribute("aria-expanded", "false");
-    }
-  });
-}
-
-const footer = document.querySelector(".site-footer");
-
-if (footer) {
-  const footerNav = footer.querySelector("nav");
-  const footerLinks = [
-    ["/photography/automotive-photography/", "Automotive Photography"],
-    ["/photography/rush-magazine/", "RUSH Magazine"],
-    ["/phone-wallpapers/", "Phone Wallpapers"],
-    ["/services-pricing.html", "Services & Pricing"],
-    ["/about-me.html", "About Us"],
-    ["/contact.html", "Contact Us"],
-    ["/privacy-policy.html", "Privacy Policy"],
-    ["/terms-and-conditions.html", "Terms And Conditions"],
-  ];
-
-  if (!footer.querySelector("img")) {
-    const headerLogo = document.querySelector(".site-header .brand img");
-    if (headerLogo) {
-      const logo = headerLogo.cloneNode(true);
-      footer.prepend(logo);
-    }
-  }
-
-  if (footerNav) {
-    footerNav.setAttribute("aria-label", "Footer links");
-    footerNav.replaceChildren(
-      ...footerLinks.map(([href, label]) => {
-        const link = document.createElement("a");
-        link.href = href;
-        link.textContent = label;
-        return link;
-      }),
-    );
-  }
-}
-
-document.querySelectorAll('a[href$="#about"]').forEach((link) => {
-  link.href = "/about-me.html";
-});
-
-document.querySelectorAll('a[href$="#contact"]').forEach((link) => {
-  link.href = "/contact.html";
-});
+const componentScript = document.createElement("script");
+componentScript.src = "/site-components.js";
+componentScript.addEventListener("load", () => window.JustySiteComponents.mount());
+document.head.append(componentScript);
 
 const legalContent = document.querySelector("[data-legal-source]");
 
