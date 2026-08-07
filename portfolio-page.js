@@ -29,12 +29,15 @@ function createPortfolioContent(page) {
     grid.className = "collection-grid";
     for (const card of page.cards) {
       const link = document.createElement("a");
-      link.className = `collection-card${card.image ? "" : " is-empty"}`;
+      link.className = `collection-card${card.image || card.galleryKey ? "" : " is-empty"}`;
       link.href = card.href;
       link.innerHTML = `${card.image ? '<img alt="">' : ""}<div class="collection-card-copy"><h2>${card.title}</h2><p>${card.description}</p></div>`;
       const image = link.querySelector("img");
       if (image) {
         loadPortfolioImage(image, card.image, "thumbnail");
+      }
+      if (card.galleryKey) {
+        populateCollectionCard(link, card, portfolioPages[card.galleryKey]);
       }
       grid.append(link);
     }
@@ -52,18 +55,78 @@ function createPortfolioContent(page) {
 
   const grid = document.createElement("section");
   grid.className = "gallery-grid";
-  for (const imageName of page.images) {
+  wrapper.append(grid);
+  populateGallery(grid, page);
+  return wrapper;
+}
+
+async function populateCollectionCard(card, details) {
+  const available = await getAvailableImages(details);
+  const label = card.querySelector(".collection-card-copy p");
+  label.textContent = available.length ? `${available.length} photograph${available.length === 1 ? "" : "s"}` : "Gallery coming soon";
+  if (!available.length) {
+    card.classList.add("is-empty");
+    return;
+  }
+  const image = document.createElement("img");
+  image.alt = "";
+  card.prepend(image);
+  loadPortfolioImage(image, available[0], "thumbnail");
+}
+
+async function populateGallery(grid, page) {
+  const available = await getAvailableImages(page);
+  if (!available.length) {
+    const message = document.createElement("p");
+    message.className = "empty-gallery";
+    message.textContent = "This gallery is ready for photographs to be added.";
+    grid.replaceWith(message);
+    return;
+  }
+  for (const source of available) {
     const figure = document.createElement("figure");
+    figure.tabIndex = 0;
     const image = document.createElement("img");
-    image.alt = `${page.title} photography by Justy Media`;
+    image.alt = `${page.title} photography by Justy Media. Open full resolution image.`;
     image.loading = "lazy";
     image.decoding = "async";
-    loadPortfolioImage(image, `${page.folder}${imageName}`, "gallery");
+    loadPortfolioImage(image, source, "gallery");
     figure.append(image);
+    figure.addEventListener("click", () => openLightbox(source, image.alt));
+    figure.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") openLightbox(source, image.alt);
+    });
     grid.append(figure);
   }
-  wrapper.append(grid);
-  return wrapper;
+}
+
+async function getAvailableImages(page) {
+  const candidates = page.images.map((imageName) => encodeImagePath(`${page.folder}${imageName}`));
+  const checks = await Promise.all(candidates.map(async (source) => {
+    try {
+      const response = await fetch(source, { method: "HEAD" });
+      return response.ok && response.headers.get("content-type")?.startsWith("image/") ? source : undefined;
+    } catch {
+      return undefined;
+    }
+  }));
+  return checks.filter(Boolean);
+}
+
+function openLightbox(source, alt) {
+  let lightbox = document.querySelector(".image-lightbox");
+  if (!lightbox) {
+    lightbox = document.createElement("dialog");
+    lightbox.className = "image-lightbox";
+    lightbox.innerHTML = '<button class="lightbox-close" type="button" aria-label="Close image">&times;</button><img alt=""><a class="lightbox-download" download>Download full resolution</a>';
+    lightbox.querySelector(".lightbox-close").addEventListener("click", () => lightbox.close());
+    lightbox.addEventListener("click", (event) => { if (event.target === lightbox) lightbox.close(); });
+    document.body.append(lightbox);
+  }
+  lightbox.querySelector("img").src = source;
+  lightbox.querySelector("img").alt = alt;
+  lightbox.querySelector("a").href = source;
+  lightbox.showModal();
 }
 
 function loadPortfolioImage(image, source, kind) {

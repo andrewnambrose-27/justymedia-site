@@ -589,6 +589,46 @@ h2 {
   margin: 0;
   overflow: hidden;
   background: #292929;
+  cursor: zoom-in;
+}
+
+.image-lightbox {
+  width: min(100% - 32px, 1280px);
+  max-height: calc(100vh - 32px);
+  padding: 52px 20px 20px;
+  border: 0;
+  background: #151515;
+}
+
+.image-lightbox::backdrop {
+  background: rgba(0, 0, 0, 0.88);
+}
+
+.image-lightbox img {
+  width: auto;
+  max-width: 100%;
+  max-height: calc(100vh - 130px);
+  margin: 0 auto;
+}
+
+.lightbox-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  color: #fff;
+  background: transparent;
+  font-size: 2rem;
+  cursor: pointer;
+}
+
+.lightbox-download {
+  display: table;
+  margin: 16px auto 0;
+  color: #fff;
+  font-weight: 800;
 }
 
 .gallery-grid img {
