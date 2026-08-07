@@ -51,6 +51,7 @@ img {
   position: sticky;
   top: 0;
   z-index: 10;
+  min-height: 90px;
   background: #272727;
   border-top: 8px solid #50636a;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.28);
@@ -68,7 +69,7 @@ img {
   align-items: center;
   justify-content: flex-start;
   gap: 28px;
-  min-height: 42px;
+  min-height: 82px;
   padding-inline: clamp(20px, 2vw, 38px);
   font-size: 0.78rem;
   font-weight: 800;
@@ -104,19 +105,20 @@ img {
 }
 
 .main-nav {
-  position: relative;
+  position: absolute;
+  inset: 0;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  min-height: 62px;
-  padding-left: clamp(20px, 4vw, 74px);
+  min-height: 82px;
+  padding-left: 0;
   padding-right: clamp(20px, 2.5vw, 52px);
 }
 
 .brand {
   position: absolute;
   left: 50%;
-  top: -46px;
+  top: 18px;
   width: 168px;
   transform: translateX(-50%);
   filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.5));
@@ -139,7 +141,7 @@ img {
 
 .nav-menu li:nth-child(1) {
   margin-left: auto;
-  padding-left: clamp(120px, 8vw, 170px);
+  padding-left: clamp(150px, 10vw, 210px);
 }
 
 .nav-menu a {
@@ -415,6 +417,62 @@ h2 {
   font-size: 0.82rem;
 }
 
+.legal-page {
+  min-height: calc(100vh - 90px);
+  background: var(--panel);
+}
+
+.legal-page .section-inner {
+  width: min(100% - 40px, 820px);
+  padding-top: 66px;
+}
+
+.legal-title {
+  margin: 0 0 48px;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(2.2rem, 4vw, 3.3rem);
+  font-weight: 400;
+  line-height: 1.1;
+  text-align: center;
+}
+
+.legal-content {
+  color: #f1eee9;
+  font-size: 0.94rem;
+}
+
+.legal-content h2,
+.legal-content h3 {
+  margin: 34px 0 12px;
+  color: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.legal-content h2 {
+  font-size: 1.5rem;
+}
+
+.legal-content h3 {
+  font-size: 1.05rem;
+}
+
+.legal-content p {
+  margin: 0 0 14px;
+}
+
+.legal-content ul {
+  margin: 0 0 14px;
+  padding-left: 24px;
+}
+
+.legal-content a {
+  color: #fff;
+  font-weight: 700;
+}
+
 @media (max-width: 1120px) {
   .top-strip {
     display: none;
@@ -422,9 +480,12 @@ h2 {
 
   .site-header {
     border-top-width: 6px;
+    min-height: 78px;
   }
 
   .main-nav {
+    position: relative;
+    inset: auto;
     justify-content: space-between;
     min-height: 78px;
   }
