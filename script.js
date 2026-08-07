@@ -15,6 +15,50 @@ if (toggle && menu) {
   });
 }
 
+const footer = document.querySelector(".site-footer");
+
+if (footer) {
+  const footerNav = footer.querySelector("nav");
+  const footerLinks = [
+    ["/photography/automotive-photography/", "Automotive Photography"],
+    ["/photography/rush-magazine/", "RUSH Magazine"],
+    ["/phone-wallpapers/", "Phone Wallpapers"],
+    ["/services-pricing.html", "Services & Pricing"],
+    ["/about-me.html", "About Us"],
+    ["/contact.html", "Contact Us"],
+    ["/privacy-policy.html", "Privacy Policy"],
+    ["/terms-and-conditions.html", "Terms And Conditions"],
+  ];
+
+  if (!footer.querySelector("img")) {
+    const headerLogo = document.querySelector(".site-header .brand img");
+    if (headerLogo) {
+      const logo = headerLogo.cloneNode(true);
+      footer.prepend(logo);
+    }
+  }
+
+  if (footerNav) {
+    footerNav.setAttribute("aria-label", "Footer links");
+    footerNav.replaceChildren(
+      ...footerLinks.map(([href, label]) => {
+        const link = document.createElement("a");
+        link.href = href;
+        link.textContent = label;
+        return link;
+      }),
+    );
+  }
+}
+
+document.querySelectorAll('a[href$="#about"]').forEach((link) => {
+  link.href = "/about-me.html";
+});
+
+document.querySelectorAll('a[href$="#contact"]').forEach((link) => {
+  link.href = "/contact.html";
+});
+
 const legalContent = document.querySelector("[data-legal-source]");
 
 if (legalContent) {
