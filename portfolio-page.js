@@ -31,7 +31,11 @@ function createPortfolioContent(page) {
       const link = document.createElement("a");
       link.className = `collection-card${card.image ? "" : " is-empty"}`;
       link.href = card.href;
-      link.innerHTML = `${card.image ? `<img src="${card.image}" alt="">` : ""}<div class="collection-card-copy"><h2>${card.title}</h2><p>${card.description}</p></div>`;
+      link.innerHTML = `${card.image ? '<img alt="">' : ""}<div class="collection-card-copy"><h2>${card.title}</h2><p>${card.description}</p></div>`;
+      const image = link.querySelector("img");
+      if (image) {
+        loadPortfolioImage(image, card.image, card.fallback, "thumbnail");
+      }
       grid.append(link);
     }
     wrapper.append(grid);
@@ -51,14 +55,40 @@ function createPortfolioContent(page) {
   for (const imageName of page.images) {
     const figure = document.createElement("figure");
     const image = document.createElement("img");
-    image.src = `${page.folder}${imageName}`;
     image.alt = `${page.title} photography by Justy Media`;
     image.loading = "lazy";
+    image.decoding = "async";
+    loadPortfolioImage(image, `${page.folder}${imageName}`, undefined, "gallery");
     figure.append(image);
     grid.append(figure);
   }
   wrapper.append(grid);
   return wrapper;
+}
+
+function loadPortfolioImage(image, source, fallback, kind) {
+  const original = encodeImagePath(source);
+  image.src = cloudflareImageUrl(original, kind);
+  image.addEventListener("error", () => {
+    if (!image.dataset.triedOriginal) {
+      image.dataset.triedOriginal = "true";
+      image.src = original;
+    } else if (fallback && !image.dataset.triedFallback) {
+      image.dataset.triedFallback = "true";
+      image.src = encodeImagePath(fallback);
+    }
+  });
+}
+
+function cloudflareImageUrl(source, kind) {
+  const options = kind === "thumbnail"
+    ? "width=960,height=720,fit=cover,quality=78,format=auto"
+    : "width=1400,fit=scale-down,quality=82,format=auto";
+  return `/cdn-cgi/image/${options}${source}`;
+}
+
+function encodeImagePath(path) {
+  return path.split("/").map(encodeURIComponent).join("/");
 }
 
 function initialisePortfolioMenu() {
