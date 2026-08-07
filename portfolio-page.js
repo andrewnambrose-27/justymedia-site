@@ -34,7 +34,7 @@ function createPortfolioContent(page) {
       link.innerHTML = `${card.image ? '<img alt="">' : ""}<div class="collection-card-copy"><h2>${card.title}</h2><p>${card.description}</p></div>`;
       const image = link.querySelector("img");
       if (image) {
-        loadPortfolioImage(image, card.image, card.fallback, "thumbnail");
+        loadPortfolioImage(image, card.image, "thumbnail");
       }
       grid.append(link);
     }
@@ -58,7 +58,7 @@ function createPortfolioContent(page) {
     image.alt = `${page.title} photography by Justy Media`;
     image.loading = "lazy";
     image.decoding = "async";
-    loadPortfolioImage(image, `${page.folder}${imageName}`, undefined, "gallery");
+    loadPortfolioImage(image, `${page.folder}${imageName}`, "gallery");
     figure.append(image);
     grid.append(figure);
   }
@@ -66,16 +66,13 @@ function createPortfolioContent(page) {
   return wrapper;
 }
 
-function loadPortfolioImage(image, source, fallback, kind) {
+function loadPortfolioImage(image, source, kind) {
   const original = encodeImagePath(source);
   image.src = cloudflareImageUrl(original, kind);
   image.addEventListener("error", () => {
     if (!image.dataset.triedOriginal) {
       image.dataset.triedOriginal = "true";
       image.src = original;
-    } else if (fallback && !image.dataset.triedFallback) {
-      image.dataset.triedFallback = "true";
-      image.src = encodeImagePath(fallback);
     }
   });
 }

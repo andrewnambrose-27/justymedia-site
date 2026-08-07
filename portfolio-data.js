@@ -12,11 +12,11 @@ const portfolioPages = {
     parent: { label: "Photography", href: "/photography/" },
     description: "Vehicle photography with an emphasis on shape, detail and the road around it.",
     cards: [
-      { title: "Honda NSX", description: "6 photographs", href: "/photography/automotive-photography/honda-nsx/", image: "/Automotive Photography/Honda NSX/_DSC8923-Edit-2.jpg", fallback: "/Automotive Photography/_DSC5553.jpg" },
+      { title: "Honda NSX", description: "6 photographs", href: "/photography/automotive-photography/honda-nsx/", image: "/Automotive Photography/Honda NSX/_DSC8923-Edit-2.jpg" },
       { title: "Mazda Mx5 Mk1", description: "Gallery coming soon", href: "/photography/automotive-photography/mazda-mx5-mk1/" },
-      { title: "Mazda Mx5 Mk2", description: "9 photographs", href: "/photography/automotive-photography/mazda-mx5-mk2/", image: "/Automotive Photography/Mazda Mx5 Mk2/_DSC9988-Edit-2.jpg", fallback: "/Automotive Photography/_DSC6037-Edit-2.jpg" },
-      { title: "Subaru Outback", description: "4 photographs", href: "/photography/automotive-photography/subaru-outback/", image: "/Automotive Photography/Subaru Outback/_DSC1548.jpg", fallback: "/Automotive Photography/_DSC6059.jpg" },
-      { title: "Toyota JZX90", description: "3 photographs", href: "/photography/automotive-photography/toyota-jzx90/", image: "/Automotive Photography/Toyota JZX90/_DSC8409-Edit-2.JPG", fallback: "/Automotive Photography/_DSC5553.jpg" }
+      { title: "Mazda Mx5 Mk2", description: "9 photographs", href: "/photography/automotive-photography/mazda-mx5-mk2/", image: "/Automotive Photography/Mazda Mx5 Mk2/_DSC9988-Edit-2.jpg" },
+      { title: "Subaru Outback", description: "4 photographs", href: "/photography/automotive-photography/subaru-outback/", image: "/Automotive Photography/Subaru Outback/_DSC1548.jpg" },
+      { title: "Toyota JZX90", description: "3 photographs", href: "/photography/automotive-photography/toyota-jzx90/", image: "/Automotive Photography/Toyota JZX90/_DSC8409-Edit-2.JPG" }
     ]
   },
   "rush-magazine": {
