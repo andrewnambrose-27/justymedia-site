@@ -16,6 +16,7 @@ const portfolioPages = {
       { title: "Mazda Mx5 Mk1", description: "Gallery coming soon", href: "/photography/automotive-photography/mazda-mx5-mk1/" },
       { title: "Mazda Mx5 Mk2", description: "9 photographs", href: "/photography/automotive-photography/mazda-mx5-mk2/", image: "/photography/automotive-photography/mazda-mx5-mk2/_DSC9988-Edit-2.jpg" },
       { title: "Subaru Outback", description: "4 photographs", href: "/photography/automotive-photography/subaru-outback/", image: "/photography/automotive-photography/subaru-outback/_DSC1548.jpg" },
+      { title: "Volkswagen New Beetle", description: "Gallery coming soon", href: "/photography/automotive-photography/vw-new-beetle/" },
       { title: "Toyota JZX90", description: "3 photographs", href: "/photography/automotive-photography/toyota-jzx90/", image: "/photography/automotive-photography/toyota-jzx90/_DSC8409-Edit-2.JPG" }
     ]
   },
