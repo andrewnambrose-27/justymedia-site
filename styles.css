@@ -608,6 +608,121 @@ h2 {
   color: var(--muted);
 }
 
+.content-page {
+  min-height: calc(100vh - 90px);
+  background: var(--panel);
+}
+
+.content-page-inner {
+  width: min(100% - 40px, 860px);
+  margin: 0 auto;
+  padding: 68px 0 80px;
+}
+
+.content-page h1 {
+  max-width: none;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: clamp(2.6rem, 5vw, 4.3rem);
+  line-height: 1.1;
+  text-align: center;
+}
+
+.content-page-intro {
+  max-width: 700px;
+  margin: 24px auto 48px;
+  color: #f1eee9;
+  font-size: 1.05rem;
+  text-align: center;
+}
+
+.about-logo {
+  width: min(100%, 440px);
+  margin: 38px auto 52px;
+}
+
+.story-copy {
+  max-width: 720px;
+  margin: 0 auto;
+  color: #f1eee9;
+  font-size: 1.04rem;
+  text-align: center;
+}
+
+.service-list {
+  display: grid;
+  gap: 18px;
+}
+
+.service-item {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  min-height: 250px;
+  background: #e8e8e8;
+  color: #151515;
+}
+
+.service-number {
+  display: grid;
+  place-items: center;
+  background: #202020;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 2px;
+}
+
+.service-copy {
+  display: grid;
+  place-items: center;
+  padding: 42px;
+  text-align: center;
+}
+
+.service-copy h2 {
+  color: #151515;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 2rem;
+}
+
+.service-copy p {
+  max-width: 460px;
+}
+
+.service-price {
+  font-size: 1.4rem;
+  font-weight: 900;
+}
+
+.contact-panel {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  background: #252525;
+  text-align: center;
+}
+
+.contact-panel h2 {
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.7rem;
+}
+
+.contact-panel a {
+  color: #fff;
+  font-size: 1.08rem;
+  font-weight: 800;
+}
+
+@media (max-width: 600px) {
+  .service-item {
+    grid-template-columns: 1fr;
+  }
+
+  .service-number {
+    min-height: 64px;
+  }
+}
+
 @media (max-width: 1120px) {
   .top-strip {
     display: none;
