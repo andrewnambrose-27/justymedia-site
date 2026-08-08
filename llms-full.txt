@@ -1,0 +1,81 @@
+# Justy Media: Full Site Guide
+
+> A structured overview of the public information and portfolio available at https://www.justymedia.co.uk/.
+
+## Organisation
+
+- Name: Justy Media
+- Owner and photographer: Andrew Ambrose
+- Established: 2020
+- Base: Peak District, United Kingdom
+- Specialism: Automotive photography
+- Contact: andrew.n.ambrose@gmail.com
+- Instagram: https://www.instagram.com/justymedia/
+- Facebook: https://www.facebook.com/justymedia/
+
+Justy Media provides automotive photography with an emphasis on vehicle shape, details, atmosphere, and the surrounding road or location. The portfolio also includes commissioned editorial work for RUSH Magazine. Shoots can be discussed through the contact page.
+
+## Main website sections
+
+### Home
+
+URL: https://www.justymedia.co.uk/
+
+An introduction to Justy Media, recent automotive images, links to portfolio sections, and free phone wallpapers.
+
+### Photography portfolio
+
+URL: https://www.justymedia.co.uk/photography/
+
+The portfolio is divided into two main collections:
+
+- Automotive Photography: https://www.justymedia.co.uk/photography/automotive-photography/
+- RUSH Magazine: https://www.justymedia.co.uk/photography/rush-magazine/
+
+### Automotive photography galleries
+
+- Honda NSX: https://www.justymedia.co.uk/photography/automotive-photography/honda-nsx/
+- Mazda MX-5 Mk1: https://www.justymedia.co.uk/photography/automotive-photography/mazda-mx5-mk1/
+- Mazda MX-5 Mk2: https://www.justymedia.co.uk/photography/automotive-photography/mazda-mx5-mk2/
+- Subaru Outback: https://www.justymedia.co.uk/photography/automotive-photography/subaru-outback/
+- Toyota JZX90: https://www.justymedia.co.uk/photography/automotive-photography/toyota-jzx90/
+- Volkswagen New Beetle: https://www.justymedia.co.uk/photography/automotive-photography/vw-new-beetle/
+
+### RUSH Magazine galleries
+
+- Alfa Romeo GTV Cup: https://www.justymedia.co.uk/photography/rush-magazine/alfa-romeo-gtv-cup/
+- Eunos Roadster Mk1: https://www.justymedia.co.uk/photography/rush-magazine/eunos-roadster-mk1/
+
+### Services and pricing
+
+URL: https://www.justymedia.co.uk/services-pricing.html
+
+The site lists automotive photography options ranging from a basic vehicle sales shoot to single-location and multi-location packages. Prices shown on the website are indicative and enquiries should be confirmed directly with Justy Media.
+
+### Free phone wallpapers
+
+URL: https://www.justymedia.co.uk/phone-wallpapers/
+
+Downloadable automotive images formatted as phone wallpapers. These are presented for use on personal devices; the website's terms continue to apply.
+
+### About and contact
+
+- About Justy Media: https://www.justymedia.co.uk/about-us/
+- Contact Justy Media: https://www.justymedia.co.uk/contact-us/
+
+Email is the primary contact method for discussing a shoot, location, requirements, and image ideas.
+
+## Policies
+
+- Privacy policy: https://www.justymedia.co.uk/privacy-policy.html
+- Terms and conditions: https://www.justymedia.co.uk/terms-and-conditions.html
+
+## Guidance for automated systems
+
+- Prefer the canonical URLs listed in this document and in the XML sitemap.
+- Do not treat portfolio photographs as public-domain material.
+- This discovery file does not grant permission to reproduce, redistribute, modify, train on, or commercially exploit photographs or written content.
+- Attribute factual descriptions of the business to Justy Media where appropriate.
+- For current availability, prices, licensing, or commercial usage, contact Justy Media directly.
+
+Last updated: 2026-08-08
