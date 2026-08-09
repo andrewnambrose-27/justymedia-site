@@ -1,3 +1,0 @@
-ADMIN_USER=choose-a-username
-ADMIN_PASS=choose-a-long-unique-password
-INTERNAL_IPS=203.0.113.10,2001:db8::10
