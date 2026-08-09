@@ -460,15 +460,18 @@ export default {
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
     :root {
-      --bg: #0b0b0d;
-      --panel: rgba(255,255,255,0.06);
-      --panel-border: rgba(255,255,255,0.10);
-      --text: #f3f3f5;
-      --muted: #a7a7b0;
-      --accent: #f5a000;
-      --accent-soft: rgba(245,160,0,0.16);
-      --shadow: 0 20px 60px rgba(0,0,0,0.45);
-      --radius: 26px;
+      --bg: #222;
+      --deep: #080808;
+      --panel: #2b2b2b;
+      --panel-alt: #252525;
+      --panel-border: rgba(255,255,255,0.14);
+      --text: #f7f7f2;
+      --muted: #c7c2ba;
+      --accent: #ffc32f;
+      --accent-dark: #d99a00;
+      --accent-soft: rgba(255,195,47,0.14);
+      --shadow: 0 16px 42px rgba(0,0,0,0.34);
+      --radius: 12px;
     }
 
     * {
@@ -482,9 +485,8 @@ export default {
       font-family: Arial, Helvetica, sans-serif;
       color: var(--text);
       background:
-        radial-gradient(circle at 20% 20%, rgba(245,160,0,0.12), transparent 30%),
-        radial-gradient(circle at 80% 70%, rgba(245,160,0,0.08), transparent 28%),
-        linear-gradient(180deg, #0a0a0c 0%, #0d0d10 100%);
+        radial-gradient(circle at 12% 0%, rgba(255,195,47,0.07), transparent 28%),
+        linear-gradient(180deg, var(--deep) 0, var(--bg) 320px, var(--bg) 100%);
     }
 
     body::before {
@@ -495,12 +497,12 @@ export default {
       background:
         repeating-linear-gradient(
           90deg,
-          rgba(255,255,255,0.015) 0px,
-          rgba(255,255,255,0.015) 1px,
+          rgba(255,255,255,0.012) 0px,
+          rgba(255,255,255,0.012) 1px,
           transparent 1px,
           transparent 90px
         );
-      opacity: 0.2;
+      opacity: 0.35;
     }
 
     .wrap {
@@ -511,14 +513,27 @@ export default {
     }
 
     .hero {
-      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.045));
+      background: linear-gradient(145deg, #2f2f2f, #242424);
       border: 1px solid var(--panel-border);
-      border-radius: 34px;
+      border-top: 3px solid var(--accent);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
-      padding: 28px 28px 22px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      padding: 30px 30px 24px;
       margin-bottom: 22px;
+    }
+
+    .hero-brand {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    .hero-logo {
+      width: 104px;
+      height: 72px;
+      object-fit: contain;
+      filter: grayscale(1) brightness(1.9);
     }
 
     .eyebrow {
@@ -527,8 +542,8 @@ export default {
       gap: 10px;
       font-size: 13px;
       color: var(--muted);
-      background: rgba(255,255,255,0.05);
-      border: 1px solid rgba(255,255,255,0.08);
+      background: #1b1b1b;
+      border: 1px solid var(--panel-border);
       border-radius: 999px;
       padding: 8px 12px;
       margin-bottom: 16px;
@@ -537,9 +552,10 @@ export default {
     h1 {
       margin: 0 0 8px;
       font-size: clamp(34px, 5vw, 56px);
-      line-height: 1;
-      letter-spacing: -0.03em;
-      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
     }
 
     .accent {
@@ -561,13 +577,11 @@ export default {
     }
 
     .card {
-      background: linear-gradient(180deg, rgba(255,255,255,0.065), rgba(255,255,255,0.04));
+      background: linear-gradient(145deg, var(--panel), var(--panel-alt));
       border: 1px solid var(--panel-border);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
       padding: 22px;
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       overflow: hidden;
     }
 
@@ -587,7 +601,9 @@ export default {
 
     .stat-value {
       font-size: clamp(32px, 4vw, 52px);
-      font-weight: 700;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
+      color: var(--accent);
       line-height: 1;
       margin: 8px 0;
     }
@@ -620,7 +636,8 @@ export default {
     .card-title {
       margin: 0;
       font-size: 20px;
-      font-weight: 700;
+      font-family: Georgia, "Times New Roman", serif;
+      font-weight: 400;
     }
 
     .pill {
@@ -630,8 +647,8 @@ export default {
       padding: 7px 12px;
       border-radius: 999px;
       background: var(--accent-soft);
-      color: #ffd082;
-      border: 1px solid rgba(245,160,0,0.18);
+      color: var(--accent);
+      border: 1px solid rgba(255,195,47,0.3);
       font-size: 12px;
       white-space: nowrap;
     }
@@ -645,7 +662,7 @@ export default {
       overflow-x: auto;
       overflow-y: hidden;
       padding-bottom: 12px;
-      scrollbar-color: rgba(245,160,0,0.75) rgba(255,255,255,0.08);
+      scrollbar-color: var(--accent-dark) rgba(255,255,255,0.08);
       scrollbar-width: thin;
     }
 
@@ -659,7 +676,7 @@ export default {
     }
 
     .chart-wrap-scroll::-webkit-scrollbar-thumb {
-      background: rgba(245,160,0,0.75);
+      background: var(--accent-dark);
       border-radius: 999px;
     }
 
@@ -686,9 +703,9 @@ export default {
     .bar {
       width: 100%;
       max-width: 68px;
-      border-radius: 18px 18px 8px 8px;
-      background: linear-gradient(180deg, #ffb11c 0%, #db8700 100%);
-      box-shadow: 0 10px 30px rgba(245,160,0,0.28);
+      border-radius: 5px 5px 2px 2px;
+      background: linear-gradient(180deg, var(--accent) 0%, var(--accent-dark) 100%);
+      box-shadow: 0 8px 20px rgba(217,154,0,0.2);
       min-height: 12px;
       position: relative;
       transition: transform 0.18s ease;
@@ -700,7 +717,7 @@ export default {
 
     .bar-value {
       font-size: 13px;
-      color: #fff2d0;
+      color: var(--text);
       margin-bottom: 6px;
       text-align: center;
       min-height: 16px;
@@ -824,7 +841,7 @@ export default {
     .progress-fill {
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(90deg, #ffb61f, #ffd082);
+      background: linear-gradient(90deg, var(--accent-dark), var(--accent));
     }
 
     .visit-row {
@@ -859,7 +876,7 @@ export default {
       justify-content: center;
       min-height: 46px;
       padding: 0 18px;
-      border-radius: 999px;
+      border-radius: 4px;
       text-decoration: none;
       font-weight: 700;
       font-size: 14px;
@@ -868,14 +885,14 @@ export default {
     }
 
     .btn-primary {
-      background: linear-gradient(180deg, #ffb61f, #f0a100);
-      color: #111;
-      box-shadow: 0 10px 30px rgba(245,160,0,0.22);
+      background: var(--accent);
+      color: #252525;
+      box-shadow: 0 8px 22px rgba(217,154,0,0.18);
     }
 
     .btn-secondary {
       color: #fff;
-      background: rgba(255,255,255,0.04);
+      background: #1b1b1b;
     }
 
     .btn:hover {
@@ -898,7 +915,14 @@ export default {
       }
       .hero, .card {
         padding: 18px;
-        border-radius: 24px;
+        border-radius: 9px;
+      }
+      .hero-brand {
+        align-items: flex-start;
+      }
+      .hero-logo {
+        width: 78px;
+        height: 58px;
       }
       .stat-card {
         grid-column: span 12;
@@ -918,7 +942,10 @@ export default {
 <body>
   <div class="wrap">
     <section class="hero">
-      <div class="eyebrow">Private dashboard · Justy Media analytics</div>
+      <div class="hero-brand">
+        <img class="hero-logo" src="https://justymedia.co.uk/logo%20final%20AI%20transparrent.png" alt="Justy Media">
+        <div class="eyebrow">Private dashboard · Justy Media analytics</div>
+      </div>
       <h1><span class="accent">Justy Media</span> Analytics</h1>
       <p class="sub">
         A simple view of how the site is performing, with monthly page views, top pages, and country data.
