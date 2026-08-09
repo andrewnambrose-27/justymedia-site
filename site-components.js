@@ -1,4 +1,12 @@
 (function () {
+  if (!document.querySelector("script[data-justy-analytics]")) {
+    const analyticsScript = document.createElement("script");
+    analyticsScript.src = "/site-analytics.js";
+    analyticsScript.async = true;
+    analyticsScript.dataset.justyAnalytics = "true";
+    document.head.append(analyticsScript);
+  }
+
   const navigation = [
     ["/photography/", "Photography Portfolio", "photography"],
     ["/#design", "Graphic Design Portfolio", "design"],
