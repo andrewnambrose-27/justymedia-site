@@ -1,0 +1,9 @@
+{
+  "name": "justy-media-site",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build-site.js",
+    "check": "node scripts/verify-site.js",
+    "serve": "node scripts/serve-site.js"
+  }
+}

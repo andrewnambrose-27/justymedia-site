@@ -98,8 +98,7 @@ const BOT_PATTERNS = [
 ];
 
 const ALLOWED_ORIGINS = new Set([
-  "https://justymedia.co.uk",
-  "https://www.justymedia.co.uk"
+  "https://justymedia.co.uk"
 ]);
 
 function isAllowedOrigin(request) {

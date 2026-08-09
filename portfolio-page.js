@@ -1,160 +1,45 @@
-const pageKey = document.body.dataset.portfolioPage;
-const portfolioPage = portfolioPages[pageKey];
+(function () {
+  const gallery = document.querySelector("[data-gallery]");
+  if (!gallery) return;
 
-if (portfolioPage) {
-  const componentScript = document.createElement("script");
-  componentScript.src = "/site-components.js";
-  componentScript.addEventListener("load", renderPortfolioPage);
-  document.head.append(componentScript);
-}
+  let lightbox;
+  let returnFocus;
 
-function renderPortfolioPage() {
-  document.title = `${portfolioPage.title} | Justy Media`;
-  document.querySelector("#site-shell").innerHTML = window.JustySiteComponents.header();
-  document.querySelector("#portfolio-content").replaceChildren(createPortfolioContent(portfolioPage));
-  document.querySelector("#site-footer").innerHTML = window.JustySiteComponents.footer();
-  window.JustySiteComponents.initialiseNavigation();
-}
-
-function createPortfolioContent(page) {
-  const wrapper = document.createElement("div");
-  const intro = document.createElement("section");
-  intro.className = "portfolio-intro";
-  intro.innerHTML = `${page.parent ? `<p class="breadcrumb"><a href="${page.parent.href}">${page.parent.label}</a> / ${page.title}</p>` : '<p class="portfolio-kicker">Portfolio</p>'}<h1>${page.title}</h1>${page.description ? `<p>${page.description}</p>` : ""}`;
-  wrapper.append(intro);
-
-  if (page.cards) {
-    const grid = document.createElement("section");
-    grid.className = "collection-grid";
-    for (const card of page.cards) {
-      const link = document.createElement("a");
-      link.className = `collection-card${card.image || card.galleryKey ? "" : " is-empty"}`;
-      link.href = card.href;
-      link.innerHTML = `${card.image ? '<img alt="">' : ""}<div class="collection-card-copy"><h2>${card.title}</h2><p>${card.description}</p></div>`;
-      const image = link.querySelector("img");
-      if (image) {
-        loadPortfolioImage(image, card.image, "thumbnail");
-      }
-      if (card.galleryKey) {
-        populateCollectionCard(link, card, portfolioPages[card.galleryKey]);
-      }
-      grid.append(link);
-    }
-    wrapper.append(grid);
-    return wrapper;
-  }
-
-  if (!page.images.length) {
-    const message = document.createElement("p");
-    message.className = "empty-gallery";
-    message.textContent = "This gallery is ready for photographs to be added.";
-    wrapper.append(message);
-    return wrapper;
-  }
-
-  const grid = document.createElement("section");
-  grid.className = "gallery-grid";
-  wrapper.append(grid);
-  populateGallery(grid, page);
-  return wrapper;
-}
-
-async function populateCollectionCard(card, details) {
-  const available = await getAvailableImages(details);
-  const label = card.querySelector(".collection-card-copy p");
-  label.textContent = available.length ? `${available.length} photograph${available.length === 1 ? "" : "s"}` : "Gallery coming soon";
-  if (!available.length) {
-    card.classList.add("is-empty");
-    return;
-  }
-  const image = document.createElement("img");
-  image.alt = "";
-  card.prepend(image);
-  loadPortfolioImage(image, available[0], "thumbnail");
-}
-
-async function populateGallery(grid, page) {
-  const available = await getAvailableImages(page);
-  if (!available.length) {
-    const message = document.createElement("p");
-    message.className = "empty-gallery";
-    message.textContent = "This gallery is ready for photographs to be added.";
-    grid.replaceWith(message);
-    return;
-  }
-  for (const source of available) {
-    const figure = document.createElement("figure");
-    figure.tabIndex = 0;
-    const image = document.createElement("img");
-    image.alt = `${page.title} photography by Justy Media. Open full resolution image.`;
-    image.loading = "lazy";
-    image.decoding = "async";
-    loadPortfolioImage(image, source, "gallery");
-    figure.append(image);
-    figure.addEventListener("click", () => openLightbox(source, image.alt));
-    figure.addEventListener("keydown", (event) => {
-      if (event.key === "Enter" || event.key === " ") openLightbox(source, image.alt);
-    });
-    grid.append(figure);
-  }
-}
-
-async function getAvailableImages(page) {
-  const candidates = page.images.map((imageName) => encodeImagePath(`${page.folder}${imageName}`));
-  const checks = await Promise.all(candidates.map(async (source) => {
-    try {
-      const response = await fetch(source, { method: "HEAD" });
-      return response.ok && response.headers.get("content-type")?.startsWith("image/") ? source : undefined;
-    } catch {
-      return undefined;
-    }
-  }));
-  return checks.filter(Boolean);
-}
-
-function openLightbox(source, alt) {
-  let lightbox = document.querySelector(".image-lightbox");
-  if (!lightbox) {
+  function ensureLightbox() {
+    if (lightbox) return lightbox;
     lightbox = document.createElement("dialog");
     lightbox.className = "image-lightbox";
-    lightbox.innerHTML = '<button class="lightbox-close" type="button" aria-label="Close image">&times;</button><img alt=""><a class="lightbox-download" download>Download full resolution</a>';
+    lightbox.setAttribute("aria-label", "Image viewer");
+    lightbox.innerHTML = '<button class="lightbox-close" type="button" aria-label="Close image viewer">&times;</button><div class="lightbox-media"><img alt=""></div><p class="lightbox-caption"></p><a class="lightbox-download" download>Download original</a>';
     lightbox.querySelector(".lightbox-close").addEventListener("click", () => lightbox.close());
     lightbox.addEventListener("click", (event) => { if (event.target === lightbox) lightbox.close(); });
+    lightbox.addEventListener("close", () => returnFocus?.focus());
     document.body.append(lightbox);
+    return lightbox;
   }
-  lightbox.querySelector("img").src = source;
-  lightbox.querySelector("img").alt = alt;
-  lightbox.querySelector("a").href = source;
-  lightbox.showModal();
-}
 
-function loadPortfolioImage(image, source, kind) {
-  const original = encodeImagePath(source);
-  image.src = cloudflareImageUrl(original, kind);
-  image.addEventListener("error", () => {
-    if (!image.dataset.triedOriginal) {
-      image.dataset.triedOriginal = "true";
-      image.src = original;
-    }
+  gallery.addEventListener("click", (event) => {
+    const trigger = event.target.closest(".gallery-trigger");
+    if (!trigger) return;
+    event.preventDefault();
+    const dialog = ensureLightbox();
+    const source = trigger.dataset.full;
+    const alt = trigger.dataset.alt || "Justy Media photograph";
+    returnFocus = trigger;
+    dialog.querySelector("img").src = source;
+    dialog.querySelector("img").alt = alt;
+    dialog.querySelector(".lightbox-caption").textContent = alt;
+    dialog.querySelector(".lightbox-download").href = source;
+    dialog.showModal();
+    dialog.querySelector(".lightbox-close").focus();
   });
-}
 
-function cloudflareImageUrl(source, kind) {
-  const options = kind === "thumbnail"
-    ? "width=960,height=720,fit=cover,quality=78,format=auto"
-    : "width=1400,fit=scale-down,quality=82,format=auto";
-  return `/cdn-cgi/image/${options}${source}`;
-}
-
-function encodeImagePath(path) {
-  return path.split("/").map(encodeURIComponent).join("/");
-}
-
-function initialisePortfolioMenu() {
-  const toggle = document.querySelector(".nav-toggle");
-  const menu = document.querySelector("#nav-menu");
-  toggle.addEventListener("click", () => {
-    const isOpen = menu.classList.toggle("is-open");
-    toggle.setAttribute("aria-expanded", String(isOpen));
-  });
-}
+  for (const image of gallery.querySelectorAll("img[data-original]")) {
+    image.addEventListener("error", () => {
+      if (image.dataset.fallbackUsed) return;
+      image.dataset.fallbackUsed = "true";
+      image.removeAttribute("srcset");
+      image.src = image.dataset.original;
+    });
+  }
+})();

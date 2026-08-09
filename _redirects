@@ -1,13 +1,37 @@
+# Canonical route redirects. Cloudflare Pages applies the first matching rule.
+# Hostname redirects cannot be declared here; see CLOUDFLARE-REDIRECTS.md.
+
+/services-pricing.html /services/ 301
+/services-pricing /services/ 301
+/services-pricing/ /services/ 301
+
 /automotive-photography /photography/automotive-photography/ 301
-/subaru-outback-2-5se-mk3 /photography/automotive-photography/subaru-outback/ 301
-/alfaromeogtvcup /photography/rush-magazine/alfa-romeo-gtv-cup/ 301
-/vwnewbeetle /photography/automotive-photography/vw-new-beetle/ 301
-/phone-wallpapers /phone-wallpapers/ 301
-/product-photography /photography/ 301
+/automotive-photography/ /photography/automotive-photography/ 301
 /about-me /about-us/ 301
+/about-me/ /about-us/ 301
 /about-me.html /about-us/ 301
-/about-us /about-us/ 301
-/services-pricing /services-pricing.html 301
+/vwnewbeetle /photography/automotive-photography/vw-new-beetle/ 301
+/vwnewbeetle/ /photography/automotive-photography/vw-new-beetle/ 301
+/subaru-outback-2-5se-mk3 /photography/automotive-photography/subaru-outback/ 301
+/subaru-outback-2-5se-mk3/ /photography/automotive-photography/subaru-outback/ 301
+/alfaromeogtvcup /photography/rush-magazine/alfa-romeo-gtv-cup/ 301
+/alfaromeogtvcup/ /photography/rush-magazine/alfa-romeo-gtv-cup/ 301
+/alfaromeogtvcupmultilocationshoot /photography/rush-magazine/alfa-romeo-gtv-cup/ 301
+/alfaromeogtvcupmultilocationshoot/ /photography/rush-magazine/alfa-romeo-gtv-cup/ 301
+/copy-of-product-photography /services/photography-content/ 301
+/copy-of-product-photography/ /services/photography-content/ 301
+/product-photography /services/photography-content/ 301
+/product-photography/ /services/photography-content/ 301
+
 /contact /contact-us/ 301
+/contact/ /contact-us/ 301
 /contact.html /contact-us/ 301
+/about-us /about-us/ 301
 /contact-us /contact-us/ 301
+/services /services/ 301
+/work /work/ 301
+/photography /photography/ 301
+/phone-wallpapers /phone-wallpapers/ 301
+
+# /bmwr50mini and /gear-i-use intentionally have no redirect because the
+# repository contains no equivalent current page. They should remain genuine 404s.

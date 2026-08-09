@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://www.justymedia.co.uk/sitemap.xml
+Sitemap: https://justymedia.co.uk/sitemap.xml

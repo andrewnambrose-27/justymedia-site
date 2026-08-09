@@ -1,12 +1,12 @@
-/* TEAM */
-Owner and photographer: Andrew Ambrose
+/* STUDIO */
+Owner and creative: Andrew Ambrose
 Brand: Justy Media
 Contact: andrew.n.ambrose@gmail.com
 Location: Peak District, United Kingdom
 
 /* SITE */
-Website: https://www.justymedia.co.uk/
-Language: English
+Website: https://justymedia.co.uk/
+Language: British English
 Standards: HTML5, CSS3, JavaScript
-Purpose: Automotive photography portfolio, services and free phone wallpapers
-Last updated: 2026-08-08
+Purpose: Independent creative studio services, selected work, photography and resources
+Last updated: 2026-08-09

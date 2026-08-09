@@ -1,23 +1,26 @@
 # Justy Media
 
-> Justy Media is an automotive photography service and portfolio created by Andrew Ambrose in the Peak District, United Kingdom.
+> Justy Media is an independent creative studio run by Andrew Ambrose in the Peak District, United Kingdom.
 
-The site showcases automotive and editorial photography, explains available photography services, provides contact information, and offers free automotive phone wallpapers. Content is in English. Photographs and site content remain the property of Justy Media or their respective rights holders; this file is provided for discovery and does not grant additional usage rights.
+The studio combines website design and development, graphic design, photography, SEO and practical digital marketing support. The public portfolio contains genuine Justy Media photography, self-owned identity and website work, and commissioned automotive editorials for RUSH Magazine.
 
 ## Primary pages
 
-- [Home](https://www.justymedia.co.uk/): Overview of Justy Media and recent work.
-- [Photography portfolio](https://www.justymedia.co.uk/photography/): Entry point for automotive and editorial photography collections.
-- [Automotive photography](https://www.justymedia.co.uk/photography/automotive-photography/): Vehicle photography galleries.
-- [RUSH Magazine](https://www.justymedia.co.uk/photography/rush-magazine/): Editorial automotive work created for RUSH Magazine.
-- [Services and pricing](https://www.justymedia.co.uk/services-pricing.html): Automotive photography packages and indicative prices.
-- [About](https://www.justymedia.co.uk/about-us/): Background and history of Justy Media.
-- [Contact](https://www.justymedia.co.uk/contact-us/): How to arrange a photography shoot.
-- [Phone wallpapers](https://www.justymedia.co.uk/phone-wallpapers/): Free automotive wallpapers for personal devices.
+- [Home](https://justymedia.co.uk/)
+- [Creative services](https://justymedia.co.uk/services/)
+- [Web design and development](https://justymedia.co.uk/services/web-design/)
+- [Graphic design and branding](https://justymedia.co.uk/services/graphic-design/)
+- [Photography and content](https://justymedia.co.uk/services/photography-content/)
+- [SEO and digital marketing](https://justymedia.co.uk/services/digital-marketing/)
+- [Selected work](https://justymedia.co.uk/work/)
+- [Photography portfolio](https://justymedia.co.uk/photography/)
+- [About](https://justymedia.co.uk/about-us/)
+- [Contact](https://justymedia.co.uk/contact-us/)
+- [Free phone wallpapers](https://justymedia.co.uk/phone-wallpapers/)
 
-## Policies and supporting information
+## Policies and discovery
 
-- [Privacy policy](https://www.justymedia.co.uk/privacy-policy.html)
-- [Terms and conditions](https://www.justymedia.co.uk/terms-and-conditions.html)
-- [Full site guide for language models](https://www.justymedia.co.uk/llms-full.txt)
-- [XML sitemap](https://www.justymedia.co.uk/sitemap.xml)
+- [Privacy policy](https://justymedia.co.uk/privacy-policy.html)
+- [Terms and conditions](https://justymedia.co.uk/terms-and-conditions.html)
+- [Full site guide](https://justymedia.co.uk/llms-full.txt)
+- [XML sitemap](https://justymedia.co.uk/sitemap.xml)
