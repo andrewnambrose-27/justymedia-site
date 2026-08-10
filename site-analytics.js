@@ -33,7 +33,10 @@
     let eventType = "";
     let label = "";
 
-    if (href.protocol === "mailto:" || href.protocol === "tel:") {
+    if (link.dataset.cameraTool && href.hostname === "27tools.co") {
+      eventType = "camera_tool_outbound_click";
+      label = `${link.dataset.cameraTool}|${href.hostname}`;
+    } else if (href.protocol === "mailto:" || href.protocol === "tel:") {
       eventType = "contact_click";
       label = href.protocol === "mailto:" ? "email" : "telephone";
     } else if (link.hasAttribute("download")) {

@@ -8,6 +8,43 @@ const email = "andrew.n.ambrose@gmail.com";
 const logo = "/logo%20final%20AI%20transparrent.png";
 const defaultShareImage = "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg";
 const modified = "2026-08-10";
+const cameraTools = [
+  {
+    group: "metadata", slug: "sony-shutter-count", name: "Sony Shutter Count Checker", label: "Sony · JPG and ARW",
+    description: "Check compatible original Sony JPG and ARW files for shutter-count information and view useful EXIF metadata directly in your browser.",
+    cta: "Open Sony Tool", url: "https://27tools.co/tools/camera-tools/camera-shutter-count/"
+  },
+  {
+    group: "metadata", slug: "canon-shutter-count", name: "Canon Shutter Count Checker", label: "Canon · CR3",
+    description: "Inspect an original Canon CR3 file for available shutter-count information while keeping access to the full metadata found inside the image.",
+    cta: "Open Canon Tool", url: "https://27tools.co/tools/camera-tools/canon-shutter-count/"
+  },
+  {
+    group: "metadata", slug: "nikon-shutter-count", name: "Nikon Shutter Count Checker", label: "Nikon · NEF",
+    description: "Read compatible Nikon NEF maker-note data to find an available shutter count and inspect useful camera and exposure metadata.",
+    cta: "Open Nikon Tool", url: "https://27tools.co/tools/camera-tools/nikon-shutter-count/"
+  },
+  {
+    group: "metadata", slug: "fujifilm-shutter-count", name: "Fujifilm Shutter Count Checker", label: "Fujifilm · RAF",
+    description: "Check an original Fujifilm RAF file for available shutter-count information and inspect the metadata recorded by the camera.",
+    cta: "Open Fujifilm Tool", url: "https://27tools.co/tools/camera-tools/fujifilm-shutter-count/"
+  },
+  {
+    group: "planning", slug: "depth-of-field-calculator", name: "Depth of Field Calculator", label: "Photography · Focus planning",
+    description: "Estimate near and far focus limits, total depth of field and hyperfocal distance using your camera format, focal length, aperture and focus distance.",
+    cta: "Calculate Depth of Field", url: "https://27tools.co/tools/camera-tools/depth-of-field-calculator/"
+  },
+  {
+    group: "planning", slug: "video-shutter-speed-calculator", name: "Video Shutter Speed Calculator", label: "Video · Frame rate and shutter angle",
+    description: "Calculate a suitable video shutter speed from frame rate and shutter angle, with practical guidance for motion blur and 50Hz or 60Hz lighting.",
+    cta: "Calculate Shutter Speed", url: "https://27tools.co/tools/camera-tools/video-shutter-speed-calculator/"
+  },
+  {
+    group: "planning", slug: "video-recording-time-calculator", name: "Video Recording Time Calculator", label: "Video · Bitrate and storage",
+    description: "Estimate how long a memory card can record at a chosen bitrate or calculate how much storage an upcoming video shoot may require.",
+    cta: "Calculate Recording Time", url: "https://27tools.co/tools/camera-tools/video-recording-time-calculator/"
+  }
+];
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>\"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[character]);
@@ -75,7 +112,8 @@ function breadcrumbs(items) {
 function currentSection(pagePath) {
   if (pagePath.startsWith("/services/")) return "services";
   if (pagePath.startsWith("/work/")) return "work";
-  if (pagePath.startsWith("/photography/") || pagePath.startsWith("/phone-wallpapers/")) return "photography";
+  if (pagePath.startsWith("/photography/")) return "photography";
+  if (pagePath.startsWith("/resources/") || pagePath.startsWith("/phone-wallpapers/")) return "resources";
   if (pagePath.startsWith("/about-us/")) return "about";
   if (pagePath.startsWith("/contact-us/")) return "contact";
   return "";
@@ -87,6 +125,7 @@ function header(pagePath) {
     ["/services/", "Services", "services"],
     ["/work/", "Work", "work"],
     ["/photography/", "Photography", "photography"],
+    ["/resources/", "Resources", "resources"],
     ["/about-us/", "About", "about"],
     ["/contact-us/", "Contact", "contact"]
   ];
@@ -105,7 +144,7 @@ function footer() {
   return `<footer class="site-footer">
     <div class="footer-brand"><img src="${logo}" width="2639" height="1511" alt="Justy Media"><p>Independent creative studio<br>Peak District, UK</p></div>
     <div><p class="footer-heading">Explore</p><nav aria-label="Footer services"><a href="/services/">Services</a><a href="/services/web-design/">Web design</a><a href="/services/graphic-design/">Graphic design</a><a href="/services/photography-content/">Photography &amp; content</a><a href="/services/digital-marketing/">SEO &amp; digital marketing</a><a href="/work/">Work</a></nav></div>
-    <div><p class="footer-heading">Photography &amp; resources</p><nav aria-label="Footer photography"><a href="/photography/">Photography overview</a><a href="/photography/automotive-photography/">Automotive photography</a><a href="/photography/rush-magazine/">RUSH Magazine</a><a href="/phone-wallpapers/">Phone wallpapers</a></nav></div>
+    <div><p class="footer-heading">Photography &amp; resources</p><nav aria-label="Footer photography and resources"><a href="/photography/">Photography overview</a><a href="/photography/automotive-photography/">Automotive photography</a><a href="/photography/rush-magazine/">RUSH Magazine</a><a href="/phone-wallpapers/">Phone wallpapers</a><a href="/resources/camera-tools/">Camera tools</a><a href="/resources/">All resources</a></nav></div>
     <div><p class="footer-heading">Justy Media</p><nav aria-label="Footer information"><a href="/about-us/">About</a><a href="/contact-us/">Contact</a><a href="/privacy-policy.html">Privacy policy</a><a href="/terms-and-conditions.html">Terms and conditions</a></nav><div class="footer-socials"><a href="https://www.instagram.com/justymedia/" aria-label="Instagram">IG</a><a href="https://www.facebook.com/justymedia/" aria-label="Facebook">FB</a></div></div>
     <small>&copy; 2026 Justy Media. Website and photography by Justy Media.</small>
   </footer>`;
@@ -196,7 +235,7 @@ function homePage() {
     <section class="section-block process-section"><div class="content-width"><p class="eyebrow">How it works</p><h2>A clear route from idea to finished work.</h2><ol class="process-list"><li><span>01</span><div><h3>Understand</h3><p>We start with the problem, audience and practical constraints—not a predetermined package.</p></div></li><li><span>02</span><div><h3>Shape</h3><p>I define the useful scope, creative direction and deliverables so expectations are clear.</p></div></li><li><span>03</span><div><h3>Create</h3><p>Design, development or production moves forward with focused review points along the way.</p></div></li><li><span>04</span><div><h3>Launch &amp; support</h3><p>The finished work is delivered properly, with the option of sensible ongoing updates and improvement.</p></div></li></ol></div></section>
     <section class="section-block why-section"><div class="wide-width split-intro"><div><p class="eyebrow">Why Justy Media?</p><h2>Direct, joined-up creative support.</h2></div><div class="feature-list"><article><h3>One point of contact</h3><p>Work directly with Andrew from the first conversation through to delivery.</p></article><article><h3>Built around the brief</h3><p>No one-size-fits-all packages or invented complexity—just the work the project needs.</p></article><article><h3>Creative and technical together</h3><p>Visual quality, useful content and sound implementation are considered as one connected job.</p></article></div></div></section>
     ${cta()}
-    <aside class="resource-strip"><div class="wide-width"><div><p class="eyebrow">A small free resource</p><h2>Automotive phone wallpapers</h2><p>Download a selection of Justy Media photographs prepared for personal phone use.</p></div><a class="button button-secondary" href="/phone-wallpapers/">Browse wallpapers</a></div></aside>
+    <aside class="resource-strip"><div class="wide-width"><div><p class="eyebrow">Free Resources</p><h2>Useful tools and downloads.</h2><p>Download automotive phone wallpapers or use practical browser-based camera tools for photography, video and used-equipment checks.</p></div><div class="resource-strip-links"><a class="button button-secondary" href="/phone-wallpapers/">Browse Phone Wallpapers</a><a class="text-link" href="/resources/camera-tools/">Explore Camera Tools</a></div></div></aside>
   </main>`;
   return documentHtml({
     path: pathName, title, description, body, bodyClass: "home-page",
@@ -308,7 +347,10 @@ function portfolioPage(page) {
       return `<figure${orientationClass}><a class="gallery-trigger" href="${encodedPath(source)}" data-full="${encodedPath(source)}" data-alt="${escapeHtml(alt)}">${responsiveImage({ src: source, alt, width, height })}<span class="sr-only">View larger image</span></a><figcaption><span>${escapeHtml(alt)}</span><a href="${encodedPath(source)}" download>Download original</a></figcaption></figure>`;
     }).join("")}</div></div></section>`;
   }
-  const body = `<main id="main-content">${breadcrumbs(page.breadcrumbs)}${pageIntro(gallery ? "Photography collection" : "Photography portfolio", page.heading, page.intro)}${content}<section class="portfolio-next"><div class="content-width"><p>Need photography for a website, campaign or editorial feature?</p><a class="text-link" href="/services/photography-content/">Explore photography &amp; content services</a></div></section></main>`;
+  const photographyResource = page.path === "/photography/"
+    ? `<aside class="photography-resource-panel"><div class="content-width"><div><p class="eyebrow">Free resource</p><h2>Planning a shoot or checking camera equipment?</h2><p>Use free tools for depth of field, shutter counts, video shutter speed and recording-time calculations.</p></div><a class="button button-secondary" href="/resources/camera-tools/">Explore Free Camera Tools</a></div></aside>`
+    : "";
+  const body = `<main id="main-content">${breadcrumbs(page.breadcrumbs)}${pageIntro(gallery ? "Photography collection" : "Photography portfolio", page.heading, page.intro)}${content}${photographyResource}<section class="portfolio-next"><div class="content-width"><p>Need photography for a website, campaign or editorial feature?</p><a class="text-link" href="/services/photography-content/">Explore photography &amp; content services</a></div></section></main>`;
   const schema = gallery
     ? { "@type": "ImageGallery", name: page.heading, url: absolute(page.path), description: page.description, author: { "@id": `${origin}/#business` }, associatedMedia: page.images.map(([file, alt, width, height]) => ({ "@type": "ImageObject", contentUrl: absolute(encodedPath(`${page.folder}${file}`)), caption: alt, width, height, creator: { "@id": `${origin}/#business` } })) }
     : { "@type": "CollectionPage", name: page.heading, url: absolute(page.path), description: page.description, isPartOf: { "@id": `${origin}/#website` } };
@@ -344,6 +386,39 @@ function contactPage() {
         <div class="form-row full"><button class="button button-primary" type="submit">Prepare email enquiry</button><p class="form-help">Your email application will open so you can review and send the message. Read the <a href="/privacy-policy.html">privacy policy</a>.</p></div>
       </form></div></section></main>`;
   return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "ContactPage", name: title, url: absolute(pagePath), description, mainEntity: { "@id": `${origin}/#business` }, isPartOf: { "@id": `${origin}/#website` } }] });
+}
+
+function resourcesPage() {
+  const pagePath = "/resources/";
+  const title = "Free Creative Resources | Justy Media";
+  const description = "Explore free resources from Justy Media, including automotive phone wallpapers and practical camera tools for photographers and videographers.";
+  const crumbs = [{ label: "Home", href: "/" }, { label: "Resources", href: pagePath }];
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Free Resources", "Useful extras for photographers and creatives.", "A small collection of free resources created around photography, content and practical creative work. Download automotive wallpapers from the Justy Media archive or use browser-based camera tools to plan a shoot, inspect image data and check used equipment.")}
+    <section class="section-block resources-overview"><div class="wide-width"><div class="resource-card-grid">
+      <article class="resource-card"><div class="resource-card-media">${responsiveImage({ src: "/phone-wallpapers/_DSC8937-Edit.jpg", alt: "Red Honda NSX in woodland sunlight, available as a Justy Media phone wallpaper", width: 2372, height: 4216 })}</div><div class="resource-card-copy"><p class="eyebrow">Free download</p><h2>Free Phone Wallpapers</h2><p>Download a selection of Justy Media automotive photographs prepared as high-resolution phone wallpapers for personal use.</p><a class="button button-secondary" href="/phone-wallpapers/">Browse Wallpapers</a></div></article>
+      <article class="resource-card"><div class="resource-card-media">${responsiveImage({ src: "/photography/automotive-photography/mk1-audi-r8/_DSC9950-Edit-2.JPG", alt: "Driver-focused Audi R8 interior photographed by Justy Media", width: 3966, height: 4957 })}</div><div class="resource-card-copy"><p class="eyebrow">Browser-based tools</p><h2>Free Camera Tools</h2><p>Use practical browser-based tools for checking shutter counts, reading camera metadata, calculating depth of field and planning video settings or storage.</p><a class="button button-secondary" href="/resources/camera-tools/">Explore Camera Tools</a></div></article>
+    </div><div class="free-resource-note"><p class="eyebrow">Made to be useful</p><h2>Free to use, with no account required.</h2><p>The wallpapers are available for personal use, while the camera tools open directly in a browser. Each resource has clear guidance on its own page.</p></div></div></section>
+    <section class="portfolio-next"><div class="content-width"><p>Looking for more photography or support with a creative project?</p><div class="button-row"><a class="text-link" href="/photography/">Explore Photography</a><a class="text-link" href="/contact-us/">Contact Justy Media</a></div></div></section></main>`;
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, shareImage: "/phone-wallpapers/_DSC8937-Edit.jpg", shareAlt: "Red Honda NSX photographed by Justy Media", schemas: [{ "@type": "CollectionPage", name: "Free creative resources", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` }, hasPart: [{ "@id": `${origin}/phone-wallpapers/` }, { "@id": `${origin}/resources/camera-tools/` }] }] });
+}
+
+function cameraToolCard(tool) {
+  return `<article class="tool-card"><p class="tool-label">${escapeHtml(tool.label)}</p><h3>${escapeHtml(tool.name)}</h3><p>${escapeHtml(tool.description)}</p><a class="text-link external-tool-link" href="${tool.url}" data-camera-tool="${tool.slug}">${escapeHtml(tool.cta)} <span class="external-destination">on 27tools <span aria-hidden="true">↗</span></span></a></article>`;
+}
+
+function cameraToolsPage() {
+  const pagePath = "/resources/camera-tools/";
+  const title = "Free Camera Tools for Photographers | Justy Media";
+  const description = "Use free camera tools for shutter counts, EXIF data, depth of field, video shutter speed and recording-time planning, powered by 27tools.";
+  const crumbs = [{ label: "Home", href: "/" }, { label: "Resources", href: "/resources/" }, { label: "Camera Tools", href: pagePath }];
+  const metadataTools = cameraTools.filter((tool) => tool.group === "metadata");
+  const planningTools = cameraTools.filter((tool) => tool.group === "planning");
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}<section class="page-hero camera-tools-hero"><div class="content-width"><p class="eyebrow">Photography Resources</p><h1>Free camera tools for photographers and videographers.</h1><p class="lede">Whether you are checking a used camera, planning depth of field or working out the storage required for a video shoot, these free browser-based tools provide quick, practical answers without installing additional software.</p><p class="resource-disclosure">These tools are built and maintained on <a href="https://27tools.co/tools/camera-tools/">27tools <span aria-hidden="true">↗</span></a>, another independent project by Andrew Ambrose. Selecting a tool will take you to 27tools to use it.</p></div></section>
+    <section class="section-block tool-collection"><div class="wide-width"><div class="tool-section-heading"><p class="eyebrow">Camera files</p><h2>Shutter count and camera metadata</h2><p>Original camera files can contain useful metadata about the camera, lens and exposure settings. Compatible files may also include the camera’s shutter count, which can provide additional context when buying or selling used equipment.</p></div><div class="tool-grid tool-grid-four">${metadataTools.map(cameraToolCard).join("")}</div><aside class="information-panel"><p class="eyebrow">File guidance</p><h3>Use an original camera file</h3><p>Edited, exported, compressed or social-media images often have their metadata removed. For the best chance of finding shutter-count or EXIF information, use an untouched file taken directly from the camera. Not every camera model records shutter count in a readable field, so a result cannot be guaranteed.</p><p>A shutter-count result is one piece of context and does not, by itself, determine a camera’s condition or remaining life.</p></aside></div></section>
+    <section class="section-block contrast tool-collection"><div class="wide-width"><div class="tool-section-heading"><p class="eyebrow">Before the shoot</p><h2>Photography and video planning</h2><p>Use these calculators to plan focus, motion and storage before a photography or video shoot.</p></div><div class="tool-grid">${planningTools.map(cameraToolCard).join("")}</div></div></section>
+    <section class="portfolio-next"><div class="content-width"><p>Explore Justy Media photography or return to all free resources.</p><div class="button-row"><a class="text-link" href="/photography/">View Photography</a><a class="text-link" href="/resources/">All Resources</a></div></div></section></main>`;
+  const itemList = { "@type": "ItemList", "@id": `${origin}${pagePath}#tools`, name: "Free camera tools for photographers and videographers", numberOfItems: cameraTools.length, itemListElement: cameraTools.map((tool, index) => ({ "@type": "ListItem", position: index + 1, name: tool.name, url: tool.url })) };
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, shareImage: "/photography/automotive-photography/mk1-audi-r8/_DSC9950-Edit-2.JPG", shareAlt: "Driver-focused Audi R8 interior photographed by Justy Media", schemas: [{ "@type": "CollectionPage", name: "Free camera tools for photographers and videographers", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` }, mainEntity: { "@id": itemList["@id"] } }, itemList] });
 }
 
 function wallpapersPage() {
@@ -413,6 +488,8 @@ for (const service of servicePages) writeRoute(service.path, servicePage(service
 writeRoute("/work/", workPage());
 for (const page of Object.values(portfolioPages)) writeRoute(page.path, portfolioPage(page));
 writeRoute("/phone-wallpapers/", wallpapersPage());
+writeRoute("/resources/", resourcesPage());
+writeRoute("/resources/camera-tools/", cameraToolsPage());
 writeRoute("/about-us/", aboutPage());
 writeRoute("/contact-us/", contactPage());
 writeRoute("/privacy-policy.html", legalPage("/privacy-policy.html", "Privacy Policy | Justy Media", "How Justy Media handles personal information, website usage data and enquiries.", "Privacy policy", "privacy-policy.txt"));
@@ -425,6 +502,7 @@ writeRoute("/services-pricing.html", legacyFallback("Services page moved | Justy
 const sitemapUrls = [
   "/", "/services/", ...servicePages.map((page) => page.path), "/work/",
   ...Object.values(portfolioPages).map((page) => page.path), "/phone-wallpapers/",
+  "/resources/", "/resources/camera-tools/",
   "/about-us/", "/contact-us/", "/privacy-policy.html", "/terms-and-conditions.html"
 ];
 fs.writeFileSync(path.join(root, "sitemap.xml"), sitemap(sitemapUrls));
