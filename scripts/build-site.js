@@ -7,7 +7,7 @@ const origin = "https://justymedia.co.uk";
 const email = "andrew.n.ambrose@gmail.com";
 const logo = "/logo%20final%20AI%20transparrent.png";
 const defaultShareImage = "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg";
-const modified = "2026-08-09";
+const modified = "2026-08-10";
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>\"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[character]);
@@ -304,7 +304,8 @@ function portfolioPage(page) {
   } else {
     content = `<section class="section-block gallery-section"><div class="wide-width"><div class="gallery-grid" data-gallery>${page.images.map(([file, alt, width, height]) => {
       const source = `${page.folder}${file}`;
-      return `<figure><a class="gallery-trigger" href="${encodedPath(source)}" data-full="${encodedPath(source)}" data-alt="${escapeHtml(alt)}">${responsiveImage({ src: source, alt, width, height })}<span class="sr-only">View larger image</span></a><figcaption><span>${escapeHtml(alt)}</span><a href="${encodedPath(source)}" download>Download original</a></figcaption></figure>`;
+      const orientationClass = width > height ? ' class="gallery-landscape"' : "";
+      return `<figure${orientationClass}><a class="gallery-trigger" href="${encodedPath(source)}" data-full="${encodedPath(source)}" data-alt="${escapeHtml(alt)}">${responsiveImage({ src: source, alt, width, height })}<span class="sr-only">View larger image</span></a><figcaption><span>${escapeHtml(alt)}</span><a href="${encodedPath(source)}" download>Download original</a></figcaption></figure>`;
     }).join("")}</div></div></section>`;
   }
   const body = `<main id="main-content">${breadcrumbs(page.breadcrumbs)}${pageIntro(gallery ? "Photography collection" : "Photography portfolio", page.heading, page.intro)}${content}<section class="portfolio-next"><div class="content-width"><p>Need photography for a website, campaign or editorial feature?</p><a class="text-link" href="/services/photography-content/">Explore photography &amp; content services</a></div></section></main>`;

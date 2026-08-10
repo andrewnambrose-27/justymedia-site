@@ -227,8 +227,10 @@ p { margin: 0 0 1.2rem; }
 .gallery-section { padding-top: 55px; }
 .gallery-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
 .gallery-grid figure { margin: 0; min-width: 0; background: #111; }
+.gallery-grid .gallery-landscape { grid-column: span 2; }
 .gallery-trigger { display: block; overflow: hidden; background: #111; }
 .gallery-trigger img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; transition: transform 420ms ease, opacity 200ms ease; }
+.gallery-landscape .gallery-trigger img { aspect-ratio: 16 / 9; }
 .gallery-trigger:hover img { transform: scale(1.025); opacity: .88; }
 .gallery-grid figcaption { display: flex; min-height: 92px; flex-direction: column; justify-content: space-between; gap: 12px; padding: 16px; color: var(--muted); font-size: .78rem; }
 .gallery-grid figcaption a { color: #fff; font-weight: 800; }
@@ -331,6 +333,7 @@ p { margin: 0 0 1.2rem; }
   h2 { font-size: clamp(2.15rem, 12vw, 3.2rem); }
   .section-heading, .resource-strip > div, .portfolio-next > div { align-items: flex-start; flex-direction: column; }
   .service-grid, .capability-grid, .work-grid, .gallery-grid, .wallpaper-grid, .site-footer, .enquiry-form { grid-template-columns: 1fr; }
+  .gallery-grid .gallery-landscape { grid-column: span 1; }
   .work-card-wide { grid-row: auto; }
   .work-card-wide > img, .work-card > img, .work-card .logo-panel { height: 430px; }
   .service-card { min-height: 320px; }

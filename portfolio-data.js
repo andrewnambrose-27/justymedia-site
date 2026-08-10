@@ -8,7 +8,7 @@ const portfolioPages = {
     type: "CollectionPage",
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }],
     cards: [
-      { title: "Automotive Photography", description: "Six vehicle collections shaped around form, detail and location.", href: "/photography/automotive-photography/", image: "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", alt: "Red Honda NSX photographed in warm woodland light", width: 2828, height: 3535 },
+      { title: "Automotive Photography", description: "Eight vehicle collections shaped around form, detail and location.", href: "/photography/automotive-photography/", image: "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", alt: "Red Honda NSX photographed in warm woodland light", width: 2828, height: 3535 },
       { title: "RUSH Magazine", description: "Editorial features covering the Alfa Romeo GTV Cup and Eunos Roadster Mk1.", href: "/photography/rush-magazine/", image: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", alt: "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", width: 3582, height: 4477 }
     ]
   },
@@ -21,9 +21,11 @@ const portfolioPages = {
     type: "CollectionPage",
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "Automotive Photography", href: "/photography/automotive-photography/" }],
     cards: [
+      { title: "Honda Civic EJ6 Coupe", description: "Six photographs", href: "/photography/automotive-photography/honda-civic-ej6-coupe/", galleryKey: "honda-civic-ej6-coupe" },
       { title: "Honda NSX", description: "Six photographs", href: "/photography/automotive-photography/honda-nsx/", galleryKey: "honda-nsx" },
       { title: "Mazda MX-5 Mk1", description: "Two photographs", href: "/photography/automotive-photography/mazda-mx5-mk1/", galleryKey: "mazda-mx5-mk1" },
       { title: "Mazda MX-5 Mk2", description: "Four photographs", href: "/photography/automotive-photography/mazda-mx5-mk2/", galleryKey: "mazda-mx5-mk2" },
+      { title: "Mk1 Audi R8", description: "Nine photographs", href: "/photography/automotive-photography/mk1-audi-r8/", galleryKey: "mk1-audi-r8" },
       { title: "Subaru Outback", description: "Four photographs", href: "/photography/automotive-photography/subaru-outback/", galleryKey: "subaru-outback" },
       { title: "Volkswagen New Beetle", description: "Five photographs", href: "/photography/automotive-photography/vw-new-beetle/", galleryKey: "vw-new-beetle" },
       { title: "Toyota JZX90", description: "Three photographs", href: "/photography/automotive-photography/toyota-jzx90/", galleryKey: "toyota-jzx90" }
@@ -40,6 +42,23 @@ const portfolioPages = {
     cards: [
       { title: "Alfa Romeo GTV Cup", description: "Four photographs", href: "/photography/rush-magazine/alfa-romeo-gtv-cup/", galleryKey: "alfa-romeo-gtv-cup" },
       { title: "Eunos Roadster Mk1", description: "Four photographs", href: "/photography/rush-magazine/eunos-roadster-mk1/", galleryKey: "eunos-roadster-mk1" }
+    ]
+  },
+  "honda-civic-ej6-coupe": {
+    path: "/photography/automotive-photography/honda-civic-ej6-coupe/",
+    title: "Honda Civic EJ6 Coupe Photography | Justy Media",
+    heading: "Honda Civic EJ6 Coupe",
+    description: "A blue Honda Civic EJ6 Coupe photographed by Justy Media, featuring warm parkland portraits and modified details.",
+    intro: "A vivid blue Honda Civic EJ6 Coupe photographed in warm parkland light, moving from wide, low-set portraits to details of its wheels, cabin and rear spoiler.",
+    breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "Automotive Photography", href: "/photography/automotive-photography/" }, { label: "Honda Civic EJ6 Coupe", href: "/photography/automotive-photography/honda-civic-ej6-coupe/" }],
+    folder: "/photography/automotive-photography/honda-civic-ej6-coupe/",
+    images: [
+      ["_DSC2032-Edit.JPG", "Low front three-quarter view of a blue Honda Civic EJ6 Coupe in parkland", 5970, 3358],
+      ["_DSC2065-Edit-2.JPG", "Sparco Evo seat viewed through the Honda Civic EJ6 Coupe window", 3910, 4887],
+      ["_DSC2115-Edit-2.JPG", "White alloy wheel on the blue Honda Civic EJ6 Coupe", 3921, 4901],
+      ["_DSC2134-Edit-2.JPG", "Rear view of the blue Honda Civic EJ6 Coupe on a tree-lined road", 3783, 4729],
+      ["_DSC2161-Edit-2.JPG", "Rear-quarter detail of the Honda Civic EJ6 Coupe and its spoiler", 4000, 5000],
+      ["_DSC2212-Edit.JPG", "Blue Honda Civic EJ6 Coupe on a sweeping parkland road", 5380, 3026]
     ]
   },
   "honda-nsx": {
@@ -85,6 +104,26 @@ const portfolioPages = {
       ["_DSC9918-Edit.jpg", "Silver Mazda MX-5 Mk2 facing along a narrow Peak District road", 2828, 3535],
       ["_DSC9930-Edit-Edit-2.jpg", "Silver Mazda MX-5 Mk2 beside green hills and purple heather", 2828, 3535],
       ["_DSC9943-Edit.jpg", "Side view of a silver Mazda MX-5 Mk2 framed by a dark foreground", 2828, 3535]
+    ]
+  },
+  "mk1-audi-r8": {
+    path: "/photography/automotive-photography/mk1-audi-r8/",
+    title: "Mk1 Audi R8 Photography | Justy Media",
+    heading: "Mk1 Audi R8",
+    description: "A black Mk1 Audi R8 V8 photographed by Justy Media, combining dramatic moorland portraits with performance and interior details.",
+    intro: "A black first-generation Audi R8 V8 set against dramatic moorland skies, pairing low, sculptural exterior portraits with monochrome badges, mechanical details and the driver-focused cabin.",
+    breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "Automotive Photography", href: "/photography/automotive-photography/" }, { label: "Mk1 Audi R8", href: "/photography/automotive-photography/mk1-audi-r8/" }],
+    folder: "/photography/automotive-photography/mk1-audi-r8/",
+    images: [
+      ["_DSC0095-Edit.JPG", "Black Mk1 Audi R8 facing a dramatic moorland sky", 4000, 5000],
+      ["_DSC0059-Edit.JPG", "Rear three-quarter view of a black Mk1 Audi R8 beneath an orange sky", 6000, 3375],
+      ["_DSC0051-Edit-2.JPG", "V8 FSI engine badge beneath the Audi R8 rear glass", 3808, 4760],
+      ["_DSC9346-Edit-2.JPG", "Close monochrome detail of an Audi R8 headlamp", 3507, 4384],
+      ["_DSC9373-Edit.JPG", "Quattro badge in the Audi R8 front grille", 3742, 4677],
+      ["_DSC9418-Edit-3.JPG", "Head-on portrait of the black Mk1 Audi R8 at sunset", 2961, 3701],
+      ["_DSC9634-Edit-2.JPG", "BBS wheel and red brake caliper on the black Audi R8", 4000, 5000],
+      ["_DSC9715-Edit.JPG", "Low side view of a black Mk1 Audi R8 on the moors", 5591, 3145],
+      ["_DSC9950-Edit-2.JPG", "Steering wheel and driver-focused cabin of the Mk1 Audi R8", 3966, 4957]
     ]
   },
   "subaru-outback": {
