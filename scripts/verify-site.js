@@ -1,5 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
+const portfolioPages = require("../portfolio-data.js");
+const { imageObjects, normaliseImage } = require("../image-metadata.js");
 
 const root = path.resolve(__dirname, "..");
 const origin = "https://justymedia.co.uk";
@@ -30,6 +32,33 @@ function localAsset(url) {
 function tagContent(html, pattern) {
   const match = html.match(pattern);
   return match ? decode(match[1]) : "";
+}
+function collectType(value, type, results = []) {
+  if (!value || typeof value !== "object") return results;
+  if (value["@type"] === type) results.push(value);
+  for (const child of Object.values(value)) collectType(child, type, results);
+  return results;
+}
+function portfolioRecord(page, image) {
+  const record = normaliseImage(image, page.structuredData);
+  return { ...record, src: `${page.folder}${record.file}` };
+}
+
+const expectedImageCounts = new Map([
+  ["/", 4],
+  ["/work/", 3],
+  ["/resources/", 2],
+  ["/phone-wallpapers/", 4]
+]);
+for (const page of Object.values(portfolioPages)) {
+  const images = page.images
+    ? page.images.map((image) => portfolioRecord(page, image))
+    : page.cards.map((card) => {
+      if (card.image) return { src: card.image, alt: card.alt, width: card.width, height: card.height, structuredData: card.structuredData };
+      const collection = portfolioPages[card.galleryKey];
+      return portfolioRecord(collection, collection.images[0]);
+    });
+  expectedImageCounts.set(page.path, imageObjects(images).length);
 }
 
 const sitemap = fs.readFileSync(path.join(root, "sitemap.xml"), "utf8");
@@ -86,6 +115,8 @@ for (const intentionallyMissing of ["/bmwr50mini", "/gear-i-use", "/unknown-veri
 
 const titles = new Map();
 const descriptions = new Map();
+const allImageMetadataUrls = new Set();
+let imageMetadataInstances = 0;
 for (const url of urls) {
   const file = routeFile(url);
   if (!fs.existsSync(file)) { fail(`Sitemap URL has no page: ${url}`); continue; }
@@ -126,6 +157,29 @@ for (const url of urls) {
   for (const block of jsonBlocks) {
     try { schemaGraphs.push(JSON.parse(block[1])); } catch (error) { fail(`${route} has invalid JSON-LD: ${error.message}`); }
   }
+  const imageSchemas = schemaGraphs.flatMap((schema) => collectType(schema, "ImageObject"));
+  const expectedImageCount = expectedImageCounts.get(route) || 0;
+  if (imageSchemas.length !== expectedImageCount) fail(`${route} has ${imageSchemas.length} ImageObject entries, expected ${expectedImageCount}`);
+  const contentUrls = imageSchemas.map((image) => image.contentUrl);
+  if (new Set(contentUrls).size !== contentUrls.length) fail(`${route} contains duplicate ImageObject contentUrl values`);
+  const renderedImages = new Set([...html.matchAll(/<img\b([^>]*)>/g)].map((match) => {
+    const attrs = match[1];
+    const source = attrs.match(/\bdata-original="([^"]+)"/) || attrs.match(/\bsrc="([^"]+)"/);
+    return source ? decodeURIComponent(new URL(source[1], origin).pathname) : "";
+  }));
+  for (const image of imageSchemas) {
+    for (const property of ["contentUrl", "creator", "creditText", "copyrightNotice", "license", "acquireLicensePage"]) {
+      if (!image[property]) fail(`${route} ImageObject is missing ${property}`);
+    }
+    if (!image.creator || image.creator["@type"] !== "Person" || !image.creator.name) fail(`${route} ImageObject creator is not a named Person`);
+    for (const property of ["contentUrl", "license", "acquireLicensePage"]) {
+      try { if (new URL(image[property]).origin !== origin) fail(`${route} ImageObject ${property} is not on the canonical origin`); }
+      catch { fail(`${route} ImageObject ${property} is not an absolute URL`); }
+    }
+    if (image.contentUrl && !renderedImages.has(decodeURIComponent(new URL(image.contentUrl).pathname))) fail(`${route} ImageObject does not match a rendered image: ${image.contentUrl}`);
+    if (image.contentUrl) allImageMetadataUrls.add(image.contentUrl);
+  }
+  imageMetadataInstances += imageSchemas.length;
   if (route !== "/") {
     const breadcrumb = html.match(/<nav class="breadcrumbs" aria-label="Breadcrumb"><ol>(.*?)<\/ol><\/nav>/s);
     if (!breadcrumb) fail(`${route} has no visible breadcrumb`);
@@ -187,6 +241,13 @@ const contact = fs.readFileSync(routeFile("/contact-us/"), "utf8");
 if (!/action="mailto:andrew\.n\.ambrose@gmail\.com"/.test(contact)) fail("Contact form no longer uses the established email route");
 if (!/id="project-type"/.test(contact) || !/id="budget"/.test(contact)) fail("Contact form lacks project type or optional budget fields");
 
+const licensing = fs.readFileSync(routeFile("/image-licensing/"), "utf8");
+if (!licensing.includes('href="/contact-us/"')) fail("Image licensing page does not link to Contact");
+if (!licensing.includes("does not grant a licence or permission to reuse it")) fail("Image licensing page could be read as granting public reuse rights");
+if (imageObjects([{ src: "/not-owned.jpg", structuredData: { licenseEligible: false } }]).length !== 0) fail("Ineligible images receive owned-photography metadata");
+const overrideSchema = imageObjects([{ src: "/override.jpg", structuredData: { licenseEligible: true, creator: "Another Photographer", copyrightOwner: "Another Rights Holder", license: "https://justymedia.co.uk/alternate-license/", acquireLicensePage: "https://justymedia.co.uk/contact-us/" } }])[0];
+if (overrideSchema.creator["@type"] !== "Person" || overrideSchema.creator.name !== "Another Photographer" || overrideSchema.copyrightNotice !== "© Another Rights Holder" || overrideSchema.license !== "https://justymedia.co.uk/alternate-license/" || overrideSchema.acquireLicensePage !== "https://justymedia.co.uk/contact-us/") fail("Per-image rights overrides are not preserved");
+
 const legacy = ["about-me.html", "contact.html", "services-pricing.html"];
 for (const file of legacy) {
   const html = fs.readFileSync(path.join(root, file), "utf8");
@@ -199,4 +260,4 @@ if (errors.length) {
   process.exit(1);
 }
 
-console.log(`Verified ${urls.length} sitemap URLs, ${redirects.length} redirects, unique metadata, JSON-LD, breadcrumbs, internal links, images, no-JS content, navigation and contact routing.`);
+console.log(`Verified ${urls.length} sitemap URLs, ${imageMetadataInstances} ImageObject page instances covering ${allImageMetadataUrls.size} unique images, ${redirects.length} redirects, JSON-LD, breadcrumbs, internal links, images, no-JS content, navigation and contact routing.`);

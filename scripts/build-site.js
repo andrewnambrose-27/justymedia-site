@@ -1,13 +1,14 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const portfolioPages = require("../portfolio-data.js");
+const { SITE_ORIGIN, normaliseImage, imageObjects } = require("../image-metadata.js");
 
 const root = path.resolve(__dirname, "..");
-const origin = "https://justymedia.co.uk";
+const origin = SITE_ORIGIN;
 const email = "andrew.n.ambrose@gmail.com";
 const logo = "/logo%20final%20AI%20transparrent.png";
 const defaultShareImage = "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg";
-const modified = "2026-08-10";
+const modified = "2026-08-17";
 const cameraTools = [
   {
     group: "metadata", slug: "sony-shutter-count", name: "Sony Shutter Count Checker", label: "Sony · JPG and ARW",
@@ -65,6 +66,15 @@ function imageUrl(url, width = 1200, fit = "scale-down") {
 function responsiveImage({ src, alt, width, height, loading = "lazy", className = "" }) {
   const encoded = encodedPath(src);
   return `<img${className ? ` class="${className}"` : ""} src="${imageUrl(src, 960)}" srcset="${imageUrl(src, 640)} 640w, ${imageUrl(src, 960)} 960w, ${imageUrl(src, 1400)} 1400w" sizes="(max-width: 720px) 100vw, 50vw" width="${width}" height="${height}" alt="${escapeHtml(alt)}" loading="${loading}" decoding="async" data-original="${encoded}">`;
+}
+
+function ownedPhoto(src, alt, width, height, options = {}) {
+  return { src, alt, width, height, ...options, structuredData: { licenseEligible: true, ...(options.structuredData || {}) } };
+}
+
+function portfolioPhoto(page, image) {
+  const record = normaliseImage(image, page.structuredData);
+  return { ...record, src: `${page.folder}${record.file}` };
 }
 
 function organisationSchema() {
@@ -145,7 +155,7 @@ function footer() {
     <div class="footer-brand"><img src="${logo}" width="2639" height="1511" alt="Justy Media"><p>Independent creative studio<br>Peak District, UK</p></div>
     <div><p class="footer-heading">Explore</p><nav aria-label="Footer services"><a href="/services/">Services</a><a href="/services/web-design/">Web design</a><a href="/services/graphic-design/">Graphic design</a><a href="/services/photography-content/">Photography &amp; content</a><a href="/services/digital-marketing/">SEO &amp; digital marketing</a><a href="/work/">Work</a></nav></div>
     <div><p class="footer-heading">Photography &amp; resources</p><nav aria-label="Footer photography and resources"><a href="/photography/">Photography overview</a><a href="/photography/automotive-photography/">Automotive photography</a><a href="/photography/rush-magazine/">RUSH Magazine</a><a href="/phone-wallpapers/">Phone wallpapers</a><a href="/resources/camera-tools/">Camera tools</a><a href="/resources/">All resources</a></nav></div>
-    <div><p class="footer-heading">Justy Media</p><nav aria-label="Footer information"><a href="/about-us/">About</a><a href="/contact-us/">Contact</a><a href="/privacy-policy.html">Privacy policy</a><a href="/terms-and-conditions.html">Terms and conditions</a></nav><div class="footer-socials"><a href="https://www.instagram.com/justymedia/" aria-label="Instagram">IG</a><a href="https://www.facebook.com/justymedia/" aria-label="Facebook">FB</a></div></div>
+    <div><p class="footer-heading">Justy Media</p><nav aria-label="Footer information"><a href="/about-us/">About</a><a href="/contact-us/">Contact</a><a href="/image-licensing/">Image licensing</a><a href="/privacy-policy.html">Privacy policy</a><a href="/terms-and-conditions.html">Terms and conditions</a></nav><div class="footer-socials"><a href="https://www.instagram.com/justymedia/" aria-label="Instagram">IG</a><a href="https://www.facebook.com/justymedia/" aria-label="Facebook">FB</a></div></div>
     <small>&copy; 2026 Justy Media. Website and photography by Justy Media.</small>
   </footer>`;
 }
@@ -157,7 +167,13 @@ function jsonLd(data) {
 function documentHtml(page) {
   const canonical = absolute(page.path);
   const shareImage = absolute(page.shareImage || defaultShareImage);
-  const schemas = page.schemas || [];
+  const schemas = [...(page.schemas || [])];
+  const pageImages = imageObjects(page.structuredImages);
+  if (pageImages.length) {
+    const primaryIndex = schemas.findIndex((schema) => ["WebPage", "CollectionPage", "WebSite"].includes(schema["@type"]));
+    if (primaryIndex >= 0) schemas[primaryIndex] = { ...schemas[primaryIndex], associatedMedia: pageImages };
+    else schemas.push(...pageImages);
+  }
   const robotsTag = page.robots ? `    <meta name="robots" content="${page.robots}">\n` : "";
   const preloadTag = page.preload ? `    ${page.preload}\n` : "";
   const galleryScript = page.gallery ? '\n    <script src="/portfolio-page.js"></script>' : "";
@@ -218,20 +234,23 @@ function homePage() {
   const pathName = "/";
   const title = "Web Design, Branding & Photography | Justy Media";
   const description = "Justy Media is a Peak District creative studio offering web design, branding, photography, SEO and digital marketing for small UK businesses.";
-  const hero = "/Automotive Photography/_DSC5553.jpg";
+  const hero = ownedPhoto("/Automotive Photography/_DSC5553.jpg", "Classic Mini photographed by Justy Media", 3271, 5815, { loading: "eager" });
+  const platformPhoto = ownedPhoto("/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", 3582, 4477);
+  const editorialPhoto = ownedPhoto("/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8112-Edit-2.JPG", "Alfa Romeo badge on the red GTV Cup bodywork", 3706, 4632);
+  const nsxPhoto = ownedPhoto("/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", "Red Honda NSX in woodland sunlight", 2828, 3535);
   const body = `<main id="main-content">
     <section class="hero studio-hero">
-      <div class="hero-media">${responsiveImage({ src: hero, alt: "Classic Mini photographed by Justy Media", width: 3271, height: 5815, loading: "eager" })}</div>
+      <div class="hero-media">${responsiveImage(hero)}</div>
       <div class="hero-content"><p class="eyebrow">Independent Creative Studio</p><h1>Creative work that helps businesses look better and grow.</h1><p>Websites, branding, photography and practical digital marketing support from the Peak District, working with businesses across the UK.</p><div class="button-row"><a class="button button-primary" href="/services/">Explore Services</a><a class="button button-secondary" href="/work/">View Selected Work</a></div></div>
     </section>
     <section class="intro-section"><div class="content-width split-intro"><div><p class="eyebrow">Justy Media</p><h2>Creative thinking, made practical.</h2></div><div><p>Justy Media is an independent studio run by Andrew Ambrose in the Peak District. What began with photography in 2020 has grown into a joined-up creative service for businesses that need a clearer identity, a better website and useful support after launch.</p><p>You work directly with the person designing, building and creating the work—keeping communication straightforward and the result focused on what your business actually needs.</p></div></div></section>
     <section class="section-block services-overview"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Services</p><h2>One studio, four connected disciplines.</h2></div><a class="text-link" href="/services/">View all services</a></div><div class="service-grid">${serviceCard("/services/web-design/", "01", "Web design & development", "Clear, responsive websites, landing pages, redesigns and lightweight tools built around your goals.")}${serviceCard("/services/graphic-design/", "02", "Graphic design & branding", "Identity, print and digital artwork that gives your business a consistent and recognisable visual voice.")}${serviceCard("/services/photography-content/", "03", "Photography & content", "Distinctive automotive, editorial, product and brand imagery for websites, campaigns and social media.")}${serviceCard("/services/digital-marketing/", "04", "SEO & digital marketing", "Understandable SEO, analytics, content improvements and ongoing support without inflated promises.")}</div></div></section>
     <section class="section-block selected-work"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Selected work</p><h2>Real work, across disciplines.</h2></div><a class="text-link" href="/work/">Explore the work</a></div><div class="work-grid">
-      <a class="work-card work-card-wide" href="/work/#justy-media-platform">${responsiveImage({ src: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", alt: "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", width: 3582, height: 4477 })}<div><p class="work-type">Website &amp; digital system</p><h3>Justy Media web platform</h3><p>A fast static website, structured portfolio system and privacy-conscious analytics tool.</p></div></a>
+      <a class="work-card work-card-wide" href="/work/#justy-media-platform">${responsiveImage(platformPhoto)}<div><p class="work-type">Website &amp; digital system</p><h3>Justy Media web platform</h3><p>A fast static website, structured portfolio system and privacy-conscious analytics tool.</p></div></a>
       <a class="work-card" href="/work/#justy-media-identity"><div class="logo-panel"><img src="${logo}" width="2639" height="1511" alt="Justy Media identity mark" loading="lazy"></div><div><p class="work-type">Brand identity</p><h3>Justy Media identity</h3><p>The established monochrome mark, carried through a dark visual system with warm gold accents.</p></div></a>
-      <a class="work-card" href="/photography/rush-magazine/alfa-romeo-gtv-cup/">${responsiveImage({ src: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8112-Edit-2.JPG", alt: "Alfa Romeo badge on the red GTV Cup bodywork", width: 3706, height: 4632 })}<div><p class="work-type">Editorial photography</p><h3>RUSH Magazine</h3><p>Automotive features combining detail, portrait and road imagery.</p></div></a>
+      <a class="work-card" href="/photography/rush-magazine/alfa-romeo-gtv-cup/">${responsiveImage(editorialPhoto)}<div><p class="work-type">Editorial photography</p><h3>RUSH Magazine</h3><p>Automotive features combining detail, portrait and road imagery.</p></div></a>
     </div></div></section>
-    <section class="photo-feature"><div class="photo-feature-media">${responsiveImage({ src: "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", alt: "Red Honda NSX in woodland sunlight", width: 2828, height: 3535 })}</div><div class="photo-feature-copy"><p class="eyebrow">Photography</p><h2>Automotive work with a point of view.</h2><p>Photography is where Justy Media started, and it remains a genuine strength. Browse complete vehicle collections and commissioned editorial work for RUSH Magazine.</p><div class="button-row"><a class="button button-primary" href="/photography/">Photography portfolio</a><a class="text-link" href="/services/photography-content/">Photography services</a></div></div></section>
+    <section class="photo-feature"><div class="photo-feature-media">${responsiveImage(nsxPhoto)}</div><div class="photo-feature-copy"><p class="eyebrow">Photography</p><h2>Automotive work with a point of view.</h2><p>Photography is where Justy Media started, and it remains a genuine strength. Browse complete vehicle collections and commissioned editorial work for RUSH Magazine.</p><div class="button-row"><a class="button button-primary" href="/photography/">Photography portfolio</a><a class="text-link" href="/services/photography-content/">Photography services</a></div></div></section>
     <section class="section-block process-section"><div class="content-width"><p class="eyebrow">How it works</p><h2>A clear route from idea to finished work.</h2><ol class="process-list"><li><span>01</span><div><h3>Understand</h3><p>We start with the problem, audience and practical constraints—not a predetermined package.</p></div></li><li><span>02</span><div><h3>Shape</h3><p>I define the useful scope, creative direction and deliverables so expectations are clear.</p></div></li><li><span>03</span><div><h3>Create</h3><p>Design, development or production moves forward with focused review points along the way.</p></div></li><li><span>04</span><div><h3>Launch &amp; support</h3><p>The finished work is delivered properly, with the option of sensible ongoing updates and improvement.</p></div></li></ol></div></section>
     <section class="section-block why-section"><div class="wide-width split-intro"><div><p class="eyebrow">Why Justy Media?</p><h2>Direct, joined-up creative support.</h2></div><div class="feature-list"><article><h3>One point of contact</h3><p>Work directly with Andrew from the first conversation through to delivery.</p></article><article><h3>Built around the brief</h3><p>No one-size-fits-all packages or invented complexity—just the work the project needs.</p></article><article><h3>Creative and technical together</h3><p>Visual quality, useful content and sound implementation are considered as one connected job.</p></article></div></div></section>
     ${cta()}
@@ -239,8 +258,9 @@ function homePage() {
   </main>`;
   return documentHtml({
     path: pathName, title, description, body, bodyClass: "home-page",
-    preload: `<link rel="preload" as="image" href="${imageUrl(hero, 1400)}" fetchpriority="high">`,
+    preload: `<link rel="preload" as="image" href="${imageUrl(hero.src, 1400)}" fetchpriority="high">`,
     shareImage: defaultShareImage, shareAlt: "Red Honda NSX photographed by Justy Media",
+    structuredImages: [hero, platformPhoto, editorialPhoto, nsxPhoto],
     schemas: [
       { "@type": "WebSite", "@id": `${origin}/#website`, url: `${origin}/`, name: "Justy Media", description, publisher: { "@id": `${origin}/#business` }, inLanguage: "en-GB" },
       organisationSchema()
@@ -318,18 +338,28 @@ function workPage() {
   const title = "Creative Portfolio & Case Studies | Justy Media";
   const description = "Explore website, graphic design, marketing and photography projects completed by Justy Media for businesses, publications and personal brands.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "Work", href: pagePath }];
+  const structuredImages = [
+    ownedPhoto("/photography/automotive-photography/mazda-mx5-mk2/_DSC9930-Edit-Edit-2.jpg", "Silver Mazda MX-5 used within the Justy Media website portfolio", 2828, 3535),
+    ownedPhoto("/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", "Driver's view into the Alfa Romeo GTV Cup cabin", 4000, 5000),
+    ownedPhoto("/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", "Close view of a red Honda NSX bonnet", 2828, 3535)
+  ];
   const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Selected work", "Creative work with real foundations.", "A growing collection of website, identity, marketing and photography work. Every published item below is supported by material in the Justy Media project—no invented clients or results.")}
     <section id="justy-media-platform" class="case-study"><div class="wide-width case-study-grid"><div class="case-study-media">${responsiveImage({ src: "/photography/automotive-photography/mazda-mx5-mk2/_DSC9930-Edit-Edit-2.jpg", alt: "Silver Mazda MX-5 used within the Justy Media website portfolio", width: 2828, height: 3535 })}</div><div class="case-study-copy"><p class="eyebrow">Website · custom tool · analytics</p><h2>Justy Media web platform</h2><p>A self-owned digital project combining a static creative-studio website, reusable gallery data, build-time HTML generation, responsive Cloudflare image delivery and a lightweight first-party analytics system.</p><ul class="tag-list"><li>Web design</li><li>Responsive development</li><li>Technical SEO</li><li>Analytics</li><li>Content architecture</li></ul><a class="text-link" href="/services/web-design/">Explore web design services</a></div></div></section>
     <section id="justy-media-identity" class="case-study contrast"><div class="wide-width case-study-grid reverse"><div class="case-study-media logo-panel"><img src="${logo}" width="2639" height="1511" alt="Justy Media monochrome identity mark" loading="lazy"></div><div class="case-study-copy"><p class="eyebrow">Identity · digital application</p><h2>Justy Media identity</h2><p>The genuine identity used across the studio: an established monochrome mark paired here with a dark visual system, warm gold emphasis and an editorial approach to large photography.</p><ul class="tag-list"><li>Logo application</li><li>Colour system</li><li>Typography</li><li>Digital design</li></ul><a class="text-link" href="/services/graphic-design/">Explore graphic design services</a></div></div></section>
     <section class="case-study"><div class="wide-width case-study-grid"><div class="case-study-media">${responsiveImage({ src: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", alt: "Driver's view into the Alfa Romeo GTV Cup cabin", width: 4000, height: 5000 })}</div><div class="case-study-copy"><p class="eyebrow">Editorial photography</p><h2>RUSH Magazine features</h2><p>Two complete automotive editorials covering an Alfa Romeo GTV Cup and a Eunos Roadster Mk1. Each feature combines details, portraits and road imagery into a coherent visual sequence.</p><ul class="tag-list"><li>Editorial photography</li><li>Automotive</li><li>Location work</li><li>Image editing</li></ul><div class="button-row"><a class="text-link" href="/photography/rush-magazine/alfa-romeo-gtv-cup/">Alfa Romeo feature</a><a class="text-link" href="/photography/rush-magazine/eunos-roadster-mk1/">Eunos Roadster feature</a></div></div></div></section>
     <section class="case-study contrast"><div class="wide-width case-study-grid reverse"><div class="case-study-media">${responsiveImage({ src: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", alt: "Close view of a red Honda NSX bonnet", width: 2828, height: 3535 })}</div><div class="case-study-copy"><p class="eyebrow">Photography &amp; content</p><h2>Automotive collections</h2><p>Six published vehicle collections ranging from moorland and woodland portraits to road, cabin and mechanical details.</p><ul class="tag-list"><li>Automotive photography</li><li>Location portraits</li><li>Detail imagery</li><li>Image delivery</li></ul><a class="text-link" href="/photography/automotive-photography/">Browse all collections</a></div></div></section>
     <section class="section-block"><div class="content-width"><p class="eyebrow">Marketing work</p><h2>Published only when there is enough to show.</h2><p class="lede">SEO, analytics and campaign support are part of the service offer, and the Justy Media platform demonstrates the technical foundations. Separate client marketing cards will be added only when suitable public material exists.</p></div></section>${cta()}</main>`;
-  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "CollectionPage", name: "Justy Media creative portfolio", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, structuredImages, schemas: [{ "@type": "CollectionPage", name: "Justy Media creative portfolio", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
 }
 
 function portfolioPage(page) {
   const gallery = Array.isArray(page.images);
   const shareImage = gallery ? `${page.folder}${page.images[0][0]}` : (page.cards[0].image || `${portfolioPages[page.cards[0].galleryKey].folder}${portfolioPages[page.cards[0].galleryKey].images[0][0]}`);
+  const cardPhotos = (page.cards || []).map((card) => {
+    if (card.image) return { src: card.image, alt: card.alt, width: card.width, height: card.height, structuredData: card.structuredData };
+    const collection = portfolioPages[card.galleryKey];
+    return portfolioPhoto(collection, collection.images[0]);
+  });
   let content;
   if (page.cards) {
     content = `<section class="section-block"><div class="wide-width"><div class="collection-grid">${page.cards.map((card) => {
@@ -352,8 +382,8 @@ function portfolioPage(page) {
     : "";
   const body = `<main id="main-content">${breadcrumbs(page.breadcrumbs)}${pageIntro(gallery ? "Photography collection" : "Photography portfolio", page.heading, page.intro)}${content}${photographyResource}<section class="portfolio-next"><div class="content-width"><p>Need photography for a website, campaign or editorial feature?</p><a class="text-link" href="/services/photography-content/">Explore photography &amp; content services</a></div></section></main>`;
   const schema = gallery
-    ? { "@type": "ImageGallery", name: page.heading, url: absolute(page.path), description: page.description, author: { "@id": `${origin}/#business` }, associatedMedia: page.images.map(([file, alt, width, height]) => ({ "@type": "ImageObject", contentUrl: absolute(encodedPath(`${page.folder}${file}`)), caption: alt, width, height, creator: { "@id": `${origin}/#business` } })) }
-    : { "@type": "CollectionPage", name: page.heading, url: absolute(page.path), description: page.description, isPartOf: { "@id": `${origin}/#website` } };
+    ? { "@type": "ImageGallery", name: page.heading, url: absolute(page.path), description: page.description, author: { "@id": `${origin}/#business` }, associatedMedia: imageObjects(page.images.map((image) => portfolioPhoto(page, image))) }
+    : { "@type": "CollectionPage", name: page.heading, url: absolute(page.path), description: page.description, isPartOf: { "@id": `${origin}/#website` }, associatedMedia: imageObjects(cardPhotos) };
   return documentHtml({ path: page.path, title: page.title, description: page.description, breadcrumbs: page.breadcrumbs, body, gallery, shareImage, shareAlt: gallery ? page.images[0][1] : page.cards[0].alt, schemas: [schema] });
 }
 
@@ -393,13 +423,17 @@ function resourcesPage() {
   const title = "Free Creative Resources | Justy Media";
   const description = "Explore free resources from Justy Media, including automotive phone wallpapers and practical camera tools for photographers and videographers.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "Resources", href: pagePath }];
+  const structuredImages = [
+    ownedPhoto("/phone-wallpapers/_DSC8937-Edit.jpg", "Red Honda NSX in woodland sunlight, available as a Justy Media phone wallpaper", 2372, 4216),
+    ownedPhoto("/photography/automotive-photography/mk1-audi-r8/_DSC9950-Edit-2.JPG", "Driver-focused Audi R8 interior photographed by Justy Media", 3966, 4957)
+  ];
   const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Free Resources", "Useful extras for photographers and creatives.", "A small collection of free resources created around photography, content and practical creative work. Download automotive wallpapers from the Justy Media archive or use browser-based camera tools to plan a shoot, inspect image data and check used equipment.")}
     <section class="section-block resources-overview"><div class="wide-width"><div class="resource-card-grid">
       <article class="resource-card"><div class="resource-card-media">${responsiveImage({ src: "/phone-wallpapers/_DSC8937-Edit.jpg", alt: "Red Honda NSX in woodland sunlight, available as a Justy Media phone wallpaper", width: 2372, height: 4216 })}</div><div class="resource-card-copy"><p class="eyebrow">Free download</p><h2>Free Phone Wallpapers</h2><p>Download a selection of Justy Media automotive photographs prepared as high-resolution phone wallpapers for personal use.</p><a class="button button-secondary" href="/phone-wallpapers/">Browse Wallpapers</a></div></article>
       <article class="resource-card"><div class="resource-card-media">${responsiveImage({ src: "/photography/automotive-photography/mk1-audi-r8/_DSC9950-Edit-2.JPG", alt: "Driver-focused Audi R8 interior photographed by Justy Media", width: 3966, height: 4957 })}</div><div class="resource-card-copy"><p class="eyebrow">Browser-based tools</p><h2>Free Camera Tools</h2><p>Use practical browser-based tools for checking shutter counts, reading camera metadata, calculating depth of field and planning video settings or storage.</p><a class="button button-secondary" href="/resources/camera-tools/">Explore Camera Tools</a></div></article>
     </div><div class="free-resource-note"><p class="eyebrow">Made to be useful</p><h2>Free to use, with no account required.</h2><p>The wallpapers are available for personal use, while the camera tools open directly in a browser. Each resource has clear guidance on its own page.</p></div></div></section>
     <section class="portfolio-next"><div class="content-width"><p>Looking for more photography or support with a creative project?</p><div class="button-row"><a class="text-link" href="/photography/">Explore Photography</a><a class="text-link" href="/contact-us/">Contact Justy Media</a></div></div></section></main>`;
-  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, shareImage: "/phone-wallpapers/_DSC8937-Edit.jpg", shareAlt: "Red Honda NSX photographed by Justy Media", schemas: [{ "@type": "CollectionPage", name: "Free creative resources", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` }, hasPart: [{ "@id": `${origin}/phone-wallpapers/` }, { "@id": `${origin}/resources/camera-tools/` }] }] });
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, shareImage: "/phone-wallpapers/_DSC8937-Edit.jpg", shareAlt: "Red Honda NSX photographed by Justy Media", structuredImages, schemas: [{ "@type": "CollectionPage", name: "Free creative resources", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` }, hasPart: [{ "@id": `${origin}/phone-wallpapers/` }, { "@id": `${origin}/resources/camera-tools/` }] }] });
 }
 
 function cameraToolCard(tool) {
@@ -435,7 +469,8 @@ function wallpapersPage() {
   const folder = "/phone-wallpapers/";
   const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Free resource", "Automotive phone wallpapers", "Download a small selection of Justy Media automotive photographs prepared for personal phone use.")}
     <section class="section-block gallery-section"><div class="wide-width"><p class="resource-note">Choose an image to view it larger, then download the original file. These wallpapers are for personal use; the website terms still apply.</p><div class="gallery-grid wallpaper-grid" data-gallery>${images.map(([file, alt, width, height]) => { const source = `${folder}${file}`; return `<figure><a class="gallery-trigger" href="${encodedPath(source)}" data-full="${encodedPath(source)}" data-alt="${escapeHtml(alt)}">${responsiveImage({ src: source, alt, width, height })}<span class="sr-only">View wallpaper larger</span></a><figcaption><span>${escapeHtml(alt)}</span><a href="${encodedPath(source)}" download>Download original</a></figcaption></figure>`; }).join("")}</div></div></section><section class="portfolio-next"><div class="content-width"><p>Looking for commercial or editorial photography?</p><a class="text-link" href="/services/photography-content/">Explore photography &amp; content services</a></div></section></main>`;
-  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, gallery: true, shareImage: `${folder}${images[1][0]}`, shareAlt: images[1][1], schemas: [{ "@type": "ImageGallery", name: "Justy Media automotive phone wallpapers", url: absolute(pagePath), description, associatedMedia: images.map(([file, alt, width, height]) => ({ "@type": "ImageObject", contentUrl: absolute(encodedPath(`${folder}${file}`)), caption: alt, width, height, creator: { "@id": `${origin}/#business` } })) }] });
+  const structuredImages = images.map(([file, alt, width, height]) => ownedPhoto(`${folder}${file}`, alt, width, height));
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, gallery: true, shareImage: `${folder}${images[1][0]}`, shareAlt: images[1][1], schemas: [{ "@type": "ImageGallery", name: "Justy Media automotive phone wallpapers", url: absolute(pagePath), description, associatedMedia: imageObjects(structuredImages) }] });
 }
 
 function legalHtml(source) {
@@ -462,6 +497,15 @@ function linkEmail(value) {
 function legalPage(pagePath, title, description, heading, source) {
   const crumbs = [{ label: "Home", href: "/" }, { label: heading, href: pagePath }];
   const body = `<main id="main-content">${breadcrumbs(crumbs)}<section class="page-hero compact-hero"><div class="content-width"><p class="eyebrow">Website information</p><h1>${heading}</h1></div></section><section class="section-block"><div class="content-width"><article class="legal-content">${legalHtml(source)}</article></div></section></main>`;
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "WebPage", name: title, url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
+}
+
+function imageLicensingPage() {
+  const pagePath = "/image-licensing/";
+  const title = "Image Licensing | Justy Media";
+  const description = "Request permission or a licence to use original photography by Andrew Ambrose and Justy Media for editorial, commercial, web, print or promotional purposes.";
+  const crumbs = [{ label: "Home", href: "/" }, { label: "Image licensing", href: pagePath }];
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}<section class="page-hero compact-hero"><div class="content-width"><p class="eyebrow">Photography rights</p><h1>Image licensing</h1></div></section><section class="section-block"><div class="content-width"><article class="legal-content"><h2>Using Justy Media photography</h2><p>Unless expressly stated otherwise, photographs displayed on Justy Media were created by Andrew Ambrose and are protected by copyright.</p><p>Images may not be copied, republished, redistributed, edited or used commercially without prior written permission. Displaying a photograph on this website does not grant a licence or permission to reuse it.</p><h2>Request a licence</h2><p>Licensing may be available for editorial, commercial, web, print and promotional use. Terms depend on the particular image, intended use, duration, territory and distribution.</p><p><a href="/contact-us/">Contact Justy Media</a> with the image URL and details of the proposed use to request permission or a licence.</p><h2>Separate usage terms</h2><p>Where a free resource, wallpaper or individual download has separately stated usage terms, those terms take precedence for that particular download. They do not extend to other images on this website.</p></article></div></section></main>`;
   return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "WebPage", name: title, url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
 }
 
@@ -492,6 +536,7 @@ writeRoute("/resources/", resourcesPage());
 writeRoute("/resources/camera-tools/", cameraToolsPage());
 writeRoute("/about-us/", aboutPage());
 writeRoute("/contact-us/", contactPage());
+writeRoute("/image-licensing/", imageLicensingPage());
 writeRoute("/privacy-policy.html", legalPage("/privacy-policy.html", "Privacy Policy | Justy Media", "How Justy Media handles personal information, website usage data and enquiries.", "Privacy policy", "privacy-policy.txt"));
 writeRoute("/terms-and-conditions.html", legalPage("/terms-and-conditions.html", "Terms and Conditions | Justy Media", "Terms and conditions for using the Justy Media website and discussing creative services.", "Terms and conditions", "terms-and-conditions.txt"));
 writeRoute("/404.html", notFoundPage());
@@ -503,7 +548,7 @@ const sitemapUrls = [
   "/", "/services/", ...servicePages.map((page) => page.path), "/work/",
   ...Object.values(portfolioPages).map((page) => page.path), "/phone-wallpapers/",
   "/resources/", "/resources/camera-tools/",
-  "/about-us/", "/contact-us/", "/privacy-policy.html", "/terms-and-conditions.html"
+  "/about-us/", "/contact-us/", "/image-licensing/", "/privacy-policy.html", "/terms-and-conditions.html"
 ];
 fs.writeFileSync(path.join(root, "sitemap.xml"), sitemap(sitemapUrls));
 console.log(`Built ${sitemapUrls.length} canonical pages and sitemap.xml`);
