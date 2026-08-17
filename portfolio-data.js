@@ -8,8 +8,8 @@ const portfolioPages = {
     type: "CollectionPage",
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }],
     cards: [
-      { title: "Automotive Photography", description: "Eight vehicle collections shaped around form, detail and location.", href: "/photography/automotive-photography/", image: "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", alt: "Red Honda NSX photographed in warm woodland light", width: 2828, height: 3535 },
-      { title: "RUSH Magazine", description: "Editorial features covering the Alfa Romeo GTV Cup and Eunos Roadster Mk1.", href: "/photography/rush-magazine/", image: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", alt: "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", width: 3582, height: 4477 }
+      { title: "Automotive Photography", description: "Eight vehicle collections shaped around form, detail and location.", href: "/photography/automotive-photography/", image: "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", alt: "Red Honda NSX photographed in warm woodland light", width: 2828, height: 3535, structuredData: { licenseEligible: true } },
+      { title: "RUSH Magazine", description: "Editorial features covering the Alfa Romeo GTV Cup and Eunos Roadster Mk1.", href: "/photography/rush-magazine/", image: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", alt: "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", width: 3582, height: 4477, structuredData: { licenseEligible: true } }
     ]
   },
   "automotive-photography": {
@@ -45,6 +45,7 @@ const portfolioPages = {
     ]
   },
   "honda-civic-ej6-coupe": {
+    structuredData: { licenseEligible: true },
     path: "/photography/automotive-photography/honda-civic-ej6-coupe/",
     title: "Honda Civic EJ6 Coupe Photography | Justy Media",
     heading: "Honda Civic EJ6 Coupe",
@@ -62,6 +63,7 @@ const portfolioPages = {
     ]
   },
   "honda-nsx": {
+    structuredData: { licenseEligible: true },
     path: "/photography/automotive-photography/honda-nsx/",
     title: "Honda NSX Automotive Photography | Justy Media",
     heading: "Honda NSX",
@@ -79,6 +81,7 @@ const portfolioPages = {
     ]
   },
   "mazda-mx5-mk1": {
+    structuredData: { licenseEligible: true },
     path: "/photography/automotive-photography/mazda-mx5-mk1/",
     title: "Mazda MX-5 Mk1 Photography | Justy Media",
     heading: "Mazda MX-5 Mk1",
@@ -92,6 +95,7 @@ const portfolioPages = {
     ]
   },
   "mazda-mx5-mk2": {
+    structuredData: { licenseEligible: true },
     path: "/photography/automotive-photography/mazda-mx5-mk2/",
     title: "Mazda MX-5 Mk2 Photography | Justy Media",
     heading: "Mazda MX-5 Mk2",
@@ -107,6 +111,7 @@ const portfolioPages = {
     ]
   },
   "mk1-audi-r8": {
+    structuredData: { licenseEligible: true },
     path: "/photography/automotive-photography/mk1-audi-r8/",
     title: "Mk1 Audi R8 Photography | Justy Media",
     heading: "Mk1 Audi R8",
@@ -127,6 +132,7 @@ const portfolioPages = {
     ]
   },
   "subaru-outback": {
+    structuredData: { licenseEligible: true },
     path: "/photography/automotive-photography/subaru-outback/",
     title: "Subaru Outback Photography | Justy Media",
     heading: "Subaru Outback",
@@ -142,6 +148,7 @@ const portfolioPages = {
     ]
   },
   "toyota-jzx90": {
+    structuredData: { licenseEligible: true },
     path: "/photography/automotive-photography/toyota-jzx90/",
     title: "Toyota JZX90 Photography | Justy Media",
     heading: "Toyota JZX90",
@@ -156,6 +163,7 @@ const portfolioPages = {
     ]
   },
   "vw-new-beetle": {
+    structuredData: { licenseEligible: true },
     path: "/photography/automotive-photography/vw-new-beetle/",
     title: "Volkswagen New Beetle Photography | Justy Media",
     heading: "Volkswagen New Beetle",
@@ -172,6 +180,7 @@ const portfolioPages = {
     ]
   },
   "alfa-romeo-gtv-cup": {
+    structuredData: { licenseEligible: true },
     path: "/photography/rush-magazine/alfa-romeo-gtv-cup/",
     title: "Alfa Romeo GTV Cup Photography | Justy Media",
     heading: "Alfa Romeo GTV Cup",
@@ -187,6 +196,7 @@ const portfolioPages = {
     ]
   },
   "eunos-roadster-mk1": {
+    structuredData: { licenseEligible: true },
     path: "/photography/rush-magazine/eunos-roadster-mk1/",
     title: "Eunos Roadster Mk1 Photography | Justy Media",
     heading: "Eunos Roadster Mk1",
