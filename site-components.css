@@ -20,22 +20,22 @@
 .email-link { text-decoration: none; color: #e1ddd5; }
 
 .main-nav { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; min-height: 85px; pointer-events: none; }
-.brand { position: absolute; left: 50%; top: 15px; z-index: 2; isolation: isolate; width: 150px; transform: translateX(-50%); pointer-events: auto; filter: drop-shadow(0 7px 12px rgba(0,0,0,.55)); }
+.brand { position: absolute; left: 50%; top: 15px; z-index: 2; isolation: isolate; width: 150px; line-height: 0; transform: translateX(-50%); pointer-events: auto; filter: drop-shadow(0 7px 12px rgba(0,0,0,.55)); }
 .brand::before {
   position: absolute;
-  top: 8px;
+  top: 50%;
   left: 50%;
   z-index: 0;
-  width: 112px;
-  height: 112px;
+  width: 80%;
+  aspect-ratio: 1;
   border-radius: 50%;
   background: #181818;
   box-shadow: 0 12px 22px rgba(0,0,0,.5);
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   content: "";
   pointer-events: none;
 }
-.brand img { position: relative; z-index: 1; width: 100%; }
+.brand img { position: relative; z-index: 1; display: block; width: 100%; }
 .nav-menu { display: flex; align-items: center; gap: clamp(14px, 2vw, 30px); margin: 0 0 0 auto; padding: 0; list-style: none; pointer-events: auto; }
 .nav-menu li:first-child { margin-left: 280px; }
 .nav-menu a { display: flex; min-height: 44px; align-items: center; text-decoration: none; color: #fff; font-size: .69rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
