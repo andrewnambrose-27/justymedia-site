@@ -128,14 +128,14 @@ p { margin: 0 0 1.2rem; }
 .brand { position: absolute; left: 50%; top: 15px; z-index: 2; isolation: isolate; width: 150px; transform: translateX(-50%); pointer-events: auto; filter: drop-shadow(0 7px 12px rgba(0,0,0,.55)); }
 .brand::before {
   position: absolute;
-  top: 66px;
+  top: -5px;
   left: 50%;
   z-index: 0;
-  width: 124px;
-  height: 38px;
-  border-radius: 0 0 60px 60px;
-  background: #141414;
-  box-shadow: 0 9px 16px rgba(0,0,0,.28);
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: #181818;
+  box-shadow: 0 12px 22px rgba(0,0,0,.5);
   transform: translateX(-50%);
   content: "";
   pointer-events: none;
