@@ -211,7 +211,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
 ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260818-5">
-    <link rel="stylesheet" href="/site-components.css?v=20260818-2">
+    <link rel="stylesheet" href="/site-components.css?v=20260818-3">
     ${jsonLd(schemas)}
   </head>
   <body class="${page.bodyClass || ""}">
