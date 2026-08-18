@@ -133,8 +133,8 @@ for (const url of urls) {
   if (count(html, /<main(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one main`);
   if (!/<header class="site-header">/.test(html) || !/<footer class="site-footer">/.test(html)) fail(`${route} lacks an initial header or footer`);
   if (!/class="nav-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="nav-menu"/.test(html)) fail(`${route} lacks an accessible mobile navigation control`);
-  if (!html.includes('href="/styles.css?v=20260818-4"')) fail(`${route} is missing the page stylesheet`);
-  if (!html.includes('href="/site-components.css?v=20260818-1"')) fail(`${route} is missing the shared component stylesheet`);
+  if (!html.includes('href="/styles.css?v=20260818-5"')) fail(`${route} is missing the page stylesheet`);
+  if (!html.includes('href="/site-components.css?v=20260818-2"')) fail(`${route} is missing the shared component stylesheet`);
   for (const faviconHref of ["/favicon.ico?v=20260818-2", "/favicons/favicon.svg?v=20260818-2", "/favicons/favicon-96x96.png?v=20260818-2", "/favicons/apple-touch-icon.png?v=20260818-2", "/favicons/site.webmanifest?v=20260818-2"]) {
     if (!html.includes(`href="${faviconHref}"`)) fail(`${route} is missing favicon link ${faviconHref}`);
     if (!fs.existsSync(localAsset(faviconHref))) fail(`${route} references missing favicon asset ${faviconHref}`);
@@ -188,15 +188,17 @@ for (const url of urls) {
   imageMetadataInstances += imageSchemas.length;
   if (route !== "/") {
     const breadcrumb = html.match(/<nav class="breadcrumbs" aria-label="Breadcrumb"><ol>(.*?)<\/ol><\/nav>/s);
-    if (!breadcrumb) fail(`${route} has no visible breadcrumb`);
-    else {
-      const visibleNames = [...breadcrumb[1].matchAll(/<li>(.*?)<\/li>/gs)].map((match) => stripHtml(match[1]));
-      const graph = schemaGraphs.flatMap((item) => item["@graph"] || []).find((item) => item["@type"] === "BreadcrumbList");
-      if (!graph) fail(`${route} has no BreadcrumbList schema`);
+    const graph = schemaGraphs.flatMap((item) => item["@graph"] || []).find((item) => item["@type"] === "BreadcrumbList");
+    if (!graph) fail(`${route} has no BreadcrumbList schema`);
+    else if (graph.itemListElement.length >= 3) {
+      if (!breadcrumb) fail(`${route} has no visible breadcrumb`);
       else {
-        const schemaNames = graph.itemListElement.map((item) => item.name);
-        if (JSON.stringify(visibleNames) !== JSON.stringify(schemaNames)) fail(`${route} breadcrumb text and schema differ`);
+      const visibleNames = [...breadcrumb[1].matchAll(/<li>(.*?)<\/li>/gs)].map((match) => stripHtml(match[1]));
+      const schemaNames = graph.itemListElement.map((item) => item.name);
+      if (JSON.stringify(visibleNames) !== JSON.stringify(schemaNames)) fail(`${route} breadcrumb text and schema differ`);
       }
+    } else if (breadcrumb) {
+      fail(`${route} displays a redundant top-level breadcrumb`);
     }
   }
 
