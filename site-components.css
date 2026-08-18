@@ -1,0 +1,83 @@
+/* Shared site header, navigation, social links and footer. */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  min-height: 90px;
+  background: rgba(20, 20, 20, 0.97);
+  border-top: 5px solid var(--gold);
+  box-shadow: 0 10px 30px rgba(0,0,0,.34);
+  backdrop-filter: blur(12px);
+}
+
+.top-strip, .main-nav { padding-inline: clamp(20px, 4vw, 64px); }
+.top-strip { display: flex; align-items: center; gap: 22px; min-height: 85px; font-size: .72rem; font-weight: 800; letter-spacing: .08em; }
+.social-links, .footer-socials { display: flex; gap: 10px; align-items: center; }
+.social-links a, .footer-socials a { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; text-decoration: none; font-size: .67rem; font-weight: 900; }
+.social-links svg, .footer-socials svg { width: 16px; height: 16px; }
+.social-links a:hover, .footer-socials a:hover { color: #111; border-color: var(--gold); background: var(--gold); }
+.email-link { text-decoration: none; color: #e1ddd5; }
+
+.main-nav { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; min-height: 85px; pointer-events: none; }
+.brand { position: absolute; left: 50%; top: 15px; z-index: 2; isolation: isolate; width: 150px; transform: translateX(-50%); pointer-events: auto; filter: drop-shadow(0 7px 12px rgba(0,0,0,.55)); }
+.brand::before {
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  z-index: 0;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  background: #181818;
+  box-shadow: 0 12px 22px rgba(0,0,0,.5);
+  transform: translateX(-50%);
+  content: "";
+  pointer-events: none;
+}
+.brand img { position: relative; z-index: 1; width: 100%; }
+.nav-menu { display: flex; align-items: center; gap: clamp(14px, 2vw, 30px); margin: 0 0 0 auto; padding: 0; list-style: none; pointer-events: auto; }
+.nav-menu li:first-child { margin-left: 280px; }
+.nav-menu a { display: flex; min-height: 44px; align-items: center; text-decoration: none; color: #fff; font-size: .69rem; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.nav-menu a:hover, .nav-menu a.active { color: var(--gold); }
+.nav-toggle { display: none; width: 46px; height: 46px; padding: 10px; border: 1px solid var(--line); color: #fff; background: #202020; pointer-events: auto; }
+.nav-toggle span:not(.sr-only) { display: block; width: 22px; height: 2px; margin: 4px auto; background: currentColor; }
+
+.site-footer { display: grid; grid-template-columns: 1.15fr repeat(3, 1fr); gap: clamp(26px, 4vw, 60px); padding: 70px max(20px, calc((100vw - var(--max)) / 2)) 30px; color: #ddd; background: #090909; border-top: 1px solid var(--line); }
+.footer-brand img { width: 165px; margin-bottom: 22px; }
+.footer-brand p { color: var(--muted); font-size: .82rem; }
+.footer-heading { color: #fff; font-size: .75rem; font-weight: 900; letter-spacing: .15em; text-transform: uppercase; }
+.site-footer nav { display: grid; gap: 8px; }
+.site-footer nav a { color: var(--muted); font-size: .81rem; text-decoration: none; }
+.site-footer nav a:hover { color: var(--gold); }
+.site-footer .footer-socials { margin-top: 20px; }
+.site-footer small { grid-column: 1 / -1; margin-top: 28px; padding-top: 22px; border-top: 1px solid var(--line); color: #85817b; font-size: .74rem; }
+
+@media (max-width: 1320px) {
+  .top-strip { justify-content: flex-start; }
+  .email-link { display: none; }
+  .brand { left: 24px; transform: none; }
+  .nav-menu li:first-child { margin-left: 0; }
+}
+
+@media (max-width: 1080px) {
+  .site-footer { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 900px) {
+  .site-header, .top-strip, .main-nav { min-height: 80px; }
+  .top-strip { padding-left: 205px; }
+  .brand { top: 13px; width: 145px; }
+  .nav-toggle { display: block; margin-left: auto; }
+  .nav-menu { position: absolute; top: 80px; right: 0; left: 0; display: none; padding: 14px 20px 22px; background: #111; border-top: 1px solid var(--line); box-shadow: 0 16px 24px rgba(0,0,0,.45); }
+  .nav-menu.is-open { display: grid; }
+  .nav-menu a { min-height: 50px; border-bottom: 1px solid var(--line); font-size: .77rem; }
+}
+
+@media (max-width: 560px) {
+  .top-strip { padding-left: 176px; padding-right: 74px; }
+  .social-links a:nth-child(2) { display: none; }
+  .brand { left: 18px; width: 135px; }
+  .main-nav { padding-right: 16px; }
+  .site-footer { grid-template-columns: 1fr; }
+}
