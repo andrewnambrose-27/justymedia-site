@@ -210,7 +210,8 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="icon" href="/favicons/favicon-96x96.png?v=20260818-2" type="image/png" sizes="96x96">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
-${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260818-3">
+${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260818-4">
+    <link rel="stylesheet" href="/site-components.css?v=20260818-1">
     ${jsonLd(schemas)}
   </head>
   <body class="${page.bodyClass || ""}">
