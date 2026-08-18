@@ -124,7 +124,21 @@ p { margin: 0 0 1.2rem; }
 .social-links a:hover, .footer-socials a:hover { color: #111; border-color: var(--gold); background: var(--gold); }
 .email-link { text-decoration: none; color: #e1ddd5; }
 .main-nav { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; min-height: 85px; pointer-events: none; }
-.brand { position: absolute; left: 50%; top: 15px; z-index: 2; width: 150px; transform: translateX(-50%); pointer-events: auto; filter: drop-shadow(0 7px 12px rgba(0,0,0,.55)); }
+.brand { position: absolute; left: 50%; top: 15px; z-index: 2; isolation: isolate; width: 150px; transform: translateX(-50%); pointer-events: auto; filter: drop-shadow(0 7px 12px rgba(0,0,0,.55)); }
+.brand::before {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  z-index: -1;
+  width: 112px;
+  height: 30px;
+  border-radius: 0 0 60px 60px;
+  background: rgba(20, 20, 20, 0.97);
+  box-shadow: 0 9px 16px rgba(0,0,0,.28);
+  transform: translateX(-50%);
+  content: "";
+  pointer-events: none;
+}
 .brand img { width: 100%; }
 .nav-menu { display: flex; align-items: center; gap: clamp(14px, 2vw, 30px); margin: 0 0 0 auto; padding: 0; list-style: none; pointer-events: auto; }
 .nav-menu li:first-child { margin-left: 280px; }
