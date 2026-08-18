@@ -133,6 +133,10 @@ for (const url of urls) {
   if (count(html, /<main(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one main`);
   if (!/<header class="site-header">/.test(html) || !/<footer class="site-footer">/.test(html)) fail(`${route} lacks an initial header or footer`);
   if (!/class="nav-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="nav-menu"/.test(html)) fail(`${route} lacks an accessible mobile navigation control`);
+  for (const faviconHref of ["/favicons/favicon.ico", "/favicons/favicon.svg", "/favicons/favicon-96x96.png", "/favicons/apple-touch-icon.png", "/favicons/site.webmanifest"]) {
+    if (!html.includes(`href="${faviconHref}"`)) fail(`${route} is missing favicon link ${faviconHref}`);
+    if (!fs.existsSync(localAsset(faviconHref))) fail(`${route} references missing favicon asset ${faviconHref}`);
+  }
 
   const title = tagContent(html, /<title>(.*?)<\/title>/s);
   const description = tagContent(html, /<meta name="description" content="(.*?)">/s);
