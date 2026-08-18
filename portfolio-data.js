@@ -9,7 +9,7 @@ const portfolioPages = {
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }],
     cards: [
       { title: "Automotive Photography", description: "Eight vehicle collections shaped around form, detail and location.", href: "/photography/automotive-photography/", image: "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", alt: "Red Honda NSX photographed in warm woodland light", width: 2828, height: 3535, structuredData: { licenseEligible: true } },
-      { title: "RUSH Magazine", description: "Editorial features covering the Alfa Romeo GTV Cup and Eunos Roadster Mk1.", href: "/photography/rush-magazine/", image: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", alt: "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", width: 3582, height: 4477, structuredData: { licenseEligible: true } }
+      { title: "RUSH Magazine", description: "Editorial features spanning Alfa Romeo, Eunos, Subaru and Suzuki performance cars.", href: "/photography/rush-magazine/", image: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", alt: "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", width: 3582, height: 4477, structuredData: { licenseEligible: true } }
     ]
   },
   "automotive-photography": {
@@ -35,13 +35,15 @@ const portfolioPages = {
     path: "/photography/rush-magazine/",
     title: "RUSH Magazine Photography | Justy Media",
     heading: "RUSH Magazine",
-    description: "Explore automotive editorial photography created by Justy Media for RUSH Magazine, including Alfa Romeo and Eunos Roadster features.",
-    intro: "Automotive editorial photography created for RUSH Magazine, combining vehicle details, location portraits and road imagery into coherent visual features.",
+    description: "Explore RUSH Magazine automotive photography by Justy Media, featuring Alfa Romeo, Eunos, Subaru Impreza P1 and Suzuki Swift Sport editorials.",
+    intro: "Automotive editorial photography created for RUSH Magazine, from rare performance icons to engaging modern hot hatches. Each feature combines vehicle details, location portraits and road imagery into a coherent visual story.",
     type: "CollectionPage",
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "RUSH Magazine", href: "/photography/rush-magazine/" }],
     cards: [
       { title: "Alfa Romeo GTV Cup", description: "Four photographs", href: "/photography/rush-magazine/alfa-romeo-gtv-cup/", galleryKey: "alfa-romeo-gtv-cup" },
-      { title: "Eunos Roadster Mk1", description: "Four photographs", href: "/photography/rush-magazine/eunos-roadster-mk1/", galleryKey: "eunos-roadster-mk1" }
+      { title: "Eunos Roadster Mk1", description: "Four photographs", href: "/photography/rush-magazine/eunos-roadster-mk1/", galleryKey: "eunos-roadster-mk1" },
+      { title: "Subaru Impreza P1", description: "Six photographs", href: "/photography/rush-magazine/subaru-impreza-p1/", galleryKey: "subaru-impreza-p1" },
+      { title: "Suzuki Swift Sport", description: "Two photographs", href: "/photography/rush-magazine/suzuki-swift-sport/", galleryKey: "suzuki-swift-sport" }
     ]
   },
   "honda-civic-ej6-coupe": {
@@ -209,6 +211,38 @@ const portfolioPages = {
       ["_DSC2860-Edit.jpg", "Elevated view of a red Eunos Roadster on an open moorland road", 3815, 4769],
       ["_DSC2891-Edit.jpg", "Red Eunos Roadster beneath a dramatic orange evening sky", 3200, 4000],
       ["_DSC2902-Edit.jpg", "Low head-on portrait of a red Eunos Roadster at sunset", 3802, 4753]
+    ]
+  },
+  "subaru-impreza-p1": {
+    structuredData: { licenseEligible: true },
+    path: "/photography/rush-magazine/subaru-impreza-p1/",
+    title: "Subaru Impreza P1 Photography | Justy Media",
+    heading: "Subaru Impreza P1",
+    description: "A blue Subaru Impreza P1 photographed by Justy Media for RUSH Magazine, with driving images, exterior portraits and defining performance details.",
+    intro: "A RUSH Magazine feature on the rare, Prodrive-developed Subaru Impreza P1, photographed across exposed Peak District roads. The collection moves from vivid blue exterior portraits and a panning road image to the car's driver-focused cabin and distinctive details.",
+    breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "RUSH Magazine", href: "/photography/rush-magazine/" }, { label: "Subaru Impreza P1", href: "/photography/rush-magazine/subaru-impreza-p1/" }],
+    folder: "/photography/rush-magazine/subaru-impreza-p1/",
+    images: [
+      ["_DSC9492-Edit-2.JPG", "Blue Subaru Impreza P1 in a low front three-quarter portrait on a rocky moorland track", 2828, 3535],
+      ["_DSC9517-Edit-2.JPG", "Steering wheel, gauges and driver-focused cabin of the Subaru Impreza P1", 2828, 3535],
+      ["_DSC9605-Edit-2.JPG", "Close view of the Subaru Impreza P1 headlamp, fog light and front grille", 2828, 3535],
+      ["_DSC9607-Edit-3.JPG", "Prodrive badge and side repeater on the blue Subaru Impreza P1 front wing", 2828, 3535],
+      ["_DSC9769-Edit-2.JPG", "Blue Subaru Impreza P1 driving at speed on an open Peak District road", 2828, 3535],
+      ["_DSC9811-Edit-2.JPG", "Blue Subaru Impreza P1 facing the camera on a rugged moorland track", 3888, 4860]
+    ]
+  },
+  "suzuki-swift-sport": {
+    structuredData: { licenseEligible: true },
+    path: "/photography/rush-magazine/suzuki-swift-sport/",
+    title: "Suzuki Swift Sport Photography | Justy Media",
+    heading: "Suzuki Swift Sport",
+    description: "A blue Suzuki Swift Sport photographed by Justy Media for RUSH Magazine, pairing a Peak District driving view with an atmospheric night portrait.",
+    intro: "A compact RUSH Magazine story following a blue Suzuki Swift Sport from a driver's-eye view on a winding Peak District road to a low, atmospheric portrait beneath the lights of a quiet town street.",
+    breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "RUSH Magazine", href: "/photography/rush-magazine/" }, { label: "Suzuki Swift Sport", href: "/photography/rush-magazine/suzuki-swift-sport/" }],
+    folder: "/photography/rush-magazine/suzuki-swift-sport/",
+    images: [
+      ["_DSC3391-Edit.JPG", "Driver's-eye view from a Suzuki Swift Sport on a winding Peak District road", 5519, 3679],
+      ["_DSC4072-Edit.JPG", "Blue Suzuki Swift Sport in a low night-time portrait on a quiet town street", 5390, 3593]
     ]
   }
 };
