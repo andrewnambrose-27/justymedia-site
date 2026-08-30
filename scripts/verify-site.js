@@ -133,7 +133,7 @@ for (const url of urls) {
   if (count(html, /<main(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one main`);
   if (!/<header class="site-header">/.test(html) || !/<footer class="site-footer">/.test(html)) fail(`${route} lacks an initial header or footer`);
   if (!/class="nav-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="nav-menu"/.test(html)) fail(`${route} lacks an accessible mobile navigation control`);
-  if (!html.includes('href="/styles.css?v=20260830-3"')) fail(`${route} is missing the page stylesheet`);
+  if (!html.includes('href="/styles.css?v=20260830-5"')) fail(`${route} is missing the page stylesheet`);
   if (!html.includes('href="/site-components.css?v=20260830-1"')) fail(`${route} is missing the shared component stylesheet`);
   for (const faviconHref of ["/favicon.ico?v=20260818-2", "/favicons/favicon.svg?v=20260818-2", "/favicons/favicon-96x96.png?v=20260818-2", "/favicons/apple-touch-icon.png?v=20260818-2", "/favicons/site.webmanifest?v=20260818-2"]) {
     if (!html.includes(`href="${faviconHref}"`)) fail(`${route} is missing favicon link ${faviconHref}`);
@@ -212,6 +212,17 @@ for (const url of urls) {
       const asset = localAsset(source[1]);
       if (asset && !fs.existsSync(asset)) fail(`${route} references missing image ${source[1]}`);
     }
+  }
+
+  for (const match of html.matchAll(/<a\b([^>]*)>(.*?)<\/a>/gs)) {
+    const attrs = match[1];
+    const href = attrs.match(/\bhref="([^"]+)"/);
+    if (!href || !/^https?:\/\//.test(href[1])) continue;
+    if (!/\btarget="_blank"/.test(attrs)) fail(`${route} external link does not open in a new tab: ${href[1]}`);
+    const rel = attrs.match(/\brel="([^"]+)"/);
+    if (!rel || !rel[1].split(/\s+/).includes("noopener") || !rel[1].split(/\s+/).includes("noreferrer")) fail(`${route} external link lacks noopener noreferrer: ${href[1]}`);
+    const accessibleName = attrs.match(/\baria-label="([^"]+)"/)?.[1] || stripHtml(match[2]);
+    if (!accessibleName) fail(`${route} external link has no accessible name: ${href[1]}`);
   }
 
   const internalLinks = [...html.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>/g)].map((match) => match[1]);
