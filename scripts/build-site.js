@@ -8,7 +8,7 @@ const origin = SITE_ORIGIN;
 const email = "andrew.n.ambrose@gmail.com";
 const logo = "/logo%20final%20AI%20transparrent.png";
 const defaultShareImage = "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg";
-const modified = "2026-08-18";
+const modified = "2026-08-30";
 const cameraTools = [
   {
     group: "metadata", slug: "sony-shutter-count", name: "Sony Shutter Count Checker", label: "Sony · JPG and ARW",
@@ -44,6 +44,63 @@ const cameraTools = [
     group: "planning", slug: "video-recording-time-calculator", name: "Video Recording Time Calculator", label: "Video · Bitrate and storage",
     description: "Estimate how long a memory card can record at a chosen bitrate or calculate how much storage an upcoming video shoot may require.",
     cta: "Calculate Recording Time", url: "https://27tools.co/tools/camera-tools/video-recording-time-calculator/"
+  }
+];
+
+const websiteProjects = [
+  {
+    slug: "27tools",
+    name: "27tools",
+    eyebrow: "Independent product · web application",
+    title: "A focused home for fast, useful browser tools.",
+    description: "Website design and development for 27tools, a growing collection of free, fast and privacy-friendly browser tools for creators, developers and everyday tasks.",
+    summary: "A dark, product-led platform that makes a growing library of camera, design and web utilities easy to search, understand and use.",
+    screenshot: "/website-screenshots/27tools/27tools homepage screenshot.png",
+    screenshotAlt: "27tools homepage showing the tool search, featured utilities and dark orange visual system",
+    width: 2539,
+    height: 1263,
+    liveUrl: "https://27tools.co/",
+    liveLabel: "Visit 27tools",
+    challenge: "A broad set of specialist utilities needed to feel like one coherent product. The homepage had to help returning users reach a tool quickly while still giving first-time visitors enough context to explore with confidence.",
+    approach: "The experience is organised around direct search, clear categories and task-focused cards. A black and orange visual system gives the platform a distinctive identity, while concise interface copy keeps attention on the tools themselves.",
+    outcome: "The finished platform gives every utility a consistent place within a recognisable product family, with browser-based processing foregrounded as a practical privacy benefit.",
+    tags: ["Product design", "Web development", "Search UX", "Content architecture", "Technical SEO"]
+  },
+  {
+    slug: "compradar",
+    name: "CompRadar",
+    eyebrow: "Independent platform · data-led website",
+    title: "Making UK competitions easier to compare.",
+    description: "Website design and development for CompRadar, an independent UK platform for comparing live car, cash and prize competitions in one consistent format.",
+    summary: "A calm, data-led comparison experience that brings prices, availability, closing times and estimated odds into one clear place.",
+    screenshot: "/website-screenshots/compradar/compradar homepage screenshot.png",
+    screenshotAlt: "CompRadar homepage with live competition search, quick links and featured comparison cards",
+    width: 2539,
+    height: 1269,
+    liveUrl: "https://compradar.co/",
+    liveLabel: "Visit CompRadar",
+    challenge: "Competition listings vary widely between providers and can change quickly. The interface needed to present useful comparison data without overwhelming visitors or implying certainty where the source information may move.",
+    approach: "A restrained cream and green system keeps the dense subject matter approachable. Search, category shortcuts and a repeatable listing structure create a clear path from broad discovery to detailed comparison.",
+    outcome: "The resulting platform turns scattered listing information into a consistent browsing experience, supported by plain-language guidance and responsible-participation context.",
+    tags: ["UX/UI design", "Responsive development", "Data presentation", "Search experience", "Content strategy"]
+  },
+  {
+    slug: "vulcan-sports",
+    name: "Vulcan Sports",
+    eyebrow: "Client website · teamwear",
+    title: "A sharper digital storefront for UK-made teamwear.",
+    description: "Website design and development for Vulcan Sports, a family-run Staffordshire manufacturer of bespoke sports kits, training gear and leisurewear.",
+    summary: "A confident, product-led website that connects Vulcan Sports' UK manufacturing story with clear routes into kit design, teamwear ranges and direct support.",
+    screenshot: "/website-screenshots/vulcansports/vulcan sports homepage screenshot.png",
+    screenshotAlt: "Vulcan Sports homepage featuring bespoke orange and black teamwear and clear product routes",
+    width: 2543,
+    height: 1251,
+    liveUrl: "https://vulcansports.co.uk/",
+    liveLabel: "Visit Vulcan Sports",
+    challenge: "The website needed to serve clubs ready to create a kit as well as visitors still comparing ranges, lead times and manufacturing options. It also needed to retain the energy of a performance-sports brand.",
+    approach: "High-impact product imagery, bold orange calls to action and compact proof points establish the offer quickly. Navigation separates bespoke kit design, ready-to-browse ranges and support content without losing the brand's direct tone.",
+    outcome: "The finished experience presents the product range and Staffordshire manufacturing story as one connected proposition, with clearer next steps for both confident buyers and early-stage enquiries.",
+    tags: ["Web design", "Responsive development", "Ecommerce UX", "Content structure", "Brand application"]
   }
 ];
 
@@ -210,7 +267,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="icon" href="/favicons/favicon-96x96.png?v=20260818-2" type="image/png" sizes="96x96">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
-${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260818-5">
+${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260830-3">
     <link rel="stylesheet" href="/site-components.css?v=20260818-3">
     ${jsonLd(schemas)}
   </head>
@@ -259,8 +316,8 @@ function homePage() {
     <section class="intro-section"><div class="content-width split-intro"><div><p class="eyebrow">Justy Media</p><h2>Creative thinking, made practical.</h2></div><div><p>Justy Media is an independent studio run by Andrew Ambrose in the Peak District. What began with photography in 2020 has grown into a joined-up creative service for businesses that need a clearer identity, a better website and useful support after launch.</p><p>You work directly with the person designing, building and creating the work—keeping communication straightforward and the result focused on what your business actually needs.</p></div></div></section>
     <section class="section-block services-overview"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Services</p><h2>One studio, four connected disciplines.</h2></div><a class="text-link" href="/services/">View all services</a></div><div class="service-grid">${serviceCard("/services/web-design/", "01", "Web design & development", "Clear, responsive websites, landing pages, redesigns and lightweight tools built around your goals.")}${serviceCard("/services/graphic-design/", "02", "Graphic design & branding", "Identity, print and digital artwork that gives your business a consistent and recognisable visual voice.")}${serviceCard("/services/photography-content/", "03", "Photography & content", "Distinctive automotive, editorial, product and brand imagery for websites, campaigns and social media.")}${serviceCard("/services/digital-marketing/", "04", "SEO & digital marketing", "Understandable SEO, analytics, content improvements and ongoing support without inflated promises.")}</div></div></section>
     <section class="section-block selected-work"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Selected work</p><h2>Real work, across disciplines.</h2></div><a class="text-link" href="/work/">Explore the work</a></div><div class="work-grid">
-      <a class="work-card work-card-wide" href="/work/#justy-media-platform">${responsiveImage(platformPhoto)}<div><p class="work-type">Website &amp; digital system</p><h3>Justy Media web platform</h3><p>A fast static website, structured portfolio system and privacy-conscious analytics tool.</p></div></a>
-      <a class="work-card" href="/work/#justy-media-identity"><div class="logo-panel"><img src="${logo}" width="2639" height="1511" alt="Justy Media identity mark" loading="lazy"></div><div><p class="work-type">Brand identity</p><h3>Justy Media identity</h3><p>The established monochrome mark, carried through a dark visual system with warm gold accents.</p></div></a>
+      <a class="work-card work-card-wide" href="/work/websites/#justy-media-platform">${responsiveImage(platformPhoto)}<div><p class="work-type">Website &amp; digital system</p><h3>Justy Media web platform</h3><p>A fast static website, structured portfolio system and privacy-conscious analytics tool.</p></div></a>
+      <a class="work-card" href="/work/graphic-design/#justy-media-identity"><div class="logo-panel"><img src="${logo}" width="2639" height="1511" alt="Justy Media identity mark" loading="lazy"></div><div><p class="work-type">Brand identity</p><h3>Justy Media identity</h3><p>The established monochrome mark, carried through a dark visual system with warm gold accents.</p></div></a>
       <a class="work-card" href="/photography/rush-magazine/alfa-romeo-gtv-cup/">${responsiveImage(editorialPhoto)}<div><p class="work-type">Editorial photography</p><h3>RUSH Magazine</h3><p>Automotive features combining detail, portrait and road imagery.</p></div></a>
     </div></div></section>
     <section class="photo-feature"><div class="photo-feature-media">${responsiveImage(nsxPhoto)}</div><div class="photo-feature-copy"><p class="eyebrow">Photography</p><h2>Automotive work with a point of view.</h2><p>Photography is where Justy Media started, and it remains a genuine strength. Browse complete vehicle collections and commissioned editorial work for RUSH Magazine.</p><div class="button-row"><a class="button button-primary" href="/photography/">Photography portfolio</a><a class="text-link" href="/services/photography-content/">Photography services</a></div></div></section>
@@ -291,7 +348,7 @@ const servicePages = [
       <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">What can be created</p><h2>From focused pages to complete small-business sites.</h2><div class="capability-grid"><article><h3>Small-business websites</h3><p>Structured, responsive sites with clear services, useful content and an enquiry route.</p></article><article><h3>Landing pages &amp; redesigns</h3><p>Campaign pages and careful improvements to websites that have outgrown their current design.</p></article><article><h3>Custom tools</h3><p>Lightweight web applications and practical internal or customer-facing utilities where a standard page is not enough.</p></article><article><h3>Analytics &amp; conversion tracking</h3><p>Measurement planned around meaningful actions, with setup that helps you understand what the site is doing.</p></article><article><h3>Responsive development</h3><p>Layouts built to work across phones, tablets and larger screens, with accessibility and performance considered.</p></article><article><h3>Updates &amp; maintenance</h3><p>Ongoing content changes, technical upkeep and measured improvements after launch.</p></article></div><p class="note">Content management or e-commerce requirements are discussed during scoping so the platform and responsibilities are clear before work begins.</p></div></section>
       <section class="section-block"><div class="content-width"><p class="eyebrow">Process</p><h2>Design and development in one practical workflow.</h2><ol class="numbered-list"><li><strong>Discovery and content</strong><span>Clarify the audience, goals, pages, content and any systems the website must connect with.</span></li><li><strong>Structure and design</strong><span>Shape the journey and visual direction before detailed development.</span></li><li><strong>Build and test</strong><span>Develop responsive pages, add tracking where required and test core journeys across devices.</span></li><li><strong>Launch and handover</strong><span>Complete final checks, publish carefully and provide the information needed to use the finished site.</span></li></ol></div></section>
       <section class="section-block contrast"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Ongoing support</p><h2>A website should not stop at launch.</h2></div><div><p>Support can continue with content updates, landing pages, technical housekeeping, analytics reviews and small improvements. The scope can be agreed around genuine needs rather than a fixed retainer.</p><a class="text-link" href="/services/digital-marketing/">Explore SEO and digital marketing support</a></div></div></div></section>
-      <section class="section-block"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Justy Media website &amp; analytics</h2><p class="lede narrow">This site is a genuine example of the approach: a static, responsive platform with reusable portfolio data, crawlable galleries, Cloudflare image delivery and a lightweight first-party analytics tool.</p><a class="button button-secondary" href="/work/#justy-media-platform">View the project overview</a></div></section>`
+      <section class="section-block"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Justy Media website &amp; analytics</h2><p class="lede narrow">This site is a genuine example of the approach: a static, responsive platform with reusable portfolio data, crawlable galleries, Cloudflare image delivery and a lightweight first-party analytics tool.</p><a class="button button-secondary" href="/work/websites/#justy-media-platform">View the project overview</a></div></section>`
   },
   {
     path: "/services/graphic-design/", title: "Graphic Design & Branding | Justy Media", heading: "Graphic design & branding", eyebrow: "Graphic design",
@@ -301,7 +358,7 @@ const servicePages = [
     content: `<section class="section-block"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">A coherent visual system</p><h2>More than an isolated logo or one-off post.</h2></div><div><p>Graphic design works best when every piece feels connected. Justy Media can develop a new visual direction or extend the identity you already have into useful, consistent materials.</p><p>The scope can be a focused piece of artwork or ongoing design support, with files prepared for the channel and people who will actually use them.</p></div></div></div></section>
       <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Capabilities</p><h2>Design support across identity, print and screen.</h2><div class="capability-grid"><article><h3>Brand identities</h3><p>Core visual direction, colour, typography and practical guidance for consistent use.</p></article><article><h3>Logo development</h3><p>New marks and considered refinements, supplied in useful formats for print and digital work.</p></article><article><h3>Print artwork</h3><p>Brochures, leaflets, marketing materials and event graphics prepared for production.</p></article><article><h3>Social media artwork</h3><p>Reusable post, story and campaign assets that stay recognisably on brand.</p></article><article><h3>Website graphics</h3><p>Image treatments, diagrams, campaign graphics and supporting visual content for web pages.</p></article><article><h3>Ongoing design support</h3><p>A reliable route for new materials without reinventing the visual approach each time.</p></article></div></div></section>
       <section class="section-block"><div class="content-width"><p class="eyebrow">Process</p><h2>Start with what the design needs to communicate.</h2><ol class="numbered-list"><li><strong>Brief</strong><span>Define the audience, message, format, practical requirements and existing brand context.</span></li><li><strong>Direction</strong><span>Establish the strongest visual route and agree it before expanding the work.</span></li><li><strong>Refinement</strong><span>Develop the selected direction with focused feedback and careful production detail.</span></li><li><strong>Delivery</strong><span>Supply correctly prepared files and a clear explanation of what each one is for.</span></li></ol></div></section>
-      <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Justy Media identity</h2><p class="lede narrow">The established Justy Media mark and its dark, monochrome-led visual identity are the genuine design project currently available to publish.</p><a class="button button-secondary" href="/work/#justy-media-identity">View the identity overview</a></div></section>`
+      <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Justy Media identity</h2><p class="lede narrow">The established Justy Media mark and its dark, monochrome-led visual identity are the genuine design project currently available to publish.</p><a class="button button-secondary" href="/work/graphic-design/#justy-media-identity">View the identity overview</a></div></section>`
   },
   {
     path: "/services/photography-content/", title: "Commercial Photography & Content | Justy Media", heading: "Photography & content", eyebrow: "Photography",
@@ -321,7 +378,7 @@ const servicePages = [
     content: `<section class="section-block"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Useful, measurable support</p><h2>Improve the foundations before chasing shortcuts.</h2></div><div><p>Digital marketing support starts with what you already have: the website, its content, the way enquiries are measured and the materials used to promote it.</p><p>Recommendations are explained in plain language and prioritised by likely usefulness. No rankings, traffic or revenue are guaranteed.</p></div></div></div></section>
       <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Capabilities</p><h2>Practical ways to strengthen your online presence.</h2><div class="capability-grid"><article><h3>On-page SEO</h3><p>Titles, descriptions, headings, internal links and page content improved around real search intent.</p></article><article><h3>Technical SEO reviews</h3><p>Crawlability, canonical URLs, redirects, structured data, sitemaps and performance risks checked methodically.</p></article><article><h3>Search Console &amp; analytics</h3><p>Setup and configuration that helps you see meaningful website activity and spot problems.</p></article><article><h3>Conversion tracking</h3><p>Measurement for enquiries, downloads and useful actions—not just a page-view total.</p></article><article><h3>Content improvements</h3><p>Clearer service pages, calls to action and supporting content shaped around audience questions.</p></article><article><h3>Campaign creative</h3><p>Email, social and campaign assets that connect the message back to a coherent website journey.</p></article><article><h3>Reporting &amp; support</h3><p>Regular, understandable review with priorities for the next useful improvements.</p></article></div></div></section>
       <section class="section-block"><div class="content-width"><p class="eyebrow">Approach</p><h2>Review, prioritise, improve, learn.</h2><ol class="numbered-list"><li><strong>Review</strong><span>Understand the current site, tracking, content and active marketing work.</span></li><li><strong>Prioritise</strong><span>Separate essential fixes from worthwhile experiments and lower-value busywork.</span></li><li><strong>Implement</strong><span>Make agreed technical, content and creative improvements carefully.</span></li><li><strong>Report and refine</strong><span>Look at useful signals, explain what they mean and decide what comes next.</span></li></ol></div></section>
-      <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>First-party analytics for Justy Media</h2><p class="lede narrow">The website includes a genuine lightweight analytics system for page views, contact clicks, downloads and outbound actions, with a separate reporting dashboard.</p><a class="button button-secondary" href="/work/#justy-media-platform">View the project overview</a></div></section>`
+      <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>First-party analytics for Justy Media</h2><p class="lede narrow">The website includes a genuine lightweight analytics system for page views, contact clicks, downloads and outbound actions, with a separate reporting dashboard.</p><a class="button button-secondary" href="/work/websites/#justy-media-platform">View the project overview</a></div></section>`
   }
 ];
 
@@ -349,20 +406,74 @@ function servicesHub() {
 function workPage() {
   const pagePath = "/work/";
   const title = "Creative Portfolio & Case Studies | Justy Media";
-  const description = "Explore website, graphic design, marketing and photography projects completed by Justy Media for businesses, publications and personal brands.";
+  const description = "Explore website, photography and graphic design work by Justy Media, organised into three focused portfolio collections.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "Work", href: pagePath }];
   const structuredImages = [
-    ownedPhoto("/photography/automotive-photography/mazda-mx5-mk2/_DSC9930-Edit-Edit-2.jpg", "Silver Mazda MX-5 used within the Justy Media website portfolio", 2828, 3535),
+    ...websiteProjects.map((project) => ({ src: project.screenshot, alt: project.screenshotAlt, width: project.width, height: project.height })),
     ownedPhoto("/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", "Driver's view into the Alfa Romeo GTV Cup cabin", 4000, 5000),
     ownedPhoto("/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", "Close view of a red Honda NSX bonnet", 2828, 3535)
   ];
-  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Selected work", "Creative work with real foundations.", "A growing collection of website, identity, marketing and photography work. Every published item below is supported by material in the Justy Media project—no invented clients or results.")}
-    <section id="justy-media-platform" class="case-study"><div class="wide-width case-study-grid"><div class="case-study-media">${responsiveImage({ src: "/photography/automotive-photography/mazda-mx5-mk2/_DSC9930-Edit-Edit-2.jpg", alt: "Silver Mazda MX-5 used within the Justy Media website portfolio", width: 2828, height: 3535 })}</div><div class="case-study-copy"><p class="eyebrow">Website · custom tool · analytics</p><h2>Justy Media web platform</h2><p>A self-owned digital project combining a static creative-studio website, reusable gallery data, build-time HTML generation, responsive Cloudflare image delivery and a lightweight first-party analytics system.</p><ul class="tag-list"><li>Web design</li><li>Responsive development</li><li>Technical SEO</li><li>Analytics</li><li>Content architecture</li></ul><a class="text-link" href="/services/web-design/">Explore web design services</a></div></div></section>
-    <section id="justy-media-identity" class="case-study contrast"><div class="wide-width case-study-grid reverse"><div class="case-study-media logo-panel"><img src="${logo}" width="2639" height="1511" alt="Justy Media monochrome identity mark" loading="lazy"></div><div class="case-study-copy"><p class="eyebrow">Identity · digital application</p><h2>Justy Media identity</h2><p>The genuine identity used across the studio: an established monochrome mark paired here with a dark visual system, warm gold emphasis and an editorial approach to large photography.</p><ul class="tag-list"><li>Logo application</li><li>Colour system</li><li>Typography</li><li>Digital design</li></ul><a class="text-link" href="/services/graphic-design/">Explore graphic design services</a></div></div></section>
-    <section class="case-study"><div class="wide-width case-study-grid"><div class="case-study-media">${responsiveImage({ src: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", alt: "Driver's view into the Alfa Romeo GTV Cup cabin", width: 4000, height: 5000 })}</div><div class="case-study-copy"><p class="eyebrow">Editorial photography</p><h2>RUSH Magazine features</h2><p>Four complete automotive editorials covering the Alfa Romeo GTV Cup, Eunos Roadster Mk1, Subaru Impreza P1 and Suzuki Swift Sport. Each feature combines details, portraits and road imagery into a coherent visual sequence.</p><ul class="tag-list"><li>Editorial photography</li><li>Automotive</li><li>Location work</li><li>Image editing</li></ul><div class="button-row"><a class="text-link" href="/photography/rush-magazine/">View all RUSH Magazine features</a></div></div></div></section>
-    <section class="case-study contrast"><div class="wide-width case-study-grid reverse"><div class="case-study-media">${responsiveImage({ src: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", alt: "Close view of a red Honda NSX bonnet", width: 2828, height: 3535 })}</div><div class="case-study-copy"><p class="eyebrow">Photography &amp; content</p><h2>Automotive collections</h2><p>Six published vehicle collections ranging from moorland and woodland portraits to road, cabin and mechanical details.</p><ul class="tag-list"><li>Automotive photography</li><li>Location portraits</li><li>Detail imagery</li><li>Image delivery</li></ul><a class="text-link" href="/photography/automotive-photography/">Browse all collections</a></div></div></section>
-    <section class="section-block"><div class="content-width"><p class="eyebrow">Marketing work</p><h2>Published only when there is enough to show.</h2><p class="lede">SEO, analytics and campaign support are part of the service offer, and the Justy Media platform demonstrates the technical foundations. Separate client marketing cards will be added only when suitable public material exists.</p></div></section>${cta()}</main>`;
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Selected work", "Choose a discipline.", "Explore the portfolio through three focused collections. Each opens into the relevant projects, case studies and complete bodies of work.")}
+    <section class="work-category-grid-section"><div class="wide-width"><div class="work-category-grid">
+      <a class="work-category-card work-category-card-wide" href="/work/websites/">${responsiveImage({ src: websiteProjects[0].screenshot, alt: "Website design projects by Justy Media", width: websiteProjects[0].width, height: websiteProjects[0].height })}<div><p class="eyebrow">01 · Digital</p><h2>Websites</h2><p>Product platforms, comparison tools and commercial websites built around clear user journeys.</p><span class="text-link">Explore website work</span></div></a>
+      <a class="work-category-card" href="/work/photography/">${responsiveImage({ src: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", alt: "Red Honda NSX representing Justy Media photography work", width: 2828, height: 3535 })}<div><p class="eyebrow">02 · Image-making</p><h2>Photography</h2><p>Automotive collections and editorial stories shaped around detail, place and atmosphere.</p><span class="text-link">Explore photography work</span></div></a>
+      <a class="work-category-card" href="/work/graphic-design/">${responsiveImage({ src: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", alt: "Editorial image used as a temporary graphic design category cover", width: 4000, height: 5000 })}<div><p class="eyebrow">03 · Visual identity</p><h2>Graphic design</h2><p>Identity and digital design systems carried consistently across practical applications.</p><span class="text-link">Explore graphic design work</span></div></a>
+    </div></div></section>${cta()}</main>`;
   return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, structuredImages, schemas: [{ "@type": "CollectionPage", name: "Justy Media creative portfolio", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
+}
+
+function websiteWorkPage() {
+  const pagePath = "/work/websites/";
+  const title = "Website Design Portfolio & Case Studies | Justy Media";
+  const description = "Explore website design, development and digital product work by Justy Media, including 27tools, CompRadar and Vulcan Sports.";
+  const crumbs = [{ label: "Home", href: "/" }, { label: "Work", href: "/work/" }, { label: "Websites", href: pagePath }];
+  const projectSections = websiteProjects.map((project, index) => `<section class="case-study${index % 2 ? " contrast" : ""}"><div class="wide-width case-study-grid${index % 2 ? " reverse" : ""}"><a class="case-study-media website-preview" href="/work/${project.slug}/" aria-label="Read the ${escapeHtml(project.name)} case study">${responsiveImage({ src: project.screenshot, alt: project.screenshotAlt, width: project.width, height: project.height })}</a><div class="case-study-copy"><p class="eyebrow">${escapeHtml(project.eyebrow)}</p><h2>${escapeHtml(project.name)}</h2><p>${escapeHtml(project.summary)}</p><ul class="tag-list">${project.tags.slice(0, 4).map((tag) => `<li>${escapeHtml(tag)}</li>`).join("")}</ul><div class="button-row"><a class="button button-secondary" href="/work/${project.slug}/">View case study</a><a class="text-link" href="${project.liveUrl}" rel="noopener">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a></div></div></div></section>`).join("");
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Website portfolio", "Digital experiences with a clear job to do.", "Product platforms, comparison tools and commercial websites shaped around distinct audiences and practical user journeys.")}${projectSections}
+    <section id="justy-media-platform" class="case-study contrast"><div class="wide-width case-study-grid reverse"><div class="case-study-media">${responsiveImage({ src: "/photography/automotive-photography/mazda-mx5-mk2/_DSC9930-Edit-Edit-2.jpg", alt: "Silver Mazda MX-5 used within the Justy Media website portfolio", width: 2828, height: 3535 })}</div><div class="case-study-copy"><p class="eyebrow">Website · custom tool · analytics</p><h2>Justy Media web platform</h2><p>A self-owned digital project combining a static creative-studio website, reusable gallery data, build-time HTML generation, responsive Cloudflare image delivery and a lightweight first-party analytics system.</p><ul class="tag-list"><li>Web design</li><li>Responsive development</li><li>Technical SEO</li><li>Analytics</li><li>Content architecture</li></ul><a class="text-link" href="/services/web-design/">Explore web design services</a></div></div></section>${cta()}</main>`;
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, shareImage: websiteProjects[0].screenshot, shareAlt: websiteProjects[0].screenshotAlt, schemas: [{ "@type": "CollectionPage", name: "Justy Media website portfolio", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
+}
+
+function photographyWorkPage() {
+  const pagePath = "/work/photography/";
+  const title = "Photography Portfolio & Editorial Work | Justy Media";
+  const description = "Explore automotive collections and editorial photography created by Justy Media, including complete features for RUSH Magazine.";
+  const crumbs = [{ label: "Home", href: "/" }, { label: "Work", href: "/work/" }, { label: "Photography", href: pagePath }];
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Photography portfolio", "Automotive stories built from complete collections.", "Editorial features and vehicle studies that move beyond isolated hero images to show character, detail, place and atmosphere.")}
+    <section class="case-study"><div class="wide-width case-study-grid"><div class="case-study-media">${responsiveImage({ src: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", alt: "Driver's view into the Alfa Romeo GTV Cup cabin", width: 4000, height: 5000 })}</div><div class="case-study-copy"><p class="eyebrow">Editorial photography</p><h2>RUSH Magazine features</h2><p>Four complete automotive editorials covering the Alfa Romeo GTV Cup, Eunos Roadster Mk1, Subaru Impreza P1 and Suzuki Swift Sport. Each feature combines details, portraits and road imagery into a coherent visual sequence.</p><ul class="tag-list"><li>Editorial photography</li><li>Automotive</li><li>Location work</li><li>Image editing</li></ul><a class="text-link" href="/photography/rush-magazine/">View all RUSH Magazine features</a></div></div></section>
+    <section class="case-study contrast"><div class="wide-width case-study-grid reverse"><div class="case-study-media">${responsiveImage({ src: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", alt: "Close view of a red Honda NSX bonnet", width: 2828, height: 3535 })}</div><div class="case-study-copy"><p class="eyebrow">Photography &amp; content</p><h2>Automotive collections</h2><p>Six published vehicle collections ranging from moorland and woodland portraits to road, cabin and mechanical details.</p><ul class="tag-list"><li>Automotive photography</li><li>Location portraits</li><li>Detail imagery</li><li>Image delivery</li></ul><a class="text-link" href="/photography/automotive-photography/">Browse all collections</a></div></div></section>${cta()}</main>`;
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, shareImage: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", shareAlt: "Close view of a red Honda NSX bonnet", schemas: [{ "@type": "CollectionPage", name: "Justy Media photography work", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
+}
+
+function graphicDesignWorkPage() {
+  const pagePath = "/work/graphic-design/";
+  const title = "Graphic Design & Identity Portfolio | Justy Media";
+  const description = "Explore identity and digital graphic design work by Justy Media, including the studio's own visual system and applications.";
+  const crumbs = [{ label: "Home", href: "/" }, { label: "Work", href: "/work/" }, { label: "Graphic design", href: pagePath }];
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Graphic design portfolio", "Visual systems designed to hold together.", "Identity and digital design work carried consistently across colour, typography, imagery and practical applications.")}
+    <section id="justy-media-identity" class="case-study contrast"><div class="wide-width case-study-grid reverse"><div class="case-study-media logo-panel"><img src="${logo}" width="2639" height="1511" alt="Justy Media monochrome identity mark" loading="lazy"></div><div class="case-study-copy"><p class="eyebrow">Identity · digital application</p><h2>Justy Media identity</h2><p>The genuine identity used across the studio: an established monochrome mark paired here with a dark visual system, warm gold emphasis and an editorial approach to large photography.</p><ul class="tag-list"><li>Logo application</li><li>Colour system</li><li>Typography</li><li>Digital design</li></ul><a class="text-link" href="/services/graphic-design/">Explore graphic design services</a></div></div></section>${cta()}</main>`;
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, shareImage: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", shareAlt: "Editorial image used as the graphic design portfolio cover", schemas: [{ "@type": "CollectionPage", name: "Justy Media graphic design work", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
+}
+
+function websiteCaseStudyPage(project) {
+  const pagePath = `/work/${project.slug}/`;
+  const title = `${project.name} Website Case Study | Justy Media`;
+  const crumbs = [{ label: "Home", href: "/" }, { label: "Work", href: "/work/" }, { label: "Websites", href: "/work/websites/" }, { label: project.name, href: pagePath }];
+  const screenshot = { src: project.screenshot, alt: project.screenshotAlt, width: project.width, height: project.height };
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}<section class="project-hero"><div class="wide-width"><div class="project-hero-copy"><p class="eyebrow">${escapeHtml(project.eyebrow)}</p><h1>${escapeHtml(project.name)}</h1><p class="lede">${escapeHtml(project.title)}</p><div class="button-row"><a class="button button-primary" href="${project.liveUrl}" rel="noopener">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a><a class="text-link" href="/work/">All selected work</a></div></div><div class="project-hero-media website-preview">${responsiveImage(screenshot)}</div></div></section>
+    <section class="project-summary section-block contrast"><div class="wide-width"><p class="eyebrow">Project overview</p><p class="project-statement">${escapeHtml(project.summary)}</p><ul class="tag-list">${project.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join("")}</ul></div></section>
+    <section class="project-details section-block"><div class="wide-width project-detail-grid"><article><p class="eyebrow">The challenge</p><h2>Make the next step feel obvious.</h2><p>${escapeHtml(project.challenge)}</p></article><article><p class="eyebrow">The approach</p><h2>Build clarity into the experience.</h2><p>${escapeHtml(project.approach)}</p></article><article><p class="eyebrow">The outcome</p><h2>A coherent digital destination.</h2><p>${escapeHtml(project.outcome)}</p></article></div></section>
+    <section class="project-visit"><div class="content-width"><p class="eyebrow">See it live</p><h2>${escapeHtml(project.name)}</h2><p>Explore the live website to see the complete experience, content and responsive interface.</p><a class="button button-primary" href="${project.liveUrl}" rel="noopener">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a></div></section>${cta("Need a website with a clearer job to do?", "Share what you are building, who it needs to serve and where the current experience is falling short.")}</main>`;
+  return documentHtml({
+    path: pagePath,
+    title,
+    description: project.description,
+    breadcrumbs: crumbs,
+    body,
+    shareImage: project.screenshot,
+    shareAlt: project.screenshotAlt,
+    structuredImages: [screenshot],
+    schemas: [{ "@type": "CreativeWork", name: `${project.name} website`, url: absolute(pagePath), description: project.description, image: absolute(project.screenshot), creator: { "@id": `${origin}/#business` }, about: { "@type": "WebSite", name: project.name, url: project.liveUrl }, isPartOf: { "@id": `${origin}/#website` } }]
+  });
 }
 
 function portfolioPage(page) {
@@ -543,6 +654,10 @@ writeRoute("/", homePage());
 writeRoute("/services/", servicesHub());
 for (const service of servicePages) writeRoute(service.path, servicePage(service));
 writeRoute("/work/", workPage());
+writeRoute("/work/websites/", websiteWorkPage());
+writeRoute("/work/photography/", photographyWorkPage());
+writeRoute("/work/graphic-design/", graphicDesignWorkPage());
+for (const project of websiteProjects) writeRoute(`/work/${project.slug}/`, websiteCaseStudyPage(project));
 for (const page of Object.values(portfolioPages)) writeRoute(page.path, portfolioPage(page));
 writeRoute("/phone-wallpapers/", wallpapersPage());
 writeRoute("/resources/", resourcesPage());
@@ -558,7 +673,7 @@ writeRoute("/contact.html", legacyFallback("Contact page moved | Justy Media", "
 writeRoute("/services-pricing.html", legacyFallback("Services page moved | Justy Media", "/services/"));
 
 const sitemapUrls = [
-  "/", "/services/", ...servicePages.map((page) => page.path), "/work/",
+  "/", "/services/", ...servicePages.map((page) => page.path), "/work/", "/work/websites/", "/work/photography/", "/work/graphic-design/", ...websiteProjects.map((project) => `/work/${project.slug}/`),
   ...Object.values(portfolioPages).map((page) => page.path), "/phone-wallpapers/",
   "/resources/", "/resources/camera-tools/",
   "/about-us/", "/contact-us/", "/image-licensing/", "/privacy-policy.html", "/terms-and-conditions.html"
