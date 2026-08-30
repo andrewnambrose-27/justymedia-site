@@ -20,7 +20,7 @@
 .email-link { text-decoration: none; color: #e1ddd5; }
 
 .main-nav { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; min-height: 85px; pointer-events: none; }
-.brand { position: absolute; left: 50%; top: 15px; z-index: 2; isolation: isolate; width: 150px; line-height: 0; transform: translateX(-50%); pointer-events: auto; filter: drop-shadow(0 7px 12px rgba(0,0,0,.55)); }
+.brand { position: absolute; left: 50%; top: 15px; z-index: 2; isolation: isolate; width: 150px; line-height: 0; transform: translateX(-50%); pointer-events: auto; }
 .brand::before {
   position: absolute;
   top: 50%;
@@ -30,7 +30,7 @@
   aspect-ratio: 1;
   border-radius: 50%;
   background: #181818;
-  box-shadow: 0 12px 22px rgba(0,0,0,.5);
+  clip-path: inset(9px 0 0);
   transform: translate(-50%, -50%);
   content: "";
   pointer-events: none;
