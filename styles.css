@@ -302,6 +302,9 @@ a.website-preview:hover img { transform: scale(1.012); }
 .work-overview-page .work-category-card:hover img,
 .work-overview-page .work-category-card:focus-visible img { transform: scale(1.025); filter: saturate(1.08) brightness(1.04); }
 .work-overview-page .work-category-card:focus-visible { outline: 3px solid var(--gold); outline-offset: 4px; }
+.work-overview-page .breadcrumbs,
+.work-discipline-page .breadcrumbs,
+.work-project-page .breadcrumbs { display: none; }
 .discipline-nav { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); background: #111; }
 .discipline-nav > div { display: flex; align-items: stretch; justify-content: center; }
 .discipline-nav a { display: grid; min-height: 58px; min-width: 170px; place-items: center; padding: 12px 22px; border-right: 1px solid var(--line); color: var(--muted); font-size: .74rem; font-weight: 900; letter-spacing: .11em; text-align: center; text-decoration: none; text-transform: uppercase; transition: color 180ms ease, background 180ms ease; }
