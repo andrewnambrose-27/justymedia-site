@@ -73,8 +73,24 @@
     }
   }
 
-  if (!customElements.get("site-header")) customElements.define("site-header", JustyHeader);
-  if (!customElements.get("site-footer")) customElements.define("site-footer", JustyFooter);
+  function defineSharedElements() {
+    if (!customElements.get("site-header")) customElements.define("site-header", JustyHeader);
+    if (!customElements.get("site-footer")) customElements.define("site-footer", JustyFooter);
+  }
+
+  function ensureComponentStyles() {
+    const existing = document.querySelector('link[href*="/site-components.css"]');
+    if (existing) return Promise.resolve();
+
+    return new Promise((resolve) => {
+      const stylesheet = document.createElement("link");
+      stylesheet.rel = "stylesheet";
+      stylesheet.href = "/site-components.css?v=20260904-1";
+      stylesheet.addEventListener("load", resolve, { once: true });
+      stylesheet.addEventListener("error", resolve, { once: true });
+      document.head.append(stylesheet);
+    });
+  }
 
   function hideVisibleBreadcrumbs() {
     document.querySelectorAll("nav.breadcrumbs").forEach((breadcrumb) => {
@@ -144,13 +160,15 @@
     document.head.append(analytics);
   }
 
-  function mount() {
+  async function mount() {
     hideVisibleBreadcrumbs();
+    await ensureComponentStyles();
+    defineSharedElements();
     replaceLegacyLayout();
     initialiseNavigation();
     loadAnalytics();
   }
 
-  window.JustySiteComponents = { hideVisibleBreadcrumbs, replaceLegacyLayout, initialiseNavigation, mount };
+  window.JustySiteComponents = { hideVisibleBreadcrumbs, ensureComponentStyles, replaceLegacyLayout, initialiseNavigation, mount };
   mount();
 })();
