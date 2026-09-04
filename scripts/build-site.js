@@ -5,10 +5,9 @@ const { SITE_ORIGIN, normaliseImage, imageObjects } = require("../image-metadata
 
 const root = path.resolve(__dirname, "..");
 const origin = SITE_ORIGIN;
-const email = "andrew.n.ambrose@gmail.com";
 const logo = "/logo%20final%20AI%20transparrent.png";
 const defaultShareImage = "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg";
-const modified = "2026-08-30";
+const modified = "2026-09-04";
 const cameraTools = [
   {
     group: "metadata", slug: "sony-shutter-count", name: "Sony Shutter Count Checker", label: "Sony · JPG and ARW",
@@ -145,14 +144,10 @@ function organisationSchema() {
     url: `${origin}/`,
     logo: `${origin}${logo}`,
     image: absolute(defaultShareImage),
-    email,
     founder: { "@type": "Person", name: "Andrew Ambrose" },
     foundingDate: "2020",
     description: "An independent creative studio based in the Peak District, combining website development, graphic design, photography and digital marketing.",
-    areaServed: [
-      { "@type": "AdministrativeArea", name: "Peak District" },
-      { "@type": "Country", name: "United Kingdom" }
-    ],
+    areaServed: "Worldwide",
     sameAs: ["https://www.instagram.com/justymedia/", "https://www.facebook.com/justymedia/"]
   };
 }
@@ -208,7 +203,7 @@ function header(pagePath) {
   ];
   return `<a class="skip-link" href="#main-content">Skip to main content</a>
     <header class="site-header">
-      <div class="top-strip"><div class="social-links"><a href="https://www.instagram.com/justymedia/" aria-label="Justy Media on Instagram" target="_blank" rel="me noopener noreferrer">${socialIcon("instagram")}</a><a href="https://www.facebook.com/justymedia/" aria-label="Justy Media on Facebook" target="_blank" rel="me noopener noreferrer">${socialIcon("facebook")}</a></div><a class="email-link" href="mailto:${email}">${email}</a></div>
+      <div class="top-strip"><div class="social-links"><a href="https://www.instagram.com/justymedia/" aria-label="Justy Media on Instagram" target="_blank" rel="me noopener noreferrer">${socialIcon("instagram")}</a><a href="https://www.facebook.com/justymedia/" aria-label="Justy Media on Facebook" target="_blank" rel="me noopener noreferrer">${socialIcon("facebook")}</a></div></div>
       <nav class="main-nav" aria-label="Primary navigation">
         <a class="brand" href="/" aria-label="Justy Media home"><img src="${logo}" width="2639" height="1511" alt="Justy Media"></a>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu"><span></span><span></span><span></span><span class="sr-only">Open navigation</span></button>
@@ -270,15 +265,15 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="icon" href="/favicons/favicon-96x96.png?v=20260818-2" type="image/png" sizes="96x96">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
-${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260830-5">
-    <link rel="stylesheet" href="/site-components.css?v=20260830-1">
+${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260904-1">
+    <link rel="stylesheet" href="/site-components.css?v=20260904-1">
     ${jsonLd(schemas)}
   </head>
   <body class="${page.bodyClass || ""}">
     ${header(page.path)}
     ${page.body}
     ${footer()}
-    <script src="/script.js"></script>${galleryScript}
+    <script src="/script.js?v=20260904-1"></script>${galleryScript}
   </body>
 </html>
 `;
@@ -482,6 +477,7 @@ function websiteCaseStudyPage(project) {
     description: project.description,
     breadcrumbs: crumbs,
     body,
+    bodyClass: "work-project-page",
     shareImage: project.screenshot,
     shareAlt: project.screenshotAlt,
     structuredImages: [screenshot],
@@ -539,18 +535,20 @@ function aboutPage() {
 function contactPage() {
   const pagePath = "/contact-us/";
   const title = "Contact Justy Media | Start Your Project";
-  const description = "Contact Justy Media to discuss a website, design, photography or digital marketing project in the Peak District or elsewhere in the UK.";
+  const description = "Contact Justy Media to discuss a website, design, photography or digital marketing project, wherever you are in the world.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "Contact", href: pagePath }];
   const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Start a conversation", "Tell me what you’re working on.", "Enquire about a website, graphic design, photography, SEO, digital marketing or ongoing creative support. You do not need a finished brief.")}
-    <section class="section-block"><div class="wide-width contact-layout"><div class="contact-details"><p class="eyebrow">Direct contact</p><h2>Based in the Peak District, working across the UK.</h2><p>Email is the most reliable way to begin. Share the context, where the project is now and what a good outcome would look like.</p><p><strong>Email</strong><br><a href="mailto:${email}">${email}</a></p><p><strong>Social</strong><br><a href="https://www.instagram.com/justymedia/" target="_blank" rel="noopener noreferrer">Instagram</a> · <a href="https://www.facebook.com/justymedia/" target="_blank" rel="noopener noreferrer">Facebook</a></p><p class="note">Submitting the form opens your email application with the enquiry details prepared. No form data is stored by this website.</p></div>
-      <form class="enquiry-form" action="mailto:${email}" method="get" data-email-form>
+    <section class="section-block"><div class="wide-width contact-layout"><div class="contact-details"><p class="eyebrow">Start a project</p><h2>Based in the Peak District, working worldwide.</h2><p>Use the form to share the context, where the project is now and what a good outcome would look like. I welcome enquiries from anywhere in the world.</p><p><strong>Social</strong><br><a href="https://www.instagram.com/justymedia/" target="_blank" rel="noopener noreferrer">Instagram</a> · <a href="https://www.facebook.com/justymedia/" target="_blank" rel="noopener noreferrer">Facebook</a></p><p class="note">Your enquiry is sent privately through this website. Your email address is used only to reply to you.</p></div>
+      <form class="enquiry-form" action="https://analytics.justymedia.co.uk/contact" method="post" data-contact-form>
         <div class="form-row"><label for="name">Name <span aria-hidden="true">*</span></label><input id="name" name="name" type="text" autocomplete="name" required></div>
         <div class="form-row"><label for="email">Email <span aria-hidden="true">*</span></label><input id="email" name="email" type="email" autocomplete="email" required></div>
         <div class="form-row"><label for="business">Business or organisation <span>(optional)</span></label><input id="business" name="business" type="text" autocomplete="organization"></div>
         <div class="form-row"><label for="project-type">Project type <span>(optional)</span></label><select id="project-type" name="project-type"><option value="">Please choose</option><option>Website project</option><option>Graphic design</option><option>Photography</option><option>SEO and digital marketing</option><option>Ongoing creative support</option><option>General enquiry</option></select></div>
         <div class="form-row"><label for="budget">Budget range <span>(optional)</span></label><select id="budget" name="budget"><option value="">Not set or prefer not to say</option><option>Under £1,000</option><option>£1,000–£2,500</option><option>£2,500–£5,000</option><option>£5,000+</option></select></div>
         <div class="form-row full"><label for="message">Tell me about the project <span aria-hidden="true">*</span></label><textarea id="message" name="message" rows="7" required placeholder="What are you trying to create or improve? Include any useful timings or links."></textarea></div>
-        <div class="form-row full"><button class="button button-primary" type="submit">Prepare email enquiry</button><p class="form-help">Your email application will open so you can review and send the message. Read the <a href="/privacy-policy.html">privacy policy</a>.</p></div>
+        <div class="form-trap" aria-hidden="true"><label for="company-website">Leave this field empty</label><input id="company-website" name="company-website" type="text" tabindex="-1" autocomplete="off"></div>
+        <input type="hidden" name="started-at" value="" data-form-started-at>
+        <div class="form-row full"><button class="button button-primary" type="submit">Send enquiry</button><p class="form-help">Your details are sent securely so I can respond. Read the <a href="/privacy-policy.html">privacy policy</a>.</p><p class="form-status" role="status" aria-live="polite" data-form-status></p></div>
       </form></div></section></main>`;
   return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "ContactPage", name: title, url: absolute(pagePath), description, mainEntity: { "@id": `${origin}/#business` }, isPartOf: { "@id": `${origin}/#website` } }] });
 }
@@ -620,15 +618,15 @@ function legalHtml(source) {
     if (!line) { if (inList) { output += "</ul>"; inList = false; } continue; }
     if (line.startsWith("# ")) output += `<h2>${escapeHtml(line.slice(2))}</h2>`;
     else if (line.startsWith("## ")) output += `<h3>${escapeHtml(line.slice(3))}</h3>`;
-    else if (line.startsWith("- ")) { if (!inList) { output += "<ul>"; inList = true; } output += `<li>${linkEmail(escapeHtml(line.slice(2)))}</li>`; }
-    else output += `<p>${linkEmail(escapeHtml(line))}</p>`;
+    else if (line.startsWith("- ")) { if (!inList) { output += "<ul>"; inList = true; } output += `<li>${linkContactPage(escapeHtml(line.slice(2)))}</li>`; }
+    else output += `<p>${linkContactPage(escapeHtml(line))}</p>`;
   }
   if (inList) output += "</ul>";
   return output;
 }
 
-function linkEmail(value) {
-  return value.replace(email, `<a href="mailto:${email}">${email}</a>`);
+function linkContactPage(value) {
+  return value.replace("https://justymedia.co.uk/contact-us/", '<a href="/contact-us/">the contact form</a>');
 }
 
 function legalPage(pagePath, title, description, heading, source) {

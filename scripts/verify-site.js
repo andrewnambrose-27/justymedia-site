@@ -133,8 +133,8 @@ for (const url of urls) {
   if (count(html, /<main(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one main`);
   if (!/<header class="site-header">/.test(html) || !/<footer class="site-footer">/.test(html)) fail(`${route} lacks an initial header or footer`);
   if (!/class="nav-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="nav-menu"/.test(html)) fail(`${route} lacks an accessible mobile navigation control`);
-  if (!html.includes('href="/styles.css?v=20260830-5"')) fail(`${route} is missing the page stylesheet`);
-  if (!html.includes('href="/site-components.css?v=20260830-1"')) fail(`${route} is missing the shared component stylesheet`);
+  if (!html.includes('href="/styles.css?v=20260904-1"')) fail(`${route} is missing the page stylesheet`);
+  if (!html.includes('href="/site-components.css?v=20260904-1"')) fail(`${route} is missing the shared component stylesheet`);
   for (const faviconHref of ["/favicon.ico?v=20260818-2", "/favicons/favicon.svg?v=20260818-2", "/favicons/favicon-96x96.png?v=20260818-2", "/favicons/apple-touch-icon.png?v=20260818-2", "/favicons/site.webmanifest?v=20260818-2"]) {
     if (!html.includes(`href="${faviconHref}"`)) fail(`${route} is missing favicon link ${faviconHref}`);
     if (!fs.existsSync(localAsset(faviconHref))) fail(`${route} references missing favicon asset ${faviconHref}`);
@@ -257,8 +257,27 @@ if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`)) fail("robots.txt has the
 if (robots.includes("www.justymedia.co.uk")) fail("robots.txt contains www hostname");
 
 const contact = fs.readFileSync(routeFile("/contact-us/"), "utf8");
-if (!/action="mailto:andrew\.n\.ambrose@gmail\.com"/.test(contact)) fail("Contact form no longer uses the established email route");
+if (!/action="https:\/\/analytics\.justymedia\.co\.uk\/contact"/.test(contact) || !/method="post"/.test(contact)) fail("Contact form is not connected to the private submission endpoint");
+if (!/data-contact-form/.test(contact) || !/data-form-status/.test(contact)) fail("Contact form lacks its submission and status hooks");
+if (/mailto:/i.test(contact)) fail("Contact page still exposes a mailto link");
+if (!/working worldwide/i.test(contact)) fail("Contact page does not describe worldwide availability");
 if (!/id="project-type"/.test(contact) || !/id="budget"/.test(contact)) fail("Contact form lacks project type or optional budget fields");
+
+function findFiles(directory, files = []) {
+  for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+    if (entry.name === ".git" || entry.name === "node_modules") continue;
+    const fullPath = path.join(directory, entry.name);
+    if (entry.isDirectory()) findFiles(fullPath, files);
+    else if (/\.(?:html|txt|xml|js|css|md)$/i.test(entry.name)) files.push(fullPath);
+  }
+  return files;
+}
+
+for (const file of findFiles(root)) {
+  if (/[a-z0-9._%+-]+@gmail\.com/i.test(fs.readFileSync(file, "utf8"))) {
+    fail(`A private Gmail address remains exposed in ${path.relative(root, file)}`);
+  }
+}
 
 const licensing = fs.readFileSync(routeFile("/image-licensing/"), "utf8");
 if (!licensing.includes('href="/contact-us/"')) fail("Image licensing page does not link to Contact");
