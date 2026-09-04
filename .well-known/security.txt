@@ -1,4 +1,4 @@
-Contact: mailto:andrew.n.ambrose@gmail.com
+Contact: https://justymedia.co.uk/contact-us/
 Expires: 2027-08-07T23:59:59Z
 Preferred-Languages: en
 Canonical: https://justymedia.co.uk/.well-known/security.txt
