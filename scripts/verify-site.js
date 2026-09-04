@@ -132,7 +132,7 @@ for (const url of urls) {
   if (count(html, /<h1(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one H1`);
   if (count(html, /<main(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one main`);
   if (!html.includes(`<site-header data-page-path="${route}"></site-header>`) || !html.includes("<site-footer></site-footer>")) fail(`${route} lacks shared header or footer component placeholders`);
-  if (!html.includes('href="/styles.css?v=20260904-1"')) fail(`${route} is missing the page stylesheet`);
+  if (!html.includes('href="/styles.css?v=20260904-2"')) fail(`${route} is missing the page stylesheet`);
   if (!html.includes('href="/site-components.css?v=20260904-1"')) fail(`${route} is missing the shared component stylesheet`);
   if (!html.includes('src="/site-components.js?v=20260904-3"')) fail(`${route} is missing the shared component script`);
   for (const faviconHref of ["/favicon.ico?v=20260818-2", "/favicons/favicon.svg?v=20260818-2", "/favicons/favicon-96x96.png?v=20260818-2", "/favicons/apple-touch-icon.png?v=20260818-2", "/favicons/site.webmanifest?v=20260818-2"]) {
@@ -186,20 +186,10 @@ for (const url of urls) {
     if (image.contentUrl) allImageMetadataUrls.add(image.contentUrl);
   }
   imageMetadataInstances += imageSchemas.length;
+  if (/<nav class="breadcrumbs"/.test(html)) fail(`${route} contains a visible breadcrumb trail`);
   if (route !== "/") {
-    const breadcrumb = html.match(/<nav class="breadcrumbs" aria-label="Breadcrumb"><ol>(.*?)<\/ol><\/nav>/s);
     const graph = schemaGraphs.flatMap((item) => item["@graph"] || []).find((item) => item["@type"] === "BreadcrumbList");
     if (!graph) fail(`${route} has no BreadcrumbList schema`);
-    else if (graph.itemListElement.length >= 3) {
-      if (!breadcrumb) fail(`${route} has no visible breadcrumb`);
-      else {
-      const visibleNames = [...breadcrumb[1].matchAll(/<li>(.*?)<\/li>/gs)].map((match) => stripHtml(match[1]));
-      const schemaNames = graph.itemListElement.map((item) => item.name);
-      if (JSON.stringify(visibleNames) !== JSON.stringify(schemaNames)) fail(`${route} breadcrumb text and schema differ`);
-      }
-    } else if (breadcrumb) {
-      fail(`${route} displays a redundant top-level breadcrumb`);
-    }
   }
 
   for (const match of html.matchAll(/<img\b([^>]*)>/g)) {

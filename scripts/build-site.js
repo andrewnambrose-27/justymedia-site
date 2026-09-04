@@ -164,14 +164,8 @@ function breadcrumbSchema(items) {
   };
 }
 
-function breadcrumbs(items) {
-  if (!items || items.length < 3) return "";
-  return `<nav class="breadcrumbs" aria-label="Breadcrumb"><ol>${items.map((item, index) => {
-    const current = index === items.length - 1;
-    return current
-      ? `<li><span aria-current="page">${escapeHtml(item.label)}</span></li>`
-      : `<li><a href="${item.href}">${escapeHtml(item.label)}</a></li>`;
-  }).join("")}</ol></nav>`;
+function breadcrumbs() {
+  return "";
 }
 
 function header(pagePath) {
@@ -225,7 +219,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="icon" href="/favicons/favicon-96x96.png?v=20260818-2" type="image/png" sizes="96x96">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
-${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260904-1">
+${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260904-2">
     <link rel="stylesheet" href="/site-components.css?v=20260904-1">
     <script src="/site-components.js?v=20260904-3" defer></script>
     ${jsonLd(schemas)}
