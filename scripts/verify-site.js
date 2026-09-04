@@ -131,10 +131,10 @@ for (const url of urls) {
   if (count(html, /<link rel="canonical"/g) !== 1) fail(`${route} does not have exactly one canonical`);
   if (count(html, /<h1(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one H1`);
   if (count(html, /<main(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one main`);
-  if (!/<header class="site-header">/.test(html) || !/<footer class="site-footer">/.test(html)) fail(`${route} lacks an initial header or footer`);
-  if (!/class="nav-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="nav-menu"/.test(html)) fail(`${route} lacks an accessible mobile navigation control`);
+  if (!html.includes(`<site-header data-page-path="${route}"></site-header>`) || !html.includes("<site-footer></site-footer>")) fail(`${route} lacks shared header or footer component placeholders`);
   if (!html.includes('href="/styles.css?v=20260904-1"')) fail(`${route} is missing the page stylesheet`);
   if (!html.includes('href="/site-components.css?v=20260904-1"')) fail(`${route} is missing the shared component stylesheet`);
+  if (!html.includes('src="/site-components.js?v=20260904-2"')) fail(`${route} is missing the shared component script`);
   for (const faviconHref of ["/favicon.ico?v=20260818-2", "/favicons/favicon.svg?v=20260818-2", "/favicons/favicon-96x96.png?v=20260818-2", "/favicons/apple-touch-icon.png?v=20260818-2", "/favicons/site.webmanifest?v=20260818-2"]) {
     if (!html.includes(`href="${faviconHref}"`)) fail(`${route} is missing favicon link ${faviconHref}`);
     if (!fs.existsSync(localAsset(faviconHref))) fail(`${route} references missing favicon asset ${faviconHref}`);
@@ -250,6 +250,15 @@ for (const url of urls) {
     if (!alts.length) fail(`${route} gallery has no initial figures`);
     if (new Set(alts).size !== alts.length) fail(`${route} gallery contains duplicate image descriptions`);
   }
+}
+
+const components = fs.readFileSync(path.join(root, "site-components.js"), "utf8");
+if (!/<header class="site-header">/.test(components) || !/<footer class="site-footer">/.test(components)) fail("Shared component file does not own the complete header and footer markup");
+if (!/class="nav-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="nav-menu"/.test(components)) fail("Shared header lacks an accessible mobile navigation control");
+if (!/replaceLegacyLayout/.test(components)) fail("Shared components cannot replace legacy copied headers and footers");
+for (const sharedRoute of ["/services/", "/work/", "/photography/", "/resources/", "/about-us/", "/contact-us/", "/privacy-policy.html", "/terms-and-conditions.html"]) {
+  if (!components.includes(`href="${sharedRoute}"`)) fail(`Shared components do not link to ${sharedRoute}`);
+  if (!fs.existsSync(routeFile(sharedRoute))) fail(`Shared components link to missing page ${sharedRoute}`);
 }
 
 const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
