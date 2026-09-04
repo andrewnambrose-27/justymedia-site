@@ -355,7 +355,12 @@ a.website-preview:hover img { transform: scale(1.012); }
 .form-row input, .form-row select { min-height: 50px; }
 .form-row textarea { resize: vertical; }
 .form-row .button { align-self: start; }
+.form-row .button:disabled { cursor: wait; opacity: .7; }
 .form-help { margin: 12px 0 0; }
+.form-trap { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.form-status { min-height: 1.4em; margin: 4px 0 0; color: var(--muted); font-size: .9rem; }
+.form-status.is-success { color: #9bd7a5; }
+.form-status.is-error { color: #ff9e93; }
 
 .legal-content { color: #dedad2; }
 .legal-content h2, .legal-content h3 { margin: 42px 0 14px; color: #fff; font-family: Arial, sans-serif; line-height: 1.25; }

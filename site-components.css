@@ -17,8 +17,6 @@
 .social-links a, .footer-socials a { display: grid; width: 32px; height: 32px; place-items: center; border: 1px solid var(--line); border-radius: 50%; text-decoration: none; font-size: .67rem; font-weight: 900; }
 .social-links svg, .footer-socials svg { width: 16px; height: 16px; }
 .social-links a:hover, .footer-socials a:hover { color: #111; border-color: var(--gold); background: var(--gold); }
-.email-link { text-decoration: none; color: #e1ddd5; }
-
 .main-nav { position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-end; min-height: 85px; pointer-events: none; }
 .brand { position: absolute; left: 50%; top: 15px; z-index: 2; isolation: isolate; width: 150px; line-height: 0; transform: translateX(-50%); pointer-events: auto; }
 .brand::before {
@@ -55,7 +53,6 @@
 
 @media (max-width: 1320px) {
   .top-strip { justify-content: flex-start; }
-  .email-link { display: none; }
   .brand { left: 24px; transform: none; }
   .nav-menu li:first-child { margin-left: 0; }
 }

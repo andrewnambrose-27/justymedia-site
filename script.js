@@ -4,26 +4,61 @@
   componentScript.defer = true;
   document.head.append(componentScript);
 
-  const form = document.querySelector("[data-email-form]");
+  const form = document.querySelector("[data-contact-form]");
   if (!form) return;
 
-  form.addEventListener("submit", (event) => {
+  const button = form.querySelector('button[type="submit"]');
+  const status = form.querySelector("[data-form-status]");
+  const startedAt = form.querySelector("[data-form-started-at]");
+  if (startedAt) startedAt.value = String(Date.now());
+
+  form.addEventListener("submit", async (event) => {
     event.preventDefault();
     if (!form.reportValidity()) return;
 
     const data = new FormData(form);
-    const project = data.get("project-type") || "Creative project";
-    const subject = `${project} enquiry from ${data.get("name")}`;
-    const lines = [
-      `Name: ${data.get("name")}`,
-      `Email: ${data.get("email")}`,
-      `Business or organisation: ${data.get("business") || "Not provided"}`,
-      `Project type: ${project}`,
-      `Budget range: ${data.get("budget") || "Not provided"}`,
-      "",
-      String(data.get("message"))
-    ];
+    const payload = Object.fromEntries(data.entries());
+    const originalLabel = button ? button.textContent : "Send enquiry";
 
-    window.location.href = `mailto:andrew.n.ambrose@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(lines.join("\n"))}`;
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Sending…";
+    }
+    if (status) {
+      status.className = "form-status";
+      status.textContent = "Sending your enquiry…";
+    }
+
+    try {
+      const response = await fetch(form.action, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+      const result = await response.json().catch(() => ({}));
+
+      if (!response.ok || !result.ok) {
+        throw new Error(result.error || "Your enquiry could not be sent.");
+      }
+
+      form.reset();
+      if (startedAt) startedAt.value = String(Date.now());
+      if (status) {
+        status.className = "form-status is-success";
+        status.textContent = "Thanks — your enquiry has been sent. I’ll get back to you as soon as I can.";
+      }
+    } catch (error) {
+      if (status) {
+        status.className = "form-status is-error";
+        status.textContent = error instanceof Error
+          ? error.message
+          : "Your enquiry could not be sent. Please try again in a moment.";
+      }
+    } finally {
+      if (button) {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
+    }
   });
 })();
