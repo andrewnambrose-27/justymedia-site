@@ -1,5 +1,7 @@
 /* Shared site header, navigation, social links and footer. */
 
+site-header, site-footer { display: block; }
+
 .site-header {
   position: sticky;
   top: 0;

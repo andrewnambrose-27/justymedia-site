@@ -1,8 +1,10 @@
 (function () {
-  const componentScript = document.createElement("script");
-  componentScript.src = "/site-components.js";
-  componentScript.defer = true;
-  document.head.append(componentScript);
+  if (!document.querySelector('script[src^="/site-components.js"]')) {
+    const componentScript = document.createElement("script");
+    componentScript.src = "/site-components.js?v=20260904-2";
+    componentScript.defer = true;
+    document.head.append(componentScript);
+  }
 
   const form = document.querySelector("[data-contact-form]");
   if (!form) return;
@@ -50,7 +52,9 @@
     } catch (error) {
       if (status) {
         status.className = "form-status is-error";
-        status.textContent = error instanceof Error
+        status.textContent = error instanceof TypeError
+          ? "The form service could not be reached. Please try again in a moment."
+          : error instanceof Error
           ? error.message
           : "Your enquiry could not be sent. Please try again in a moment.";
       }
