@@ -134,7 +134,7 @@ for (const url of urls) {
   if (!html.includes(`<site-header data-page-path="${route}"></site-header>`) || !html.includes("<site-footer></site-footer>")) fail(`${route} lacks shared header or footer component placeholders`);
   if (!html.includes('href="/styles.css?v=20260904-1"')) fail(`${route} is missing the page stylesheet`);
   if (!html.includes('href="/site-components.css?v=20260904-1"')) fail(`${route} is missing the shared component stylesheet`);
-  if (!html.includes('src="/site-components.js?v=20260904-2"')) fail(`${route} is missing the shared component script`);
+  if (!html.includes('src="/site-components.js?v=20260904-3"')) fail(`${route} is missing the shared component script`);
   for (const faviconHref of ["/favicon.ico?v=20260818-2", "/favicons/favicon.svg?v=20260818-2", "/favicons/favicon-96x96.png?v=20260818-2", "/favicons/apple-touch-icon.png?v=20260818-2", "/favicons/site.webmanifest?v=20260818-2"]) {
     if (!html.includes(`href="${faviconHref}"`)) fail(`${route} is missing favicon link ${faviconHref}`);
     if (!fs.existsSync(localAsset(faviconHref))) fail(`${route} references missing favicon asset ${faviconHref}`);

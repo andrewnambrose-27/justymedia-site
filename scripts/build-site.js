@@ -227,7 +227,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
 ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260904-1">
     <link rel="stylesheet" href="/site-components.css?v=20260904-1">
-    <script src="/site-components.js?v=20260904-2" defer></script>
+    <script src="/site-components.js?v=20260904-3" defer></script>
     ${jsonLd(schemas)}
   </head>
   <body class="${page.bodyClass || ""}">
