@@ -85,7 +85,7 @@
     return new Promise((resolve) => {
       const stylesheet = document.createElement("link");
       stylesheet.rel = "stylesheet";
-      stylesheet.href = "/site-components.css?v=20260904-1";
+      stylesheet.href = "/site-components.css?v=20260904-2";
       stylesheet.addEventListener("load", resolve, { once: true });
       stylesheet.addEventListener("error", resolve, { once: true });
       document.head.append(stylesheet);

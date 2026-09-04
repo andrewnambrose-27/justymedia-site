@@ -1,7 +1,7 @@
 (function () {
   if (!document.querySelector('script[src^="/site-components.js"]')) {
     const componentScript = document.createElement("script");
-    componentScript.src = "/site-components.js?v=20260904-3";
+    componentScript.src = "/site-components.js?v=20260904-4";
     componentScript.defer = true;
     document.head.append(componentScript);
   }

@@ -4,17 +4,24 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   X-Frame-Options: SAMEORIGIN
 
-/*.css
-  Cache-Control: public, max-age=3600, must-revalidate
+# Revalidate the shared layout files so header and footer updates only need one upload.
+/site-components.js
+  Cache-Control: public, max-age=0, must-revalidate
 
-/*.js
-  Cache-Control: public, max-age=3600, must-revalidate
+/site-components.css
+  Cache-Control: public, max-age=0, must-revalidate
+
+/script.js
+  Cache-Control: public, max-age=0, must-revalidate
+
+/styles.css
+  Cache-Control: public, max-age=0, must-revalidate
 
 /photography/*
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Cache-Control: public, max-age=0, must-revalidate
 
 /phone-wallpapers/*
-  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Cache-Control: public, max-age=0, must-revalidate
 
 /logo*
   Cache-Control: public, max-age=86400, stale-while-revalidate=604800
