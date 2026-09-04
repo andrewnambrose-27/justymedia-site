@@ -76,6 +76,13 @@
   if (!customElements.get("site-header")) customElements.define("site-header", JustyHeader);
   if (!customElements.get("site-footer")) customElements.define("site-footer", JustyFooter);
 
+  function hideVisibleBreadcrumbs() {
+    document.querySelectorAll("nav.breadcrumbs").forEach((breadcrumb) => {
+      breadcrumb.hidden = true;
+      breadcrumb.setAttribute("aria-hidden", "true");
+    });
+  }
+
   function replaceLegacyLayout() {
     if (!document.querySelector("site-header")) {
       const legacyHeader = document.querySelector("header.site-header");
@@ -138,11 +145,12 @@
   }
 
   function mount() {
+    hideVisibleBreadcrumbs();
     replaceLegacyLayout();
     initialiseNavigation();
     loadAnalytics();
   }
 
-  window.JustySiteComponents = { replaceLegacyLayout, initialiseNavigation, mount };
+  window.JustySiteComponents = { hideVisibleBreadcrumbs, replaceLegacyLayout, initialiseNavigation, mount };
   mount();
 })();
