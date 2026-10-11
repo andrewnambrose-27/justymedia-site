@@ -151,6 +151,117 @@ function isBotUserAgent(userAgent = "") {
   return BOT_PATTERNS.some(pattern => lower.includes(pattern));
 }
 
+function contactJsonResponse(request, data, status = 200) {
+  const origin = request.headers.get("Origin");
+  const headers = {
+    "Content-Type": "application/json; charset=utf-8",
+    "Cache-Control": "no-store",
+    "Vary": "Origin"
+  };
+
+  if (origin && ALLOWED_ORIGINS.has(origin)) {
+    headers["Access-Control-Allow-Origin"] = origin;
+  }
+
+  return new Response(JSON.stringify(data), { status, headers });
+}
+
+function cleanContactValue(value, maxLength) {
+  return String(value || "").trim().slice(0, maxLength);
+}
+
+function isValidContactEmail(value) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) && value.length <= 254;
+}
+
+function escapeEmailHtml(value) {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+async function contactIpHash(request, env) {
+  const encoder = new TextEncoder();
+  const value = `${String(env.CONTACT_HASH_SALT || "justy-media-contact")}:${getClientIp(request)}`;
+  const digest = await crypto.subtle.digest("SHA-256", encoder.encode(value));
+  return [...new Uint8Array(digest)].map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+async function ensureContactStorage(env) {
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS contact_submissions (
+      id TEXT PRIMARY KEY,
+      created_at TEXT NOT NULL,
+      name TEXT NOT NULL,
+      email TEXT NOT NULL,
+      business TEXT NOT NULL DEFAULT '',
+      project_type TEXT NOT NULL DEFAULT '',
+      budget TEXT NOT NULL DEFAULT '',
+      message TEXT NOT NULL,
+      country TEXT NOT NULL DEFAULT 'unknown',
+      ip_hash TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'new',
+      email_sent INTEGER NOT NULL DEFAULT 0
+    )
+  `).run();
+  await env.DB.prepare(`
+    CREATE INDEX IF NOT EXISTS contact_submissions_created_at
+    ON contact_submissions (created_at DESC)
+  `).run();
+  await env.DB.prepare(`
+    CREATE INDEX IF NOT EXISTS contact_submissions_ip_hash
+    ON contact_submissions (ip_hash, created_at DESC)
+  `).run();
+}
+
+function contactEmailConfigured(env) {
+  return typeof env.EMAIL?.send === "function"
+    && isValidContactEmail(String(env.CONTACT_RECIPIENT || ""))
+    && isValidContactEmail(String(env.CONTACT_SENDER || ""));
+}
+
+async function sendContactNotification(env, submission) {
+  if (!contactEmailConfigured(env)) {
+    throw new Error("Contact email requires EMAIL, CONTACT_RECIPIENT and CONTACT_SENDER on the analytics Worker.");
+  }
+
+  const subjectType = (submission.projectType || "General").replace(/[\r\n]+/g, " ");
+  const text = [
+    `New ${subjectType} enquiry from ${submission.name}`,
+    "",
+    `Name: ${submission.name}`,
+    `Email: ${submission.email}`,
+    `Business or organisation: ${submission.business || "Not provided"}`,
+    `Project type: ${submission.projectType || "Not provided"}`,
+    `Budget range: ${submission.budget || "Not provided"}`,
+    `Country: ${submission.country}`,
+    "",
+    submission.message
+  ].join("\n");
+
+  await env.EMAIL.send({
+    to: env.CONTACT_RECIPIENT,
+    from: { email: env.CONTACT_SENDER, name: "Justy Media website" },
+    replyTo: { email: submission.email, name: submission.name },
+    subject: `New ${subjectType} enquiry from ${submission.name}`,
+    text,
+    html: `<h1>New website enquiry</h1>
+      <p><strong>Name:</strong> ${escapeEmailHtml(submission.name)}</p>
+      <p><strong>Email:</strong> ${escapeEmailHtml(submission.email)}</p>
+      <p><strong>Business or organisation:</strong> ${escapeEmailHtml(submission.business || "Not provided")}</p>
+      <p><strong>Project type:</strong> ${escapeEmailHtml(submission.projectType || "Not provided")}</p>
+      <p><strong>Budget range:</strong> ${escapeEmailHtml(submission.budget || "Not provided")}</p>
+      <p><strong>Country:</strong> ${escapeEmailHtml(submission.country)}</p>
+      <h2>Message</h2>
+      <p>${escapeEmailHtml(submission.message).replace(/\n/g, "<br>")}</p>`
+  });
+
+  return true;
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
@@ -171,6 +282,117 @@ export default {
           "Vary": "Origin"
         }
       });
+    }
+
+    if (url.pathname === "/contact" && request.method === "POST") {
+      try {
+        if (request.headers.get("Origin") !== "https://justymedia.co.uk") {
+          return contactJsonResponse(request, { ok: false, error: "This form can only be submitted from the Justy Media website." }, 403);
+        }
+
+        const contentLength = Number(request.headers.get("Content-Length") || 0);
+        if (!contentLength || contentLength > 16384) {
+          return contactJsonResponse(request, { ok: false, error: "The enquiry is too large to send." }, 413);
+        }
+        if (!String(request.headers.get("Content-Type") || "").toLowerCase().startsWith("application/json")) {
+          return contactJsonResponse(request, { ok: false, error: "Unsupported form submission." }, 415);
+        }
+
+        const data = await request.json();
+        if (!data || typeof data !== "object" || Array.isArray(data)) {
+          return contactJsonResponse(request, { ok: false, error: "Please check the form and try again." }, 400);
+        }
+
+        if (cleanContactValue(data["company-website"], 200)) {
+          return contactJsonResponse(request, { ok: true });
+        }
+
+        const startedAt = Number(data["started-at"] || 0);
+        const elapsed = Date.now() - startedAt;
+        if (!startedAt || elapsed < 1500 || elapsed > 86400000) {
+          return contactJsonResponse(request, { ok: false, error: "Please wait a moment, then try sending the form again." }, 429);
+        }
+
+        const submission = {
+          id: crypto.randomUUID(),
+          createdAt: new Date().toISOString(),
+          name: cleanContactValue(data.name, 120),
+          email: cleanContactValue(data.email, 254).toLowerCase(),
+          business: cleanContactValue(data.business, 160),
+          projectType: cleanContactValue(data["project-type"], 120),
+          budget: cleanContactValue(data.budget, 80),
+          message: cleanContactValue(data.message, 6000),
+          country: cleanContactValue(request.cf?.country || "unknown", 80)
+        };
+
+        if (submission.name.length < 2 || !isValidContactEmail(submission.email) || submission.message.length < 10) {
+          return contactJsonResponse(request, { ok: false, error: "Please add your name, a valid email address and a little more detail about your enquiry." }, 400);
+        }
+
+        await ensureContactStorage(env);
+        const ipHash = await contactIpHash(request, env);
+        const recent = await env.DB.prepare(`
+          SELECT COUNT(*) AS total
+          FROM contact_submissions
+          WHERE ip_hash = ? AND datetime(created_at) >= datetime('now', '-30 minutes')
+        `).bind(ipHash).first();
+
+        if (Number(recent?.total || 0) >= 3) {
+          return contactJsonResponse(request, { ok: false, error: "Too many enquiries were sent recently. Please try again later." }, 429);
+        }
+
+        await env.DB.prepare(`
+          INSERT INTO contact_submissions (
+            id, created_at, name, email, business, project_type, budget,
+            message, country, ip_hash, status, email_sent
+          ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'new', 0)
+        `).bind(
+          submission.id,
+          submission.createdAt,
+          submission.name,
+          submission.email,
+          submission.business,
+          submission.projectType,
+          submission.budget,
+          submission.message,
+          submission.country,
+          ipHash
+        ).run();
+
+        let emailSent = false;
+        try {
+          emailSent = await sendContactNotification(env, submission);
+        } catch (error) {
+          console.error(JSON.stringify({
+            message: "contact notification failed",
+            submissionId: submission.id,
+            error: error instanceof Error ? error.message : String(error)
+          }));
+        }
+
+        if (emailSent) {
+          try {
+            await env.DB.prepare("UPDATE contact_submissions SET email_sent = 1 WHERE id = ?")
+              .bind(submission.id)
+              .run();
+          } catch (error) {
+            console.error(JSON.stringify({
+              message: "contact email status update failed",
+              submissionId: submission.id,
+              error: error instanceof Error ? error.message : String(error)
+            }));
+          }
+        }
+
+        // Acceptance means the enquiry is safely stored; notification is a separate outcome.
+        return contactJsonResponse(request, { ok: true, emailSent });
+      } catch (error) {
+        console.error(JSON.stringify({
+          message: "contact submission failed",
+          error: error instanceof Error ? error.message : String(error)
+        }));
+        return contactJsonResponse(request, { ok: false, error: "Your enquiry could not be sent. Please try again in a moment." }, 500);
+      }
     }
 
     // Track page view
@@ -255,6 +477,7 @@ export default {
     // Main stats endpoint
     if (url.pathname === "/api/stats" && request.method === "GET") {
       try {
+        await ensureContactStorage(env);
         const trafficFilter = url.searchParams.get("traffic") || "human";
         const botClause = trafficFilter === "all"
           ? "1 = 1"
@@ -400,6 +623,32 @@ export default {
           LIMIT 20
         `).all();
 
+        const contactTotals = await env.DB.prepare(`
+          SELECT
+            COUNT(*) AS total,
+            SUM(CASE WHEN status = 'new' THEN 1 ELSE 0 END) AS unread,
+            SUM(CASE WHEN email_sent = 0 THEN 1 ELSE 0 END) AS withoutEmail
+          FROM contact_submissions
+        `).first();
+
+        const recentEnquiries = await env.DB.prepare(`
+          SELECT
+            id,
+            created_at AS createdAt,
+            name,
+            email,
+            business,
+            project_type AS projectType,
+            budget,
+            message,
+            country,
+            status,
+            email_sent AS emailSent
+          FROM contact_submissions
+          ORDER BY created_at DESC
+          LIMIT 20
+        `).all();
+
         return jsonResponse({
           ok: true,
           trafficFilter,
@@ -435,7 +684,14 @@ export default {
           topReferrers: topReferrers.results || [],
           recentVisits: recentVisits.results || [],
           trafficMix: trafficMix.results || [],
-          interactionEvents: interactionEvents.results || []
+          interactionEvents: interactionEvents.results || [],
+          enquiries: {
+            total: contactTotals?.total || 0,
+            unread: contactTotals?.unread || 0,
+            withoutEmail: contactTotals?.withoutEmail || 0,
+            emailConfigured: contactEmailConfigured(env),
+            recent: recentEnquiries.results || []
+          }
         });
       } catch (error) {
         console.error(JSON.stringify({
@@ -1012,6 +1268,24 @@ export default {
         <div class="stat-foot" id="topCountryLabel">Waiting for data</div>
       </div>
 
+      <div class="card stat-card">
+        <div class="stat-label">Website enquiries</div>
+        <div class="stat-value" id="enquiryTotal">—</div>
+        <div class="stat-foot">All contact form submissions</div>
+      </div>
+
+      <div class="card stat-card">
+        <div class="stat-label">New enquiries</div>
+        <div class="stat-value" id="enquiryUnread">—</div>
+        <div class="stat-foot">Waiting for your review</div>
+      </div>
+
+      <div class="card stat-card">
+        <div class="stat-label">Enquiries without email notification</div>
+        <div class="stat-value" id="enquiryWithoutEmail">—</div>
+        <div class="stat-foot" id="contactEmailStatus" role="status">Checking email setup</div>
+      </div>
+
       <div class="card chart-card">
         <div class="card-title-row">
           <h2 class="card-title">Daily page views</h2>
@@ -1080,6 +1354,14 @@ export default {
           <h2 class="card-title">Monthly breakdown</h2>
         </div>
         <div id="monthlyTableWrap"></div>
+      </div>
+
+      <div class="card full">
+        <div class="card-title-row">
+          <h2 class="card-title">Recent enquiries</h2>
+          <div class="pill">Private</div>
+        </div>
+        <div id="enquiriesWrap"></div>
       </div>
 
       <div class="card full">
@@ -1203,6 +1485,35 @@ export default {
       }).join("") + '</div>';
     }
 
+    function renderEnquiries(enquiries) {
+      if (!enquiries || !enquiries.length) {
+        return '<div class="empty">No website enquiries yet.</div>';
+      }
+
+      return '<div class="visit-feed">' + enquiries.map(enquiry => {
+        const date = new Date(enquiry.createdAt);
+        const label = Number.isNaN(date.getTime()) ? enquiry.createdAt : date.toLocaleString("en-GB");
+        const details = [
+          enquiry.email,
+          enquiry.business,
+          enquiry.projectType,
+          enquiry.budget,
+          enquiry.country
+        ].filter(Boolean).join(" · ");
+
+        return \`
+          <div class="visit-row">
+            <div>
+              <div class="visit-path">\${escapeHtml(enquiry.name)}</div>
+              <div class="visit-meta">\${escapeHtml(details)}</div>
+              <p>\${escapeHtml(enquiry.message)}</p>
+            </div>
+            <span>\${escapeHtml(label)}<br>\${enquiry.emailSent ? "Email sent" : "Saved in dashboard"}</span>
+          </div>
+        \`;
+      }).join("") + '</div>';
+    }
+
     let activeTraffic = "human";
 
     async function loadDashboard() {
@@ -1224,6 +1535,14 @@ export default {
         document.getElementById("todayViews").textContent = data.totals?.todayViews ?? "0";
         document.getElementById("sevenDayViews").textContent = data.totals?.sevenDayViews ?? "0";
         document.getElementById("thirtyDayViews").textContent = data.totals?.thirtyDayViews ?? "0";
+        document.getElementById("enquiryTotal").textContent = data.enquiries?.total ?? "0";
+        document.getElementById("enquiryUnread").textContent = data.enquiries?.unread ?? "0";
+        document.getElementById("enquiryWithoutEmail").textContent = data.enquiries?.withoutEmail ?? "0";
+        document.getElementById("contactEmailStatus").textContent = !data.enquiries?.emailConfigured
+          ? "Email is not configured. Set EMAIL, CONTACT_RECIPIENT and CONTACT_SENDER on this Worker. Review saved enquiries below."
+          : data.enquiries.withoutEmail > 0
+          ? "Email is configured. Review saved enquiries below: some have no recorded email notification."
+          : "Email is configured. Check Email Service logs if a notification does not arrive.";
 
         const topPage = data.topPages && data.topPages.length ? data.topPages[0] : null;
         document.getElementById("topPageValue").textContent = topPage ? topPage.views : "—";
@@ -1296,6 +1615,7 @@ export default {
         );
 
         document.getElementById("recentVisitsWrap").innerHTML = renderRecentVisits(data.recentVisits || []);
+        document.getElementById("enquiriesWrap").innerHTML = renderEnquiries(data.enquiries?.recent || []);
       } catch (error) {
         document.getElementById("dailyChart").innerHTML = '<div class="empty">Could not load daily analytics data.</div>';
         document.getElementById("monthlyChart").innerHTML = '<div class="empty">Could not load analytics data.</div>';
@@ -1306,6 +1626,7 @@ export default {
         document.getElementById("toolEventsWrap").innerHTML = '<div class="empty">Could not load interaction events.</div>';
         document.getElementById("goalsWrap").innerHTML = '<div class="empty">Could not load goals.</div>';
         document.getElementById("recentVisitsWrap").innerHTML = '<div class="empty">Could not load recent visits.</div>';
+        document.getElementById("enquiriesWrap").innerHTML = '<div class="empty">Could not load website enquiries.</div>';
         document.getElementById("monthlyTableWrap").innerHTML = '<div class="empty">Could not load monthly data.</div>';
       }
     }

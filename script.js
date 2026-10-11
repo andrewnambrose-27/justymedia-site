@@ -47,7 +47,7 @@
       if (startedAt) startedAt.value = String(Date.now());
       if (status) {
         status.className = "form-status is-success";
-        status.textContent = "Thanks — your enquiry has been sent. I’ll get back to you as soon as I can.";
+        status.textContent = "Thanks — your enquiry has been received. I’ll get back to you as soon as I can.";
       }
     } catch (error) {
       if (status) {
