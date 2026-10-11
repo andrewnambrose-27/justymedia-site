@@ -151,6 +151,48 @@ function isBotUserAgent(userAgent = "") {
   return BOT_PATTERNS.some(pattern => lower.includes(pattern));
 }
 
+const VULCAN_REFERRAL = Object.freeze({
+  id: "vulcan-sports-footer",
+  path: "/go/vulcan-sports",
+  source: "vulcansports.co.uk",
+  destination: "https://justymedia.co.uk/?utm_source=vulcan-sports&utm_medium=referral&utm_campaign=website-credit&utm_content=footer"
+});
+
+function isVulcanFooterArrival(href) {
+  try {
+    const url = new URL(String(href || ""));
+    return url.origin === "https://justymedia.co.uk"
+      && url.searchParams.get("utm_source") === "vulcan-sports"
+      && url.searchParams.get("utm_medium") === "referral"
+      && url.searchParams.get("utm_campaign") === "website-credit"
+      && url.searchParams.get("utm_content") === "footer";
+  } catch {
+    return false;
+  }
+}
+
+async function recordAnalyticsEvent(request, env, event) {
+  const userAgent = request.headers.get("User-Agent") || "";
+  await env.DB.prepare(`
+    INSERT INTO pageviews (
+      ts, path, country, event_type, normalized_path, referrer,
+      referrer_host, user_agent, is_bot, tool_id, title
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `).bind(
+    new Date().toISOString(),
+    event.path,
+    request.cf?.country || "unknown",
+    event.eventType,
+    normalizePath(event.path),
+    event.referrer,
+    event.referrerHost || getReferrerHost(event.referrer),
+    userAgent.slice(0, 500),
+    isBotUserAgent(userAgent) ? 1 : 0,
+    event.toolId,
+    event.title
+  ).run();
+}
+
 function contactJsonResponse(request, data, status = 200) {
   const origin = request.headers.get("Origin");
   const headers = {
@@ -265,6 +307,38 @@ async function sendContactNotification(env, submission) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === VULCAN_REFERRAL.path) {
+      if (!["GET", "HEAD"].includes(request.method)) {
+        return new Response("Method not allowed", { status: 405, headers: { Allow: "GET, HEAD" } });
+      }
+
+      const purpose = `${request.headers.get("Sec-Purpose") || ""} ${request.headers.get("Purpose") || ""}`;
+      if (request.method === "GET" && !/prefetch|prerender/i.test(purpose)
+          && !getInternalIps(env).has(getClientIp(request))) {
+        try {
+          await recordAnalyticsEvent(request, env, {
+            path: VULCAN_REFERRAL.path,
+            eventType: "referral_click",
+            referrer: String(request.headers.get("Referer") || "").slice(0, 500),
+            toolId: VULCAN_REFERRAL.id,
+            title: "Vulcan Sports footer link"
+          });
+        } catch (error) {
+          console.error(JSON.stringify({
+            message: "referral tracking failed",
+            referral: VULCAN_REFERRAL.id,
+            error: error instanceof Error ? error.message : String(error)
+          }));
+        }
+      }
+
+      // The destination is fixed, and visitors can still reach it if analytics fails.
+      return new Response(null, {
+        status: 302,
+        headers: { Location: VULCAN_REFERRAL.destination, "Cache-Control": "no-store" }
+      });
+    }
 
     if (request.method === "OPTIONS") {
       const origin = request.headers.get("Origin");
@@ -418,41 +492,20 @@ export default {
         }
 
         const rawPath = String(data.path || "/").slice(0, 500);
-        const normalizedPath = normalizePath(rawPath);
         const referrer = String(data.referrer || "").slice(0, 500);
-        const userAgent = request.headers.get("User-Agent") || "";
         const eventType = String(data.eventType || "pageview").slice(0, 40);
         const toolId = String(data.toolId || "").slice(0, 120);
         const title = String(data.title || "").slice(0, 180);
+        const footerArrival = eventType === "pageview" && isVulcanFooterArrival(data.href);
 
-        await env.DB.prepare(`
-          INSERT INTO pageviews (
-            ts,
-            path,
-            country,
-            event_type,
-            normalized_path,
-            referrer,
-            referrer_host,
-            user_agent,
-            is_bot,
-            tool_id,
-            title
-          )
-          VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `).bind(
-          new Date().toISOString(),
-          rawPath,
-          request.cf?.country || "unknown",
+        await recordAnalyticsEvent(request, env, {
+          path: rawPath,
           eventType,
-          normalizedPath,
           referrer,
-          getReferrerHost(referrer),
-          userAgent.slice(0, 500),
-          isBotUserAgent(userAgent) ? 1 : 0,
-          toolId,
+          referrerHost: footerArrival ? VULCAN_REFERRAL.source : getReferrerHost(referrer),
+          toolId: footerArrival ? VULCAN_REFERRAL.id : toolId,
           title
-        ).run();
+        });
 
         return jsonResponse({ ok: true });
       } catch (error) {
@@ -587,6 +640,21 @@ export default {
           LIMIT 10
         `).all();
 
+        const vulcanReferrals = await env.DB.prepare(`
+          SELECT
+            SUM(CASE WHEN event_type = 'referral_click' THEN 1 ELSE 0 END) AS clicks,
+            SUM(CASE WHEN event_type = 'referral_click' AND date(ts) >= date('now', '-29 days') THEN 1 ELSE 0 END) AS thirtyDayClicks,
+            SUM(CASE WHEN COALESCE(event_type, 'pageview') = 'pageview' THEN 1 ELSE 0 END) AS arrivals,
+            SUM(CASE WHEN COALESCE(event_type, 'pageview') = 'pageview' AND date(ts) >= date('now', '-29 days') THEN 1 ELSE 0 END) AS thirtyDayArrivals
+          FROM pageviews
+          WHERE ${botClause}
+            AND (
+              (event_type = 'referral_click' AND tool_id = ?)
+              OR (COALESCE(event_type, 'pageview') = 'pageview'
+                AND (tool_id = ? OR lower(COALESCE(referrer_host, '')) IN ('vulcansports.co.uk', 'www.vulcansports.co.uk')))
+            )
+        `).bind(VULCAN_REFERRAL.id, VULCAN_REFERRAL.id).first();
+
         const recentVisits = await env.DB.prepare(`
           SELECT
             ts,
@@ -682,6 +750,14 @@ export default {
           topCountries: topCountries.results || []
           ,
           topReferrers: topReferrers.results || [],
+          referralLinks: [{
+            name: "Vulcan Sports",
+            url: `${url.origin}${VULCAN_REFERRAL.path}`,
+            clicks: vulcanReferrals?.clicks || 0,
+            thirtyDayClicks: vulcanReferrals?.thirtyDayClicks || 0,
+            arrivals: vulcanReferrals?.arrivals || 0,
+            thirtyDayArrivals: vulcanReferrals?.thirtyDayArrivals || 0
+          }],
           recentVisits: recentVisits.results || [],
           trafficMix: trafficMix.results || [],
           interactionEvents: interactionEvents.results || [],
@@ -1022,6 +1098,22 @@ export default {
       font-size: 13px;
     }
 
+    #referralLinksWrap {
+      overflow-x: auto;
+    }
+
+    #referralLinksWrap table {
+      min-width: 650px;
+    }
+
+    #referralLinksWrap th, #referralLinksWrap td {
+      padding: 12px 10px;
+    }
+
+    .referral-tracking-url {
+      overflow-wrap: anywhere;
+    }
+
     .top-links {
       display: flex;
       gap: 12px;
@@ -1335,6 +1427,15 @@ export default {
         <div id="topReferrersWrap"></div>
       </div>
 
+      <div class="card full">
+        <div class="card-title-row">
+          <h2 class="card-title">Website credit referrals</h2>
+        </div>
+        <div id="referralLinksWrap"></div>
+        <p class="footer-note">Clicks count requests through the tracking link. Referred page views include tagged arrivals and visits with a Vulcan Sports referrer. Counts follow the traffic filter above and are not unique visitors.</p>
+        <p class="footer-note referral-tracking-url">Vulcan Sports footer link: <code>https://analytics.justymedia.co.uk/go/vulcan-sports</code></p>
+      </div>
+
       <div class="card table-card">
         <div class="card-title-row">
           <h2 class="card-title">Top interactions</h2>
@@ -1596,6 +1697,18 @@ export default {
           "No interaction data yet."
         );
 
+        document.getElementById("referralLinksWrap").innerHTML = renderSimpleTable(
+          data.referralLinks || [],
+          [
+            { label: "Website", render: item => escapeHtml(item.name) },
+            { label: "Link clicks", render: item => escapeHtml(item.clicks) },
+            { label: "Clicks / 30 days", render: item => escapeHtml(item.thirtyDayClicks) },
+            { label: "Referred page views", render: item => escapeHtml(item.arrivals) },
+            { label: "Views / 30 days", render: item => escapeHtml(item.thirtyDayArrivals) }
+          ],
+          "No referral links configured."
+        );
+
         document.getElementById("toolEventsWrap").innerHTML = renderSimpleTable(
           data.interactionEvents || [],
           [
@@ -1622,6 +1735,7 @@ export default {
         document.getElementById("topPagesWrap").innerHTML = '<div class="empty">Could not load top pages.</div>';
         document.getElementById("topCountriesWrap").innerHTML = '<div class="empty">Could not load top countries.</div>';
         document.getElementById("topReferrersWrap").innerHTML = '<div class="empty">Could not load referrers.</div>';
+        document.getElementById("referralLinksWrap").innerHTML = '<div class="empty">Could not load referral links.</div>';
         document.getElementById("topToolsWrap").innerHTML = '<div class="empty">Could not load top interactions.</div>';
         document.getElementById("toolEventsWrap").innerHTML = '<div class="empty">Could not load interaction events.</div>';
         document.getElementById("goalsWrap").innerHTML = '<div class="empty">Could not load goals.</div>';
