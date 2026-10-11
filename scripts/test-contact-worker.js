@@ -15,8 +15,9 @@ const context = vm.createContext({
   Uint8Array,
   crypto: webcrypto,
   atob,
-  console
+  console: { error(message) { logs.push(JSON.parse(message)); } }
 });
+const logs = [];
 vm.runInContext(source, context, { filename: workerPath });
 
 function createDatabase() {
@@ -84,11 +85,47 @@ function contactRequest(overrides = {}, origin = "https://justymedia.co.uk") {
 
   const success = await context.contactWorker.fetch(contactRequest(), env);
   assert.equal(success.status, 200);
-  assert.deepEqual(await success.json(), { ok: true });
+  assert.deepEqual(await success.json(), { ok: true, emailSent: true });
   assert.equal(database.state.submissions.length, 1);
   assert.equal(database.state.emailUpdates, 1);
   assert.equal(sent.length, 1);
   assert.equal(sent[0].replyTo.email, "client@example.com");
+
+  // Saving an enquiry must survive missing configuration and provider failures.
+  for (const overrides of [
+    { EMAIL: undefined },
+    { CONTACT_RECIPIENT: undefined },
+    { CONTACT_SENDER: undefined },
+    { EMAIL: { async send() { throw new Error("Email service unavailable"); } } }
+  ]) {
+    const fallbackDatabase = createDatabase();
+    const fallback = await context.contactWorker.fetch(contactRequest(), {
+      ...env, ...overrides, DB: fallbackDatabase
+    });
+    assert.equal(fallback.status, 200);
+    assert.deepEqual(await fallback.json(), { ok: true, emailSent: false });
+    assert.equal(fallbackDatabase.state.submissions.length, 1);
+    assert.equal(fallbackDatabase.state.emailUpdates, 0);
+    assert.equal(logs.at(-1).message, "contact notification failed");
+  }
+
+  const beforeStorageFailure = sent.length;
+  const unavailable = await context.contactWorker.fetch(contactRequest(), {
+    ...env, DB: { prepare() { throw new Error("Database unavailable"); } }
+  });
+  assert.equal(unavailable.status, 500);
+  assert.equal((await unavailable.json()).ok, false);
+  assert.equal(sent.length, beforeStorageFailure);
+
+  const updateDatabase = createDatabase();
+  const originalPrepare = updateDatabase.prepare;
+  updateDatabase.prepare = (sql) => /UPDATE contact_submissions SET email_sent/.test(sql)
+    ? { bind() { return this; }, async run() { throw new Error("Status update unavailable"); } }
+    : originalPrepare(sql);
+  const updateFailure = await context.contactWorker.fetch(contactRequest(), { ...env, DB: updateDatabase });
+  assert.equal(updateFailure.status, 200);
+  assert.deepEqual(await updateFailure.json(), { ok: true, emailSent: true });
+  assert.equal(logs.at(-1).message, "contact email status update failed");
 
   const beforeSpam = database.state.submissions.length;
   const spam = await context.contactWorker.fetch(contactRequest({ "company-website": "https://spam.example" }), env);
@@ -98,7 +135,7 @@ function contactRequest(overrides = {}, origin = "https://justymedia.co.uk") {
   const forbidden = await context.contactWorker.fetch(contactRequest({}, "https://example.com"), env);
   assert.equal(forbidden.status, 403);
 
-  console.log("Contact Worker submission, notification, honeypot and origin checks passed.");
+  console.log("Contact Worker notification, missing configuration, provider/storage failures, honeypot and origin checks passed.");
 })().catch(error => {
   console.error(error);
   process.exit(1);
