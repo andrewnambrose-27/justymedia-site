@@ -20,7 +20,7 @@ The studio combines website design and development, graphic design, photography,
 
 ## Policies and discovery
 
-- [Privacy policy](https://justymedia.co.uk/privacy-policy.html)
-- [Terms and conditions](https://justymedia.co.uk/terms-and-conditions.html)
+- [Privacy policy](https://justymedia.co.uk/privacy-policy)
+- [Terms and conditions](https://justymedia.co.uk/terms-and-conditions)
 - [Full site guide](https://justymedia.co.uk/llms-full.txt)
 - [XML sitemap](https://justymedia.co.uk/sitemap.xml)

@@ -62,8 +62,8 @@ The wallpaper downloads are for personal use. This discovery document does not g
 
 - About: https://justymedia.co.uk/about-us/
 - Contact: https://justymedia.co.uk/contact-us/
-- Privacy policy: https://justymedia.co.uk/privacy-policy.html
-- Terms and conditions: https://justymedia.co.uk/terms-and-conditions.html
+- Privacy policy: https://justymedia.co.uk/privacy-policy
+- Terms and conditions: https://justymedia.co.uk/terms-and-conditions
 
 ## Guidance for automated systems
 

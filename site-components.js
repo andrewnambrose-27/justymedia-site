@@ -48,11 +48,17 @@
   function footerMarkup() {
     return `<footer class="site-footer">
       <div class="footer-brand"><img src="${logo}" width="2639" height="1511" alt="Justy Media"><p>Independent creative studio<br>Peak District, UK</p></div>
-      <div><p class="footer-heading">Explore</p><nav aria-label="Footer services"><a href="/services/">Services</a><a href="/services/web-design/">Web design</a><a href="/services/graphic-design/">Graphic design</a><a href="/services/photography-content/">Photography &amp; content</a><a href="/services/digital-marketing/">SEO &amp; digital marketing</a><a href="/work/">Work</a></nav></div>
+      <div><p class="footer-heading">Explore</p><nav aria-label="Footer services"><a href="/services/">Services</a><a href="/services/web-design/">Web design</a><a href="/services/graphic-design/">Graphic design</a><a href="/services/digital-marketing/">SEO &amp; digital marketing</a><a href="/services/photography-content/">Photography &amp; content</a><a href="/work/">Work</a></nav></div>
       <div><p class="footer-heading">Photography &amp; resources</p><nav aria-label="Footer photography and resources"><a href="/photography/">Photography overview</a><a href="/photography/automotive-photography/">Automotive photography</a><a href="/photography/rush-magazine/">RUSH Magazine</a><a href="/phone-wallpapers/">Phone wallpapers</a><a href="/resources/camera-tools/">Camera tools</a><a href="/resources/">All resources</a></nav></div>
-      <div><p class="footer-heading">Justy Media</p><nav aria-label="Footer information"><a href="/about-us/">About</a><a href="/contact-us/">Contact</a><a href="/image-licensing/">Image licensing</a><a href="/privacy-policy.html">Privacy policy</a><a href="/terms-and-conditions.html">Terms and conditions</a></nav><div class="footer-socials"><a href="https://www.instagram.com/justymedia/" aria-label="Justy Media on Instagram" target="_blank" rel="noopener noreferrer">${socialIcon("instagram")}</a><a href="https://www.facebook.com/justymedia/" aria-label="Justy Media on Facebook" target="_blank" rel="noopener noreferrer">${socialIcon("facebook")}</a></div></div>
+      <div><p class="footer-heading">Justy Media</p><nav aria-label="Footer information"><a href="/about-us/">About</a><a href="/contact-us/">Contact</a><a href="/image-licensing/">Image licensing</a><a href="/privacy-policy">Privacy policy</a><a href="/terms-and-conditions">Terms and conditions</a></nav><div class="footer-socials"><a href="https://www.instagram.com/justymedia/" aria-label="Justy Media on Instagram" target="_blank" rel="noopener noreferrer">${socialIcon("instagram")}</a><a href="https://www.facebook.com/justymedia/" aria-label="Justy Media on Facebook" target="_blank" rel="noopener noreferrer">${socialIcon("facebook")}</a></div></div>
       <small>&copy; 2026 Justy Media. Website and photography by Justy Media.</small>
     </footer>`;
+  }
+
+  // Use the same navigation markup at build time and for legacy browser pages.
+  if (typeof module === "object" && module.exports) {
+    module.exports = { headerMarkup, footerMarkup };
+    return;
   }
 
   class JustyHeader extends HTMLElement {

@@ -24,8 +24,8 @@ function safeFile(pathname) {
   if (imageMatch) clean = imageMatch[1];
   clean = clean.replace(/^\/+/, "");
   let file = path.resolve(root, clean || "index.html");
-  if (!file.startsWith(root)) return null;
-  if (!path.extname(file)) file = path.join(file, "index.html");
+  if (file !== root && !file.startsWith(`${root}${path.sep}`)) return null;
+  if (!path.extname(file)) file = !pathname.endsWith("/") && fs.existsSync(`${file}.html`) ? `${file}.html` : path.join(file, "index.html");
   return file;
 }
 

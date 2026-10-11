@@ -2,12 +2,13 @@ const fs = require("node:fs");
 const path = require("node:path");
 const portfolioPages = require("../portfolio-data.js");
 const { SITE_ORIGIN, normaliseImage, imageObjects } = require("../image-metadata.js");
+const { headerMarkup, footerMarkup } = require("../site-components.js");
 
 const root = path.resolve(__dirname, "..");
 const origin = SITE_ORIGIN;
 const logo = "/logo%20final%20AI%20transparrent.png";
 const defaultShareImage = "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg";
-const modified = "2026-09-04";
+const modified = "2026-10-11";
 const cameraTools = [
   {
     group: "metadata", slug: "sony-shutter-count", name: "Sony Shutter Count Checker", label: "Sony · JPG and ARW",
@@ -122,9 +123,9 @@ function imageUrl(url, width = 1200, fit = "scale-down") {
   return `/cdn-cgi/image/width=${width},fit=${fit},quality=82,format=auto${encodedPath(url)}`;
 }
 
-function responsiveImage({ src, alt, width, height, loading = "lazy", className = "" }) {
+function responsiveImage({ src, alt, width, height, loading = "lazy", className = "", sizes = "(max-width: 720px) 100vw, 50vw" }) {
   const encoded = encodedPath(src);
-  return `<img${className ? ` class="${className}"` : ""} src="${imageUrl(src, 960)}" srcset="${imageUrl(src, 640)} 640w, ${imageUrl(src, 960)} 960w, ${imageUrl(src, 1400)} 1400w" sizes="(max-width: 720px) 100vw, 50vw" width="${width}" height="${height}" alt="${escapeHtml(alt)}" loading="${loading}" decoding="async" data-original="${encoded}">`;
+  return `<img${className ? ` class="${className}"` : ""} src="${imageUrl(src, 960)}" srcset="${imageUrl(src, 640)} 640w, ${imageUrl(src, 960)} 960w, ${imageUrl(src, 1400)} 1400w" sizes="${escapeHtml(sizes)}" width="${width}" height="${height}" alt="${escapeHtml(alt)}" loading="${loading}"${loading === "eager" ? ' fetchpriority="high"' : ""} decoding="async" data-original="${encoded}">`;
 }
 
 function ownedPhoto(src, alt, width, height, options = {}) {
@@ -147,7 +148,12 @@ function organisationSchema() {
     founder: { "@type": "Person", name: "Andrew Ambrose" },
     foundingDate: "2020",
     description: "An independent creative studio based in the Peak District, combining website development, graphic design, photography and digital marketing.",
-    areaServed: "Worldwide",
+    areaServed: [
+      { "@type": "Country", name: "United Kingdom" },
+      { "@type": "Place", name: "Peak District" },
+      { "@type": "Place", name: "Buxton" },
+      { "@type": "Place", name: "Leek" }
+    ],
     sameAs: ["https://www.instagram.com/justymedia/", "https://www.facebook.com/justymedia/"]
   };
 }
@@ -169,11 +175,11 @@ function breadcrumbs() {
 }
 
 function header(pagePath) {
-  return `<site-header data-page-path="${escapeHtml(pagePath)}"></site-header>`;
+  return `<site-header data-page-path="${escapeHtml(pagePath)}" data-rendered="true">${headerMarkup(pagePath)}</site-header>`;
 }
 
 function footer() {
-  return `<site-footer></site-footer>`;
+  return `<site-footer data-rendered="true">${footerMarkup()}</site-footer>`;
 }
 
 function jsonLd(data) {
@@ -220,8 +226,8 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
 ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260904-2">
-    <link rel="stylesheet" href="/site-components.css?v=20260904-1">
-    <script src="/site-components.js?v=20260904-3" defer></script>
+    <link rel="stylesheet" href="/site-components.css?v=20260904-2">
+    <script src="/site-components.js?v=20260904-4" defer></script>
     ${jsonLd(schemas)}
   </head>
   <body class="${page.bodyClass || ""}">
@@ -235,7 +241,7 @@ ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20260904-2">
 }
 
 function writeRoute(route, content) {
-  const relative = route === "/" ? "index.html" : route.endsWith(".html") ? route.slice(1) : `${route.slice(1)}index.html`;
+  const relative = route === "/" ? "index.html" : route.endsWith(".html") ? route.slice(1) : route.endsWith("/") ? `${route.slice(1)}index.html` : `${route.slice(1)}.html`;
   const destination = path.join(root, relative);
   fs.mkdirSync(path.dirname(destination), { recursive: true });
   fs.writeFileSync(destination, content);
@@ -259,26 +265,27 @@ function cta(title = "Let’s make something useful.", copy = "Tell me what you 
 }
 
 function serviceCard(href, number, title, copy) {
-  return `<article class="service-card"><span>${number}</span><h3><a href="${href}">${escapeHtml(title)}</a></h3><p>${escapeHtml(copy)}</p><a class="text-link" href="${href}">Explore ${escapeHtml(title.toLowerCase())}</a></article>`;
+  return `<article class="service-card"><span>${number}</span><h3><a href="${href}">${escapeHtml(title)}</a></h3><p>${escapeHtml(copy)}</p><a class="text-link" href="${href}">Explore ${escapeHtml(title)}</a></article>`;
 }
 
 function homePage() {
   const pathName = "/";
-  const title = "Web Design, Branding & Photography | Justy Media";
-  const description = "Justy Media is a Peak District creative studio offering web design, branding, photography, SEO and digital marketing for small UK businesses.";
-  const hero = ownedPhoto("/Automotive Photography/_DSC5553.jpg", "Classic Mini photographed by Justy Media", 3271, 5815, { loading: "eager" });
-  const platformPhoto = ownedPhoto("/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", 3582, 4477);
+  const title = "Web Design & Digital Marketing, Peak District | Justy Media";
+  const description = "Web design, graphic design, branding and SEO for small UK businesses. Work directly with Andrew Ambrose at Justy Media, based in the Peak District.";
+  const hero = ownedPhoto("/Automotive Photography/_DSC5553.jpg", "Classic Mini photographed by Justy Media", 3271, 5815, { loading: "eager", sizes: "100vw" });
+  const vulcan = websiteProjects.find((project) => project.slug === "vulcan-sports");
+  const projectImage = { src: vulcan.screenshot, alt: vulcan.screenshotAlt, width: vulcan.width, height: vulcan.height };
   const editorialPhoto = ownedPhoto("/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8112-Edit-2.JPG", "Alfa Romeo badge on the red GTV Cup bodywork", 3706, 4632);
   const nsxPhoto = ownedPhoto("/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", "Red Honda NSX in woodland sunlight", 2828, 3535);
   const body = `<main id="main-content">
     <section class="hero studio-hero">
       <div class="hero-media">${responsiveImage(hero)}</div>
-      <div class="hero-content"><p class="eyebrow">Independent Creative Studio</p><h1>Creative work that helps businesses look better and grow.</h1><p>Websites, branding, photography and practical digital marketing support from the Peak District, working with businesses across the UK.</p><div class="button-row"><a class="button button-primary" href="/services/">Explore Services</a><a class="button button-secondary" href="/work/">View Selected Work</a></div></div>
+      <div class="hero-content"><p class="eyebrow">Independent Creative Studio</p><h1>Web design, graphic design &amp; digital marketing in the Peak District</h1><p>I help small businesses explain their offer, build a consistent identity and make it easier for customers to enquire. Websites, branding and practical SEO support, delivered directly by Andrew Ambrose.</p><div class="button-row"><a class="button button-primary" href="/contact-us/">Discuss your project</a><a class="button button-secondary" href="/work/">View Selected Work</a></div></div>
     </section>
-    <section class="intro-section"><div class="content-width split-intro"><div><p class="eyebrow">Justy Media</p><h2>Creative thinking, made practical.</h2></div><div><p>Justy Media is an independent studio run by Andrew Ambrose in the Peak District. What began with photography in 2020 has grown into a joined-up creative service for businesses that need a clearer identity, a better website and useful support after launch.</p><p>You work directly with the person designing, building and creating the work—keeping communication straightforward and the result focused on what your business actually needs.</p></div></div></section>
-    <section class="section-block services-overview"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Services</p><h2>One studio, four connected disciplines.</h2></div><a class="text-link" href="/services/">View all services</a></div><div class="service-grid">${serviceCard("/services/web-design/", "01", "Web design & development", "Clear, responsive websites, landing pages, redesigns and lightweight tools built around your goals.")}${serviceCard("/services/graphic-design/", "02", "Graphic design & branding", "Identity, print and digital artwork that gives your business a consistent and recognisable visual voice.")}${serviceCard("/services/photography-content/", "03", "Photography & content", "Distinctive automotive, editorial, product and brand imagery for websites, campaigns and social media.")}${serviceCard("/services/digital-marketing/", "04", "SEO & digital marketing", "Understandable SEO, analytics, content improvements and ongoing support without inflated promises.")}</div></div></section>
+    <section class="intro-section"><div class="content-width split-intro"><div><p class="eyebrow">Justy Media</p><h2>Creative thinking, made practical.</h2></div><div><p>Justy Media is my independent creative studio in the Peak District. I work with businesses in Buxton, Leek and the surrounding area, and across the UK, on clearer websites, recognisable branding and useful digital marketing.</p><p>Whether you are starting a business or improving an established one, I connect the design, content and technical details around what your customers need. You work directly with me, Andrew Ambrose, from the first conversation through to delivery, keeping decisions and communication straightforward.</p></div></div></section>
+    <section class="section-block services-overview"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Services</p><h2>Design and marketing, with photography alongside.</h2></div><a class="text-link" href="/services/">View all services</a></div><div class="service-grid">${serviceCard("/services/web-design/", "01", "Web design & development", "Clear, responsive websites, landing pages, redesigns and lightweight tools built around your goals.")}${serviceCard("/services/graphic-design/", "02", "Graphic design & branding", "Identity, print and digital artwork that gives your business a consistent and recognisable visual voice.")}${serviceCard("/services/digital-marketing/", "03", "SEO & digital marketing", "Understandable SEO, analytics, content improvements and ongoing support without inflated promises.")}${serviceCard("/services/photography-content/", "04", "Photography & content", "Distinctive automotive, editorial, product and brand imagery for websites, campaigns and social media.")}</div></div></section>
     <section class="section-block selected-work"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Selected work</p><h2>Real work, across disciplines.</h2></div><a class="text-link" href="/work/">Explore the work</a></div><div class="work-grid">
-      <a class="work-card work-card-wide" href="/work/websites/#justy-media-platform">${responsiveImage(platformPhoto)}<div><p class="work-type">Website &amp; digital system</p><h3>Justy Media web platform</h3><p>A fast static website, structured portfolio system and privacy-conscious analytics tool.</p></div></a>
+      <a class="work-card work-card-wide work-card-website" href="/work/vulcan-sports/">${responsiveImage(projectImage)}<div><p class="work-type">Web design &amp; brand application</p><h3>Vulcan Sports</h3><p>A product-led website connecting UK-made teamwear with clear routes into kit design, product ranges and enquiries.</p></div></a>
       <a class="work-card" href="/work/graphic-design/#justy-media-identity"><div class="logo-panel"><img src="${logo}" width="2639" height="1511" alt="Justy Media identity mark" loading="lazy"></div><div><p class="work-type">Brand identity</p><h3>Justy Media identity</h3><p>The established monochrome mark, carried through a dark visual system with warm gold accents.</p></div></a>
       <a class="work-card" href="/photography/rush-magazine/alfa-romeo-gtv-cup/">${responsiveImage(editorialPhoto)}<div><p class="work-type">Editorial photography</p><h3>RUSH Magazine</h3><p>Automotive features combining detail, portrait and road imagery.</p></div></a>
     </div></div></section>
@@ -290,9 +297,9 @@ function homePage() {
   </main>`;
   return documentHtml({
     path: pathName, title, description, body, bodyClass: "home-page",
-    preload: `<link rel="preload" as="image" href="${imageUrl(hero.src, 1400)}" fetchpriority="high">`,
+    preload: `<link rel="preload" as="image" href="${imageUrl(hero.src, 960)}" imagesrcset="${imageUrl(hero.src, 640)} 640w, ${imageUrl(hero.src, 960)} 960w, ${imageUrl(hero.src, 1400)} 1400w" imagesizes="100vw" fetchpriority="high">`,
     shareImage: defaultShareImage, shareAlt: "Red Honda NSX photographed by Justy Media",
-    structuredImages: [hero, platformPhoto, editorialPhoto, nsxPhoto],
+    structuredImages: [hero, editorialPhoto, nsxPhoto],
     schemas: [
       { "@type": "WebSite", "@id": `${origin}/#website`, url: `${origin}/`, name: "Justy Media", description, publisher: { "@id": `${origin}/#business` }, inLanguage: "en-GB" },
       organisationSchema()
@@ -302,54 +309,65 @@ function homePage() {
 
 const servicePages = [
   {
-    path: "/services/web-design/", title: "Website Design & Development | Justy Media", heading: "Website design & development", eyebrow: "Web design",
-    description: "Custom websites, WordPress builds, landing pages, redesigns and ongoing website support for small businesses across the Peak District and the UK.",
-    intro: "Clear, responsive websites and lightweight digital tools designed around what your business needs people to understand and do.",
+    path: "/services/web-design/", title: "Website Design, Peak District | Justy Media", heading: "Web design & development in the Peak District", eyebrow: "Web design",
+    description: "Responsive websites, redesigns and landing pages for small businesses in the Peak District and across the UK. Plan your website directly with Andrew Ambrose.",
+    intro: "A website should make your offer clear and give customers an easy next step. I design and build responsive websites for businesses in Buxton, Leek, the Peak District and across the UK.",
+    enquiry: "Tell me about your business, share your current website if you have one, and explain what visitors need to do. I’ll help identify the pages, features and support your project needs.",
     serviceType: "Website design and development",
+    shareImage: websiteProjects.find((project) => project.slug === "vulcan-sports").screenshot,
+    shareAlt: "Vulcan Sports website designed and developed by Justy Media",
     content: `<section class="section-block"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Who it is for</p><h2>For smaller businesses that need a more useful website.</h2></div><div><p>This service suits new businesses building a credible first presence, established organisations whose site no longer reflects them, and teams that need a focused campaign page or practical online tool.</p><p>The aim is not to add technology for its own sake. It is to make the message clearer, the experience easier and the route to enquiry more direct.</p></div></div></div></section>
       <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">What can be created</p><h2>From focused pages to complete small-business sites.</h2><div class="capability-grid"><article><h3>Small-business websites</h3><p>Structured, responsive sites with clear services, useful content and an enquiry route.</p></article><article><h3>Landing pages &amp; redesigns</h3><p>Campaign pages and careful improvements to websites that have outgrown their current design.</p></article><article><h3>Custom tools</h3><p>Lightweight web applications and practical internal or customer-facing utilities where a standard page is not enough.</p></article><article><h3>Analytics &amp; conversion tracking</h3><p>Measurement planned around meaningful actions, with setup that helps you understand what the site is doing.</p></article><article><h3>Responsive development</h3><p>Layouts built to work across phones, tablets and larger screens, with accessibility and performance considered.</p></article><article><h3>Updates &amp; maintenance</h3><p>Ongoing content changes, technical upkeep and measured improvements after launch.</p></article></div><p class="note">Content management or e-commerce requirements are discussed during scoping so the platform and responsibilities are clear before work begins.</p></div></section>
       <section class="section-block"><div class="content-width"><p class="eyebrow">Process</p><h2>Design and development in one practical workflow.</h2><ol class="numbered-list"><li><strong>Discovery and content</strong><span>Clarify the audience, goals, pages, content and any systems the website must connect with.</span></li><li><strong>Structure and design</strong><span>Shape the journey and visual direction before detailed development.</span></li><li><strong>Build and test</strong><span>Develop responsive pages, add tracking where required and test core journeys across devices.</span></li><li><strong>Launch and handover</strong><span>Complete final checks, publish carefully and provide the information needed to use the finished site.</span></li></ol></div></section>
       <section class="section-block contrast"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Ongoing support</p><h2>A website should not stop at launch.</h2></div><div><p>Support can continue with content updates, landing pages, technical housekeeping, analytics reviews and small improvements. The scope can be agreed around genuine needs rather than a fixed retainer.</p><a class="text-link" href="/services/digital-marketing/">Explore SEO and digital marketing support</a></div></div></div></section>
-      <section class="section-block"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Justy Media website &amp; analytics</h2><p class="lede narrow">This site is a genuine example of the approach: a static, responsive platform with reusable portfolio data, crawlable galleries, Cloudflare image delivery and a lightweight first-party analytics tool.</p><a class="button button-secondary" href="/work/websites/#justy-media-platform">View the project overview</a></div></section>`
+      <section class="section-block"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Vulcan Sports: a clearer route to teamwear.</h2><p class="lede narrow">The Vulcan Sports website brings bespoke kit design, product ranges and direct support into a product-led experience. Its existing sportswear identity carries through the layout, imagery and calls to action.</p><div class="button-row"><a class="button button-secondary" href="/work/vulcan-sports/">See the Vulcan Sports website case study</a><a class="text-link" href="/work/websites/">Browse website design projects</a></div></div></section>`
   },
   {
-    path: "/services/graphic-design/", title: "Graphic Design & Branding | Justy Media", heading: "Graphic design & branding", eyebrow: "Graphic design",
-    description: "Branding, graphic design, print artwork and digital marketing assets created by Justy Media for businesses, organisations and events.",
-    intro: "Considered visual design for businesses that need to look consistent, recognisable and ready to communicate across print and digital channels.",
+    path: "/services/graphic-design/", title: "Graphic Design & Branding, Peak District | Justy Media", heading: "Graphic design & branding in the Peak District", eyebrow: "Graphic design",
+    description: "Brand identities, logos, print artwork and digital graphics for Peak District and UK businesses. Work directly with Andrew Ambrose on a consistent visual identity.",
+    intro: "Make your business recognisable across print, websites and social media. I create identities and practical design materials for businesses in the Peak District, including Buxton and Leek, and across the UK.",
+    enquiry: "Tell me what you need to communicate, where the design will be used and whether you have an existing identity. I’ll help define the artwork, formats and direction that suit the brief.",
     serviceType: "Graphic design and branding",
+    shareImage: logo,
+    shareAlt: "Justy Media monochrome identity mark",
     content: `<section class="section-block"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">A coherent visual system</p><h2>More than an isolated logo or one-off post.</h2></div><div><p>Graphic design works best when every piece feels connected. Justy Media can develop a new visual direction or extend the identity you already have into useful, consistent materials.</p><p>The scope can be a focused piece of artwork or ongoing design support, with files prepared for the channel and people who will actually use them.</p></div></div></div></section>
       <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Capabilities</p><h2>Design support across identity, print and screen.</h2><div class="capability-grid"><article><h3>Brand identities</h3><p>Core visual direction, colour, typography and practical guidance for consistent use.</p></article><article><h3>Logo development</h3><p>New marks and considered refinements, supplied in useful formats for print and digital work.</p></article><article><h3>Print artwork</h3><p>Brochures, leaflets, marketing materials and event graphics prepared for production.</p></article><article><h3>Social media artwork</h3><p>Reusable post, story and campaign assets that stay recognisably on brand.</p></article><article><h3>Website graphics</h3><p>Image treatments, diagrams, campaign graphics and supporting visual content for web pages.</p></article><article><h3>Ongoing design support</h3><p>A reliable route for new materials without reinventing the visual approach each time.</p></article></div></div></section>
       <section class="section-block"><div class="content-width"><p class="eyebrow">Process</p><h2>Start with what the design needs to communicate.</h2><ol class="numbered-list"><li><strong>Brief</strong><span>Define the audience, message, format, practical requirements and existing brand context.</span></li><li><strong>Direction</strong><span>Establish the strongest visual route and agree it before expanding the work.</span></li><li><strong>Refinement</strong><span>Develop the selected direction with focused feedback and careful production detail.</span></li><li><strong>Delivery</strong><span>Supply correctly prepared files and a clear explanation of what each one is for.</span></li></ol></div></section>
-      <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Justy Media identity</h2><p class="lede narrow">The established Justy Media mark and its dark, monochrome-led visual identity are the genuine design project currently available to publish.</p><a class="button button-secondary" href="/work/graphic-design/#justy-media-identity">View the identity overview</a></div></section>`
+      <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Identity and design in use.</h2><p class="lede narrow">The Justy Media identity combines a monochrome mark, dark backgrounds and warm gold accents across this website. Vulcan Sports shows how an existing brand can be applied to a commercial website through colour, imagery and clear product journeys.</p><div class="button-row"><a class="button button-secondary" href="/work/graphic-design/#justy-media-identity">Explore the Justy Media identity</a><a class="text-link" href="/work/vulcan-sports/">See brand application on the Vulcan Sports website</a></div></div></section>`
   },
   {
-    path: "/services/photography-content/", title: "Commercial Photography & Content | Justy Media", heading: "Photography & content", eyebrow: "Photography",
-    description: "Automotive, brand and commercial photography from Justy Media, creating polished images for websites, campaigns and social media.",
+    path: "/services/photography-content/", title: "Commercial Photography, Peak District | Justy Media", heading: "Photography & content", eyebrow: "Photography",
+    description: "Automotive, editorial and brand photography by Andrew Ambrose in the Peak District. Purposeful images for UK businesses, websites, campaigns and publications.",
     intro: "Purposeful photography shaped for the place it needs to work—from an editorial feature or automotive story to a website, campaign or social feed.",
     serviceType: "Commercial photography and content",
-    content: `<section class="section-block"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Established strength</p><h2>Photography with context, not just isolated images.</h2></div><div><p>Justy Media began as a photography project in 2020. That experience now supports businesses and publications that need a coherent set of images rather than a disconnected collection of files.</p><p>The repository and historic site material demonstrate automotive, editorial, product and landscape work. New briefs are scoped around subjects and environments that can be handled properly.</p></div></div></div></section>
+    content: `<section class="section-block"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Established strength</p><h2>Photography with context, not just isolated images.</h2></div><div><p>Justy Media began as a photography project in 2020. That experience now supports businesses and publications that need a coherent set of images rather than a disconnected collection of files.</p><p>My work includes automotive collections, editorial features, product images and landscapes. Each new brief starts with the subject, intended use and location so the shoot has a clear purpose.</p></div></div></div></section>
       <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Capabilities</p><h2>Images made for real channels.</h2><div class="capability-grid"><article><h3>Automotive photography</h3><p>Vehicle portraits, details, road scenes and complete collections for owners, features and brands.</p></article><article><h3>Commercial &amp; brand photography</h3><p>Purposeful product, place and brand imagery for websites and marketing materials.</p></article><article><h3>Website photography</h3><p>Image sets planned around page layouts, crops, loading requirements and the story the website needs to tell.</p></article><article><h3>Social media content</h3><p>Consistent stills prepared for the formats and rhythm of ongoing social communication.</p></article><article><h3>Editorial photography</h3><p>Feature-led image stories, supported by genuine commissioned work for RUSH Magazine.</p></article><article><h3>Editing &amp; delivery</h3><p>Careful selection, colour work and organised delivery in practical formats for their intended use.</p></article></div></div></section>
       <section class="section-block"><div class="content-width"><p class="eyebrow">Approach</p><h2>Plan the use before the shoot.</h2><ol class="numbered-list"><li><strong>Brief and shot needs</strong><span>Define where the images will appear, the subject, location and required formats.</span></li><li><strong>Visual plan</strong><span>Shape a practical shot list while leaving room for the strongest opportunities on the day.</span></li><li><strong>Photography</strong><span>Create a coherent set with enough variety for wide, close and channel-specific uses.</span></li><li><strong>Edit and delivery</strong><span>Select, finish and organise images so they are straightforward to put to work.</span></li></ol></div></section>
       <section class="section-block contrast"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Relevant work</p><h2>Established photography collections</h2></div><a class="text-link" href="/photography/">View all photography</a></div><div class="link-card-grid"><a href="/photography/automotive-photography/"><span>Automotive portfolio</span><strong>Six complete vehicle collections</strong></a><a href="/photography/rush-magazine/"><span>Editorial photography</span><strong>RUSH Magazine features</strong></a></div></div></section>`
   },
   {
-    path: "/services/digital-marketing/", title: "SEO & Digital Marketing Support | Justy Media", heading: "SEO & digital marketing", eyebrow: "Practical digital support",
-    description: "Practical SEO, analytics, content and digital marketing support to help small businesses improve their websites and online visibility.",
-    intro: "Understandable support for smaller businesses that want to improve their website, measurement and marketing materials without guarantees or unnecessary jargon.",
+    path: "/services/digital-marketing/", title: "Digital Marketing & SEO, Peak District | Justy Media", heading: "Digital marketing & SEO in the Peak District", eyebrow: "Practical digital support",
+    description: "Practical SEO, content improvements, analytics and campaign creative for Peak District and UK businesses. Work directly with Andrew Ambrose to plan your next steps.",
+    intro: "Help customers understand your services and find a clear route to enquiry. I offer practical SEO and digital marketing support from the Peak District, serving Buxton, Leek and businesses across the UK.",
+    enquiry: "Share your website, the services you want to promote and what you would like to understand or improve. I’ll suggest a useful starting point, whether that is a focused review or ongoing support.",
     serviceType: "SEO and digital marketing support",
-    content: `<section class="section-block"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Useful, measurable support</p><h2>Improve the foundations before chasing shortcuts.</h2></div><div><p>Digital marketing support starts with what you already have: the website, its content, the way enquiries are measured and the materials used to promote it.</p><p>Recommendations are explained in plain language and prioritised by likely usefulness. No rankings, traffic or revenue are guaranteed.</p></div></div></div></section>
+    shareImage: websiteProjects.find((project) => project.slug === "27tools").screenshot,
+    shareAlt: "27tools website showing searchable browser tools and content categories",
+    content: `<section class="section-block"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Who it is for</p><h2>Give your existing website a clearer purpose.</h2></div><div><p>This support suits small businesses whose service pages are unclear, whose website has technical search issues, or who need to understand which online activity leads to enquiries. It can also help connect a campaign with a useful landing page and consistent creative assets.</p><p>I start with your website, content and existing measurement, then explain the priorities in plain language. Depending on the agreed scope, the work can include a technical review, updated page copy and metadata, tracking setup or a practical report with next steps.</p></div></div></div></section>
       <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Capabilities</p><h2>Practical ways to strengthen your online presence.</h2><div class="capability-grid"><article><h3>On-page SEO</h3><p>Titles, descriptions, headings, internal links and page content improved around real search intent.</p></article><article><h3>Technical SEO reviews</h3><p>Crawlability, canonical URLs, redirects, structured data, sitemaps and performance risks checked methodically.</p></article><article><h3>Search Console &amp; analytics</h3><p>Setup and configuration that helps you see meaningful website activity and spot problems.</p></article><article><h3>Conversion tracking</h3><p>Measurement for enquiries, downloads and useful actions—not just a page-view total.</p></article><article><h3>Content improvements</h3><p>Clearer service pages, calls to action and supporting content shaped around audience questions.</p></article><article><h3>Campaign creative</h3><p>Email, social and campaign assets that connect the message back to a coherent website journey.</p></article><article><h3>Reporting &amp; support</h3><p>Regular, understandable review with priorities for the next useful improvements.</p></article></div></div></section>
       <section class="section-block"><div class="content-width"><p class="eyebrow">Approach</p><h2>Review, prioritise, improve, learn.</h2><ol class="numbered-list"><li><strong>Review</strong><span>Understand the current site, tracking, content and active marketing work.</span></li><li><strong>Prioritise</strong><span>Separate essential fixes from worthwhile experiments and lower-value busywork.</span></li><li><strong>Implement</strong><span>Make agreed technical, content and creative improvements carefully.</span></li><li><strong>Report and refine</strong><span>Look at useful signals, explain what they mean and decide what comes next.</span></li></ol></div></section>
-      <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>First-party analytics for Justy Media</h2><p class="lede narrow">The website includes a genuine lightweight analytics system for page views, contact clicks, downloads and outbound actions, with a separate reporting dashboard.</p><a class="button button-secondary" href="/work/websites/#justy-media-platform">View the project overview</a></div></section>`
+      <section class="section-block contrast"><div class="wide-width"><p class="eyebrow">Relevant work</p><h2>Technical SEO and measurement in practice.</h2><p class="lede narrow">The Justy Media website combines crawlable portfolio pages, technical SEO and first-party analytics for page views, contact clicks, downloads and outbound actions. The 27tools project also demonstrates content architecture and technical SEO for a library of browser tools.</p><div class="button-row"><a class="button button-secondary" href="/work/websites/#justy-media-platform">Explore the Justy Media website and analytics</a><a class="text-link" href="/work/27tools/">See the 27tools website case study</a></div></div></section>`
   }
 ];
 
 function servicePage(service) {
   const crumbs = [{ label: "Home", href: "/" }, { label: "Services", href: "/services/" }, { label: service.heading, href: service.path }];
-  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro(service.eyebrow, service.heading, service.intro)}${service.content}${cta("Have a project in mind?", "Share the brief, the stage you are at and what would make the work useful. I’ll come back with a practical next step.")}</main>`;
+  const relatedServices = servicePages.filter((item) => item.path !== service.path);
+  const related = `<section class="section-block related-services"><div class="content-width"><p class="eyebrow">Work directly with Andrew</p><h2>Connect the parts your project needs.</h2><p>I handle the brief, creative work and practical details with you. Your project may need more than one service; we can discuss those connections when agreeing the scope.</p><div class="button-row">${relatedServices.map((item) => `<a class="text-link" href="${item.path}">${escapeHtml(item.serviceType)}</a>`).join("")}</div></div></section>`;
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro(service.eyebrow, service.heading, service.intro)}${service.content}${related}${cta("Have a project in mind?", service.enquiry || "Share the brief, the stage you are at and what would make the work useful. I’ll come back with a practical next step.")}</main>`;
   return documentHtml({
     ...service, breadcrumbs: crumbs, body,
-    schemas: [{ "@type": "Service", "@id": `${origin}${service.path}#service`, name: service.heading, serviceType: service.serviceType, description: service.description, url: absolute(service.path), provider: { "@id": `${origin}/#business` }, areaServed: { "@type": "Country", name: "United Kingdom" } }]
+    schemas: [{ "@type": "Service", "@id": `${origin}${service.path}#service`, name: service.heading, serviceType: service.serviceType, description: service.description, url: absolute(service.path), provider: { "@id": `${origin}/#business` }, areaServed: { "@type": "Country", name: "United Kingdom" } }, organisationSchema()]
   });
 }
 
@@ -358,9 +376,9 @@ function servicesHub() {
   const title = "Creative Services | Justy Media";
   const description = "Explore web design, graphic design, photography, SEO and digital marketing services from Justy Media, an independent Peak District creative studio.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "Services", href: pagePath }];
-  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Independent creative studio", "Creative services", "Website development, graphic design, photography and practical digital marketing—connected by one clear creative approach.")}
-    <section class="section-block"><div class="wide-width"><div class="service-grid service-grid-large">${serviceCard("/services/web-design/", "01", "Web design & development", "Small-business websites, landing pages, redesigns, responsive development, analytics and ongoing support.")}${serviceCard("/services/graphic-design/", "02", "Graphic design & branding", "Identity, logo development, print artwork, social and website graphics, plus ongoing design help.")}${serviceCard("/services/photography-content/", "03", "Photography & content", "Automotive, editorial, product and brand imagery created for websites, campaigns and social channels.")}${serviceCard("/services/digital-marketing/", "04", "SEO & digital marketing", "On-page and technical SEO, analytics, content improvements, campaign assets and understandable reporting.")}</div></div></section>
-    <section class="section-block contrast"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Connected support</p><h2>Bring in the disciplines the project actually needs.</h2></div><div><p>A website may need new photography. A campaign may need a landing page and social artwork. An SEO review may reveal that the content and page structure need rebuilding.</p><p>Justy Media can connect those parts without presenting itself as a large agency. You work directly with Andrew, and the scope stays honest about what is being delivered.</p></div></div></div></section>
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Independent creative studio", "Creative services", "Web design, graphic design, branding and SEO support for businesses in the Peak District and across the UK, with photography for websites, campaigns and editorial work.")}
+    <section class="section-block"><div class="wide-width"><div class="service-grid service-grid-large">${serviceCard("/services/web-design/", "01", "Web design & development", "Small-business websites, landing pages, redesigns, responsive development, analytics and ongoing support.")}${serviceCard("/services/graphic-design/", "02", "Graphic design & branding", "Identity, logo development, print artwork, social and website graphics, plus ongoing design help.")}${serviceCard("/services/digital-marketing/", "03", "SEO & digital marketing", "On-page and technical SEO, analytics, content improvements, campaign assets and understandable reporting.")}${serviceCard("/services/photography-content/", "04", "Photography & content", "Automotive, editorial, product and brand imagery created for websites, campaigns and social channels.")}</div></div></section>
+    <section class="section-block contrast"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">Connected support</p><h2>Bring in the disciplines the project actually needs.</h2></div><div><p>A website may need new photography. A campaign may need a landing page and social artwork. An SEO review may reveal that the content and page structure need rebuilding.</p><p>I can bring those parts together around your project. You work directly with me, Andrew Ambrose, with a clear scope for the design, development or marketing support you need.</p></div></div></div></section>
     <section class="section-block"><div class="content-width"><p class="eyebrow">Starting a project</p><h2>A straightforward first conversation.</h2><p class="lede">You do not need a finished brief. Share what the business is trying to achieve, what already exists and where you feel stuck. From there, I can help define a useful scope.</p><a class="button button-primary" href="/contact-us/">Discuss your project</a></div></section>${cta()}</main>`;
   return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "CollectionPage", name: "Justy Media creative services", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` }, about: servicePages.map((item) => ({ "@type": "Service", name: item.heading, url: absolute(item.path) })) }] });
 }
@@ -421,11 +439,17 @@ function websiteCaseStudyPage(project) {
   const pagePath = `/work/${project.slug}/`;
   const title = `${project.name} Website Case Study | Justy Media`;
   const crumbs = [{ label: "Home", href: "/" }, { label: "Work", href: "/work/" }, { label: "Websites", href: "/work/websites/" }, { label: project.name, href: pagePath }];
-  const screenshot = { src: project.screenshot, alt: project.screenshotAlt, width: project.width, height: project.height };
+  const screenshot = { src: project.screenshot, alt: project.screenshotAlt, width: project.width, height: project.height, loading: "eager" };
+  const relatedServices = [
+    ["/services/web-design/", "Web design & development"],
+    ...(project.slug === "vulcan-sports" ? [["/services/graphic-design/", "Graphic design & brand application"]] : []),
+    ...(project.slug === "27tools" ? [["/services/digital-marketing/", "Technical SEO & digital marketing"]] : [])
+  ];
+  const serviceLinks = `<section class="section-block contrast related-services"><div class="content-width"><p class="eyebrow">Services behind the work</p><h2>Plan a similar project.</h2><div class="button-row">${relatedServices.map(([href, label]) => `<a class="text-link" href="${href}">${escapeHtml(label)}</a>`).join("")}</div></div></section>`;
   const body = `<main id="main-content">${breadcrumbs(crumbs)}<section class="project-hero"><div class="wide-width"><div class="project-hero-copy"><p class="eyebrow">${escapeHtml(project.eyebrow)}</p><h1>${escapeHtml(project.name)}</h1><p class="lede">${escapeHtml(project.title)}</p><div class="button-row"><a class="button button-primary" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a><a class="text-link" href="/work/websites/">All website work</a></div></div><div class="project-hero-media website-preview">${responsiveImage(screenshot)}</div></div></section>
     <section class="project-summary section-block contrast"><div class="wide-width"><p class="eyebrow">Project overview</p><p class="project-statement">${escapeHtml(project.summary)}</p><ul class="tag-list">${project.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join("")}</ul></div></section>
     <section class="project-details section-block"><div class="wide-width project-detail-grid"><article><p class="eyebrow">The challenge</p><h2>Make the next step feel obvious.</h2><p>${escapeHtml(project.challenge)}</p></article><article><p class="eyebrow">The approach</p><h2>Build clarity into the experience.</h2><p>${escapeHtml(project.approach)}</p></article><article><p class="eyebrow">The outcome</p><h2>A coherent digital destination.</h2><p>${escapeHtml(project.outcome)}</p></article></div></section>
-    <section class="project-visit"><div class="content-width"><p class="eyebrow">See it live</p><h2>${escapeHtml(project.name)}</h2><p>Explore the live website to see the complete experience, content and responsive interface.</p><a class="button button-primary" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a></div></section>${cta("Need a website with a clearer job to do?", "Share what you are building, who it needs to serve and where the current experience is falling short.")}</main>`;
+    <section class="project-visit"><div class="content-width"><p class="eyebrow">See it live</p><h2>${escapeHtml(project.name)}</h2><p>Explore the live website to see the complete experience, content and responsive interface.</p><a class="button button-primary" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a></div></section>${serviceLinks}${cta("Need a website with a clearer job to do?", "Share what you are building, who it needs to serve and where the current experience is falling short.")}</main>`;
   return documentHtml({
     path: pagePath,
     title,
@@ -490,10 +514,10 @@ function aboutPage() {
 function contactPage() {
   const pagePath = "/contact-us/";
   const title = "Contact Justy Media | Start Your Project";
-  const description = "Contact Justy Media to discuss a website, design, photography or digital marketing project, wherever you are in the world.";
+  const description = "Contact Andrew Ambrose at Justy Media to discuss web design, branding, SEO or photography. Based in the Peak District and working with businesses across the UK.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "Contact", href: pagePath }];
   const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Start a conversation", "Tell me what you’re working on.", "Enquire about a website, graphic design, photography, SEO, digital marketing or ongoing creative support. You do not need a finished brief.")}
-    <section class="section-block"><div class="wide-width contact-layout"><div class="contact-details"><p class="eyebrow">Start a project</p><h2>Based in the Peak District, working worldwide.</h2><p>Use the form to share the context, where the project is now and what a good outcome would look like. I welcome enquiries from anywhere in the world.</p><p><strong>Social</strong><br><a href="https://www.instagram.com/justymedia/" target="_blank" rel="noopener noreferrer">Instagram</a> · <a href="https://www.facebook.com/justymedia/" target="_blank" rel="noopener noreferrer">Facebook</a></p><p class="note">Your enquiry is sent privately through this website. Your email address is used only to reply to you.</p></div>
+    <section class="section-block"><div class="wide-width contact-layout"><div class="contact-details"><p class="eyebrow">Start a project</p><h2>Based in the Peak District, working across the UK.</h2><p>Use the form to share where the project is now and what you would like to improve. I work with businesses in Buxton, Leek and the surrounding Peak District, as well as across the UK.</p><p><strong>Social</strong><br><a href="https://www.instagram.com/justymedia/" target="_blank" rel="noopener noreferrer">Instagram</a> · <a href="https://www.facebook.com/justymedia/" target="_blank" rel="noopener noreferrer">Facebook</a></p><p class="note">Your enquiry is sent privately through this website. Your email address is used only to reply to you.</p></div>
       <form class="enquiry-form" action="https://analytics.justymedia.co.uk/contact" method="post" data-contact-form>
         <div class="form-row"><label for="name">Name <span aria-hidden="true">*</span></label><input id="name" name="name" type="text" autocomplete="name" required></div>
         <div class="form-row"><label for="email">Email <span aria-hidden="true">*</span></label><input id="email" name="email" type="email" autocomplete="email" required></div>
@@ -503,7 +527,7 @@ function contactPage() {
         <div class="form-row full"><label for="message">Tell me about the project <span aria-hidden="true">*</span></label><textarea id="message" name="message" rows="7" required placeholder="What are you trying to create or improve? Include any useful timings or links."></textarea></div>
         <div class="form-trap" aria-hidden="true"><label for="company-website">Leave this field empty</label><input id="company-website" name="company-website" type="text" tabindex="-1" autocomplete="off"></div>
         <input type="hidden" name="started-at" value="" data-form-started-at>
-        <div class="form-row full"><button class="button button-primary" type="submit">Send enquiry</button><p class="form-help">Your details are sent securely so I can respond. Read the <a href="/privacy-policy.html">privacy policy</a>.</p><p class="form-status" role="status" aria-live="polite" data-form-status></p></div>
+        <div class="form-row full"><button class="button button-primary" type="submit">Send enquiry</button><p class="form-help">Your details are sent securely so I can respond. Read the <a href="/privacy-policy">privacy policy</a>.</p><p class="form-status" role="status" aria-live="polite" data-form-status></p></div>
       </form></div></section></main>`;
   return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "ContactPage", name: title, url: absolute(pagePath), description, mainEntity: { "@id": `${origin}/#business` }, isPartOf: { "@id": `${origin}/#website` } }] });
 }
@@ -631,8 +655,8 @@ writeRoute("/resources/camera-tools/", cameraToolsPage());
 writeRoute("/about-us/", aboutPage());
 writeRoute("/contact-us/", contactPage());
 writeRoute("/image-licensing/", imageLicensingPage());
-writeRoute("/privacy-policy.html", legalPage("/privacy-policy.html", "Privacy Policy | Justy Media", "How Justy Media handles personal information, website usage data and enquiries.", "Privacy policy", "privacy-policy.txt"));
-writeRoute("/terms-and-conditions.html", legalPage("/terms-and-conditions.html", "Terms and Conditions | Justy Media", "Terms and conditions for using the Justy Media website and discussing creative services.", "Terms and conditions", "terms-and-conditions.txt"));
+writeRoute("/privacy-policy", legalPage("/privacy-policy", "Privacy Policy | Justy Media", "How Justy Media handles personal information, website usage data and enquiries.", "Privacy policy", "privacy-policy.txt"));
+writeRoute("/terms-and-conditions", legalPage("/terms-and-conditions", "Terms and Conditions | Justy Media", "Terms and conditions for using the Justy Media website and discussing creative services.", "Terms and conditions", "terms-and-conditions.txt"));
 writeRoute("/404.html", notFoundPage());
 writeRoute("/about-me.html", legacyFallback("About page moved | Justy Media", "/about-us/"));
 writeRoute("/contact.html", legacyFallback("Contact page moved | Justy Media", "/contact-us/"));
@@ -642,7 +666,16 @@ const sitemapUrls = [
   "/", "/services/", ...servicePages.map((page) => page.path), "/work/", "/work/websites/", "/work/photography/", "/work/graphic-design/", ...websiteProjects.map((project) => `/work/${project.slug}/`),
   ...Object.values(portfolioPages).map((page) => page.path), "/phone-wallpapers/",
   "/resources/", "/resources/camera-tools/",
-  "/about-us/", "/contact-us/", "/image-licensing/", "/privacy-policy.html", "/terms-and-conditions.html"
+  "/about-us/", "/contact-us/", "/image-licensing/", "/privacy-policy", "/terms-and-conditions"
 ];
 fs.writeFileSync(path.join(root, "sitemap.xml"), sitemap(sitemapUrls));
+
+// Keep canonical aliases explicit for Pages hosting and the local test server.
+// Only known pages are redirected: missing URLs must still return a real 404.
+const redirectsFile = path.join(root, "_redirects");
+const redirectMarker = "# Generated canonical page aliases";
+const existingRedirects = fs.readFileSync(redirectsFile, "utf8").split(redirectMarker)[0].trimEnd();
+const existingSources = new Set(existingRedirects.split(/\r?\n/).filter((line) => line && !line.startsWith("#")).map((line) => line.split(/\s+/)[0]));
+const aliases = sitemapUrls.flatMap((route) => route === "/" ? [["/index.html", route]] : route.endsWith("/") ? [[route.slice(0, -1), route], [`${route}index.html`, route]] : [[`${route}.html`, route], [`${route}/`, route]]);
+fs.writeFileSync(redirectsFile, `${existingRedirects}\n\n${redirectMarker}\n${aliases.filter(([from]) => !existingSources.has(from)).map(([from, to]) => `${from} ${to} 301`).join("\n")}\n`);
 console.log(`Built ${sitemapUrls.length} canonical pages and sitemap.xml`);

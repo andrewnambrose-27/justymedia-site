@@ -19,6 +19,8 @@ function routeFile(route) {
   const pathname = new URL(route, origin).pathname;
   if (pathname === "/") return path.join(root, "index.html");
   if (path.extname(pathname)) return path.join(root, decodeURIComponent(pathname.slice(1)));
+  const flatHtml = path.join(root, `${decodeURIComponent(pathname.slice(1))}.html`);
+  if (!pathname.endsWith("/") && fs.existsSync(flatHtml)) return flatHtml;
   return path.join(root, decodeURIComponent(pathname.slice(1)), "index.html");
 }
 function localAsset(url) {
@@ -45,7 +47,7 @@ function portfolioRecord(page, image) {
 }
 
 const expectedImageCounts = new Map([
-  ["/", 4],
+  ["/", 3],
   ["/work/", 2],
   ["/resources/", 2],
   ["/phone-wallpapers/", 4]
@@ -90,6 +92,12 @@ function resolveRedirect(route) {
   return { loop: false, current, hops };
 }
 
+for (const redirect of redirects) {
+  const resolved = resolveRedirect(redirect.from);
+  if (resolved.loop || resolved.hops !== 1) fail(`Redirect must resolve in one hop: ${redirect.from}`);
+  if (!fs.existsSync(routeFile(resolved.current))) fail(`Redirect target is missing: ${redirect.to}`);
+}
+
 const requiredRedirects = {
   "/services-pricing.html": "/services/",
   "/services-pricing": "/services/",
@@ -115,6 +123,7 @@ for (const intentionallyMissing of ["/bmwr50mini", "/gear-i-use", "/unknown-veri
 
 const titles = new Map();
 const descriptions = new Map();
+const pageLinks = new Map();
 const allImageMetadataUrls = new Set();
 let imageMetadataInstances = 0;
 for (const url of urls) {
@@ -131,10 +140,11 @@ for (const url of urls) {
   if (count(html, /<link rel="canonical"/g) !== 1) fail(`${route} does not have exactly one canonical`);
   if (count(html, /<h1(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one H1`);
   if (count(html, /<main(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one main`);
-  if (!html.includes(`<site-header data-page-path="${route}"></site-header>`) || !html.includes("<site-footer></site-footer>")) fail(`${route} lacks shared header or footer component placeholders`);
+  if (!html.includes(`<site-header data-page-path="${route}" data-rendered="true">`) || !html.includes('<site-footer data-rendered="true">')) fail(`${route} lacks pre-rendered shared components`);
+  if (!/<header class="site-header">/.test(html) || !/<footer class="site-footer">/.test(html)) fail(`${route} lacks crawlable header or footer markup`);
   if (!html.includes('href="/styles.css?v=20260904-2"')) fail(`${route} is missing the page stylesheet`);
-  if (!html.includes('href="/site-components.css?v=20260904-1"')) fail(`${route} is missing the shared component stylesheet`);
-  if (!html.includes('src="/site-components.js?v=20260904-3"')) fail(`${route} is missing the shared component script`);
+  if (!html.includes('href="/site-components.css?v=20260904-2"')) fail(`${route} is missing the shared component stylesheet`);
+  if (!html.includes('src="/site-components.js?v=20260904-4"')) fail(`${route} is missing the shared component script`);
   for (const faviconHref of ["/favicon.ico?v=20260818-2", "/favicons/favicon.svg?v=20260818-2", "/favicons/favicon-96x96.png?v=20260818-2", "/favicons/apple-touch-icon.png?v=20260818-2", "/favicons/site.webmanifest?v=20260818-2"]) {
     if (!html.includes(`href="${faviconHref}"`)) fail(`${route} is missing favicon link ${faviconHref}`);
     if (!fs.existsSync(localAsset(faviconHref))) fail(`${route} references missing favicon asset ${faviconHref}`);
@@ -143,6 +153,7 @@ for (const url of urls) {
   const title = tagContent(html, /<title>(.*?)<\/title>/s);
   const description = tagContent(html, /<meta name="description" content="(.*?)">/s);
   const canonical = tagContent(html, /<link rel="canonical" href="(.*?)">/s);
+  if (!title || !description) fail(`${route} has empty page metadata`);
   if (canonical !== url) fail(`${route} canonical ${canonical} does not match sitemap URL ${url}`);
   if (titles.has(title)) fail(`Duplicate title on ${route} and ${titles.get(title)}: ${title}`); else titles.set(title, route);
   if (descriptions.has(description)) fail(`Duplicate description on ${route} and ${descriptions.get(description)}`); else descriptions.set(description, route);
@@ -156,6 +167,9 @@ for (const url of urls) {
   for (const pattern of requiredMeta) if (!pattern.test(html)) fail(`${route} is missing social metadata matching ${pattern}`);
   const ogUrl = tagContent(html, /<meta property="og:url" content="(.*?)">/s);
   if (ogUrl !== url) fail(`${route} og:url does not match canonical`);
+  for (const [attribute, key, expected] of [["property", "og:title", title], ["property", "og:description", description], ["name", "twitter:title", title], ["name", "twitter:description", description]]) {
+    if (tagContent(html, new RegExp(`<meta ${attribute}="${key}" content="(.*?)">`, "s")) !== expected) fail(`${route} ${key} differs from page metadata`);
+  }
 
   const jsonBlocks = [...html.matchAll(/<script type="application\/ld\+json">(.*?)<\/script>/gs)];
   if (!jsonBlocks.length) fail(`${route} has no JSON-LD`);
@@ -216,6 +230,7 @@ for (const url of urls) {
   }
 
   const internalLinks = [...html.matchAll(/<a\b[^>]*href="([^"]+)"[^>]*>/g)].map((match) => match[1]);
+  pageLinks.set(route, internalLinks.filter((href) => href.startsWith("/") && !href.startsWith("//")).map((href) => resolveRedirect(new URL(href, origin).pathname).current));
   for (const href of internalLinks) {
     if (!href.startsWith("/") || href.startsWith("//")) continue;
     const targetUrl = new URL(href, origin);
@@ -242,11 +257,21 @@ for (const url of urls) {
   }
 }
 
+const reachable = new Set();
+const queue = ["/"];
+while (queue.length) {
+  const route = queue.shift();
+  if (reachable.has(route)) continue;
+  reachable.add(route);
+  queue.push(...(pageLinks.get(route) || []).filter((target) => pageLinks.has(target) && !reachable.has(target)));
+}
+for (const route of pageLinks.keys()) if (!reachable.has(route)) fail(`${route} is not reachable from the homepage through static links`);
+
 const components = fs.readFileSync(path.join(root, "site-components.js"), "utf8");
 if (!/<header class="site-header">/.test(components) || !/<footer class="site-footer">/.test(components)) fail("Shared component file does not own the complete header and footer markup");
 if (!/class="nav-toggle"[^>]+aria-expanded="false"[^>]+aria-controls="nav-menu"/.test(components)) fail("Shared header lacks an accessible mobile navigation control");
 if (!/replaceLegacyLayout/.test(components)) fail("Shared components cannot replace legacy copied headers and footers");
-for (const sharedRoute of ["/services/", "/work/", "/photography/", "/resources/", "/about-us/", "/contact-us/", "/privacy-policy.html", "/terms-and-conditions.html"]) {
+for (const sharedRoute of ["/services/", "/work/", "/photography/", "/resources/", "/about-us/", "/contact-us/", "/privacy-policy", "/terms-and-conditions"]) {
   if (!components.includes(`href="${sharedRoute}"`)) fail(`Shared components do not link to ${sharedRoute}`);
   if (!fs.existsSync(routeFile(sharedRoute))) fail(`Shared components link to missing page ${sharedRoute}`);
 }
@@ -254,12 +279,23 @@ for (const sharedRoute of ["/services/", "/work/", "/photography/", "/resources/
 const robots = fs.readFileSync(path.join(root, "robots.txt"), "utf8");
 if (!robots.includes(`Sitemap: ${origin}/sitemap.xml`)) fail("robots.txt has the wrong sitemap declaration");
 if (robots.includes("www.justymedia.co.uk")) fail("robots.txt contains www hostname");
+if (/^Disallow:\s*\S+/im.test(robots)) fail("robots.txt blocks intended public content");
+
+const responseHeaders = fs.readFileSync(path.join(root, "_headers"), "utf8");
+if (/X-Robots-Tag:.*noindex/i.test(responseHeaders)) fail("Hosting headers block indexing");
+for (const sharedAsset of ["/site-components.js", "/site-components.css", "/script.js", "/styles.css", "/photography/*"]) {
+  const escapedAsset = sharedAsset.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  const rule = responseHeaders.match(new RegExp(`^${escapedAsset}\\r?\\n((?:[ \\t]+[^\\r\\n]+\\r?\\n?)*)`, "m"));
+  if (!rule || !/Cache-Control:\s*public,\s*max-age=0,\s*must-revalidate/i.test(rule[1])) {
+    fail(`${sharedAsset} is not configured for immediate cache revalidation`);
+  }
+}
 
 const contact = fs.readFileSync(routeFile("/contact-us/"), "utf8");
 if (!/action="https:\/\/analytics\.justymedia\.co\.uk\/contact"/.test(contact) || !/method="post"/.test(contact)) fail("Contact form is not connected to the private submission endpoint");
 if (!/data-contact-form/.test(contact) || !/data-form-status/.test(contact)) fail("Contact form lacks its submission and status hooks");
 if (/mailto:/i.test(contact)) fail("Contact page still exposes a mailto link");
-if (!/working worldwide/i.test(contact)) fail("Contact page does not describe worldwide availability");
+if (!/working across the UK/i.test(contact)) fail("Contact page does not describe UK availability");
 if (!/id="project-type"/.test(contact) || !/id="budget"/.test(contact)) fail("Contact form lacks project type or optional budget fields");
 
 function findFiles(directory, files = []) {

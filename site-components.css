@@ -71,6 +71,10 @@ site-header, site-footer { display: block; }
   .nav-menu { position: absolute; top: 80px; right: 0; left: 0; display: none; padding: 14px 20px 22px; background: #111; border-top: 1px solid var(--line); box-shadow: 0 16px 24px rgba(0,0,0,.45); }
   .nav-menu.is-open { display: grid; }
   .nav-menu a { min-height: 50px; border-bottom: 1px solid var(--line); font-size: .77rem; }
+  /* Keep ordinary navigation usable when JavaScript is unavailable. */
+  site-header:not(:defined) .nav-toggle { display: none; }
+  site-header:not(:defined) .main-nav { position: relative; padding-top: 80px; }
+  site-header:not(:defined) .nav-menu { position: static; display: flex; flex-wrap: wrap; width: 100%; box-shadow: none; }
 }
 
 @media (max-width: 560px) {
