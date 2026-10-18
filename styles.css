@@ -122,15 +122,15 @@ p { margin: 0 0 1.2rem; }
 .hero-content { position: relative; z-index: 1; width: min(100% - 40px, var(--max)); margin: auto; padding: 90px 0 130px; }
 .hero-content h1 { max-width: 900px; font-size: clamp(3.25rem, 7.6vw, 7.2rem); }
 .hero-content > p:not(.eyebrow) { max-width: 650px; margin: 28px 0 34px; color: #e7e2d9; font-size: clamp(1.03rem, 1.7vw, 1.28rem); }
-.clients-projects { max-width: 840px; margin: 34px auto 0; }
-.clients-projects .eyebrow { margin: 0 0 16px; color: var(--muted); font-family: inherit; font-size: .65rem; line-height: 1.5; letter-spacing: .2em; text-align: center; }
-.client-logos { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 20px 36px; margin: 0; padding: 0; list-style: none; }
-.client-logos li { display: flex; flex: 0 1 176px; height: 64px; align-items: center; justify-content: center; }
-.client-logos img { width: 100%; max-width: 176px; max-height: 62px; object-fit: contain; opacity: .72; transition: opacity 180ms ease; }
+.clients-projects { margin: 46px 0 0; }
+.clients-projects .eyebrow { margin: 0 0 28px; color: #d4cfc5; font-family: inherit; font-size: .8rem; line-height: 1.5; letter-spacing: .24em; text-align: center; }
+.client-logos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: clamp(24px, 4vw, 56px); margin: 0; padding: 0; list-style: none; }
+.client-logos li { display: flex; min-width: 0; height: 104px; align-items: center; justify-content: center; }
+.client-logos img { width: 100%; max-width: 280px; max-height: 100px; object-fit: contain; opacity: .8; transition: opacity 180ms ease; }
 .client-logos img:hover { opacity: 1; }
-.client-logos .client-logo-norman { max-width: 174px; }
-.client-logos .client-logo-rush { max-width: 156px; }
-.client-logos .client-logo-vulcan { max-width: 116px; }
+.client-logos .client-logo-norman { max-width: 260px; }
+.client-logos .client-logo-rush { max-width: 250px; }
+.client-logos .client-logo-vulcan { max-width: 180px; }
 
 .intro-section { padding: clamp(80px, 11vw, 145px) 0; background: var(--charcoal); }
 .split-intro, .prose-grid { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: clamp(40px, 8vw, 100px); }
@@ -391,7 +391,8 @@ a.website-preview:hover img { transform: scale(1.012); }
 }
 
 @media (max-width: 900px) {
-  .client-logos { max-width: 420px; margin-inline: auto; column-gap: 24px; }
+  .clients-projects { margin-top: 40px; }
+  .client-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 48px; }
   .hero { min-height: 760px; }
   .hero::after { background: linear-gradient(90deg, rgba(0,0,0,.9), rgba(0,0,0,.46)), linear-gradient(0deg, #171717, transparent 25%); }
   .split-intro, .prose-grid, .photo-feature, .case-study-grid, .case-study-grid.reverse, .story-layout, .contact-layout, .work-category-heading > div, .project-hero > div, .project-detail-grid { grid-template-columns: 1fr; }
@@ -417,7 +418,11 @@ a.website-preview:hover img { transform: scale(1.012); }
 }
 
 @media (max-width: 560px) {
-  .client-logos li { flex-basis: calc((100% - 24px) / 2); }
+  .clients-projects .eyebrow { margin-bottom: 22px; font-size: .74rem; }
+  .client-logos { gap: 18px 24px; }
+  .client-logos li { height: 78px; }
+  .client-logos img { max-height: 76px; }
+  .client-logos .client-logo-vulcan { max-width: 140px; }
   h1 { font-size: clamp(2.8rem, 15vw, 4.4rem); }
   h2 { font-size: clamp(2.15rem, 12vw, 3.2rem); }
   .section-heading, .resource-strip > div, .portfolio-next > div { align-items: flex-start; flex-direction: column; }

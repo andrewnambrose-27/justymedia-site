@@ -142,7 +142,7 @@ for (const url of urls) {
   if (count(html, /<main(?:\s|>)/g) !== 1) fail(`${route} does not have exactly one main`);
   if (!html.includes(`<site-header data-page-path="${route}" data-rendered="true">`) || !html.includes('<site-footer data-rendered="true">')) fail(`${route} lacks pre-rendered shared components`);
   if (!/<header class="site-header">/.test(html) || !/<footer class="site-footer">/.test(html)) fail(`${route} lacks crawlable header or footer markup`);
-  if (!html.includes('href="/styles.css?v=20261018-1"')) fail(`${route} is missing the page stylesheet`);
+  if (!html.includes('href="/styles.css?v=20261018-2"')) fail(`${route} is missing the page stylesheet`);
   if (!html.includes('href="/site-components.css?v=20260904-2"')) fail(`${route} is missing the shared component stylesheet`);
   if (!html.includes('src="/site-components.js?v=20260904-4"')) fail(`${route} is missing the shared component script`);
   for (const faviconHref of ["/favicon.ico?v=20260818-2", "/favicons/favicon.svg?v=20260818-2", "/favicons/favicon-96x96.png?v=20260818-2", "/favicons/apple-touch-icon.png?v=20260818-2", "/favicons/site.webmanifest?v=20260818-2"]) {
