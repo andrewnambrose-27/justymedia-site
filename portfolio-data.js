@@ -1,5 +1,6 @@
 const portfolioPages = {
   photography: {
+    lastModified: "2026-10-18",
     path: "/photography/",
     title: "Photography Portfolio | Justy Media",
     heading: "Photography",
@@ -9,7 +10,7 @@ const portfolioPages = {
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }],
     cards: [
       { title: "Automotive Photography", description: "Eight vehicle collections shaped around form, detail and location.", href: "/photography/automotive-photography/", image: "/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", alt: "Red Honda NSX photographed in warm woodland light", width: 2828, height: 3535, structuredData: { licenseEligible: true } },
-      { title: "RUSH Magazine", description: "Editorial features spanning Alfa Romeo, Eunos, Subaru and Suzuki performance cars.", href: "/photography/rush-magazine/", image: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", alt: "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", width: 3582, height: 4477, structuredData: { licenseEligible: true } }
+      { title: "RUSH Magazine", description: "Editorial features spanning Alfa Romeo, Eunos, Lotus, Subaru, Suzuki and Toyota performance cars.", href: "/photography/rush-magazine/", image: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8094-Edit.JPG", alt: "Front wing and teledial wheel of a red Alfa Romeo GTV Cup", width: 3582, height: 4477, structuredData: { licenseEligible: true } }
     ]
   },
   "automotive-photography": {
@@ -32,10 +33,11 @@ const portfolioPages = {
     ]
   },
   "rush-magazine": {
+    lastModified: "2026-10-18",
     path: "/photography/rush-magazine/",
     title: "RUSH Magazine Photography | Justy Media",
     heading: "RUSH Magazine",
-    description: "Explore RUSH Magazine automotive photography by Justy Media, featuring Alfa Romeo, Eunos, Subaru Impreza P1 and Suzuki Swift Sport editorials.",
+    description: "Explore RUSH Magazine photography by Justy Media, featuring Alfa Romeo, Eunos, Lotus Exige V6 S, Subaru Impreza P1, Suzuki Swift Sport and Toyota GR Yaris.",
     intro: "Automotive editorial photography created for RUSH Magazine, from rare performance icons to engaging modern hot hatches. Each feature combines vehicle details, location portraits and road imagery into a coherent visual story.",
     type: "CollectionPage",
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "RUSH Magazine", href: "/photography/rush-magazine/" }],
@@ -43,7 +45,9 @@ const portfolioPages = {
       { title: "Alfa Romeo GTV Cup", description: "Four photographs", href: "/photography/rush-magazine/alfa-romeo-gtv-cup/", galleryKey: "alfa-romeo-gtv-cup" },
       { title: "Eunos Roadster Mk1", description: "Four photographs", href: "/photography/rush-magazine/eunos-roadster-mk1/", galleryKey: "eunos-roadster-mk1" },
       { title: "Subaru Impreza P1", description: "Six photographs", href: "/photography/rush-magazine/subaru-impreza-p1/", galleryKey: "subaru-impreza-p1" },
-      { title: "Suzuki Swift Sport", description: "Two photographs", href: "/photography/rush-magazine/suzuki-swift-sport/", galleryKey: "suzuki-swift-sport" }
+      { title: "Suzuki Swift Sport", description: "Seven photographs", href: "/photography/rush-magazine/suzuki-swift-sport/", galleryKey: "suzuki-swift-sport" },
+      { title: "Toyota GR Yaris", description: "Four photographs", href: "/photography/rush-magazine/toyota-gr-yaris/", galleryKey: "toyota-gr-yaris" },
+      { title: "Lotus Exige V6 S", description: "Five photographs", href: "/photography/rush-magazine/lotus-exige-v6-s/", galleryKey: "lotus-exige-v6-s" }
     ]
   },
   "honda-civic-ej6-coupe": {
@@ -232,17 +236,58 @@ const portfolioPages = {
     ]
   },
   "suzuki-swift-sport": {
+    lastModified: "2026-10-18",
     structuredData: { licenseEligible: true },
     path: "/photography/rush-magazine/suzuki-swift-sport/",
     title: "Suzuki Swift Sport Photography | Justy Media",
     heading: "Suzuki Swift Sport",
-    description: "A blue Suzuki Swift Sport photographed by Justy Media for RUSH Magazine, pairing a Peak District driving view with an atmospheric night portrait.",
-    intro: "A compact RUSH Magazine story following a blue Suzuki Swift Sport from a driver's-eye view on a winding Peak District road to a low, atmospheric portrait beneath the lights of a quiet town street.",
+    description: "A blue Suzuki Swift Sport photographed by Justy Media for RUSH Magazine, with forest driving images, Peak District roads and atmospheric night-time details.",
+    intro: "A RUSH Magazine story following a blue Suzuki Swift Sport from a driver's-eye view on a winding Peak District road to rolling portraits through the forest. After dark, cobbled streets and glowing lights frame the car's shape and details.",
     breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "RUSH Magazine", href: "/photography/rush-magazine/" }, { label: "Suzuki Swift Sport", href: "/photography/rush-magazine/suzuki-swift-sport/" }],
     folder: "/photography/rush-magazine/suzuki-swift-sport/",
     images: [
       ["_DSC3391-Edit.JPG", "Driver's-eye view from a Suzuki Swift Sport on a winding Peak District road", 5519, 3679],
-      ["_DSC4072-Edit.JPG", "Blue Suzuki Swift Sport in a low night-time portrait on a quiet town street", 5390, 3593]
+      ["_DSC3787.JPG", "Blue Suzuki Swift Sport driving towards the camera on a forest road", 3872, 2581],
+      ["_DSC3801.JPG", "Blue Suzuki Swift Sport in a rolling front three-quarter view beside tall forest trees", 2581, 3872],
+      ["_DSC4061.JPG", "Rear view of the blue Suzuki Swift Sport at night with red tail lights reflected on cobblestones", 2581, 3872],
+      ["_DSC4072-Edit.JPG", "Blue Suzuki Swift Sport in a low night-time portrait on a quiet town street", 5390, 3593],
+      ["_DSC4230.JPG", "Elevated close view of the blue Suzuki Swift Sport rear light beside a cobbled street", 4000, 6000],
+      ["_DSC4239.JPG", "Illuminated headlamp and blue bonnet of the Suzuki Swift Sport at night", 2581, 3872]
+    ]
+  },
+  "toyota-gr-yaris": {
+    lastModified: "2026-10-18",
+    structuredData: { licenseEligible: true },
+    path: "/photography/rush-magazine/toyota-gr-yaris/",
+    title: "Toyota GR Yaris Photography | Justy Media",
+    heading: "Toyota GR Yaris",
+    description: "A white Toyota GR Yaris photographed by Justy Media for RUSH Magazine, with sunset moorland portraits, wheel details and GR brake callipers.",
+    intro: "A RUSH Magazine feature on a white Toyota GR Yaris, photographed against a warm sunset and open moorland. Wide exterior portraits lead into closer studies of the car's sculpted bodywork, black alloy wheels and red GR brake callipers.",
+    breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "RUSH Magazine", href: "/photography/rush-magazine/" }, { label: "Toyota GR Yaris", href: "/photography/rush-magazine/toyota-gr-yaris/" }],
+    folder: "/photography/rush-magazine/toyota-gr-yaris/",
+    images: [
+      ["_DSC8654-Edit.JPG", "White Toyota GR Yaris in a front three-quarter portrait beneath an orange sunset sky", 4216, 2371],
+      ["_DSC8669-Edit-2.JPG", "Elevated front three-quarter view of the white Toyota GR Yaris on open moorland at sunset", 2828, 3535],
+      ["_DSC8679-Edit-2.JPG", "Rear-quarter detail of the white Toyota GR Yaris with a black alloy wheel and red brake calliper", 2828, 3535],
+      ["_DSC8682-Edit-2.JPG", "Close view of the Toyota GR Yaris red GR brake calliper behind black alloy wheel spokes", 2828, 3535]
+    ]
+  },
+  "lotus-exige-v6-s": {
+    lastModified: "2026-10-18",
+    structuredData: { licenseEligible: true },
+    path: "/photography/rush-magazine/lotus-exige-v6-s/",
+    title: "Lotus Exige V6 S Photography | Justy Media",
+    heading: "Lotus Exige V6 S",
+    description: "A red Lotus Exige V6 S photographed by Justy Media for RUSH Magazine, featuring moorland road scenes, exterior portraits and cabin details.",
+    intro: "A RUSH Magazine feature following a red Lotus Exige V6 S across open moorland roads. Wide views of its low profile and rear wing sit alongside intimate details of the steering wheel, cabin and bodywork beneath an overcast sky.",
+    breadcrumbs: [{ label: "Home", href: "/" }, { label: "Photography", href: "/photography/" }, { label: "RUSH Magazine", href: "/photography/rush-magazine/" }, { label: "Lotus Exige V6 S", href: "/photography/rush-magazine/lotus-exige-v6-s/" }],
+    folder: "/photography/rush-magazine/lotus-exige-v6-s/",
+    images: [
+      ["_DSC1262.JPG", "Red Lotus Exige V6 S driving away along a winding moorland road beneath an overcast sky", 3872, 2581],
+      ["_DSC1297.JPG", "Lotus steering wheel and dark cabin viewed through the red Exige V6 S side window", 2581, 3872],
+      ["_DSC1317.JPG", "Rear view of the red Lotus Exige V6 S and its raised rear wing beside an open moorland road", 3873, 2582],
+      ["_DSC1327.JPG", "Side profile of the red Lotus Exige V6 S against rolling moorland and grey skies", 3872, 2581],
+      ["_DSC1749.JPG", "Fanta air freshener hanging inside the red Lotus Exige V6 S, viewed through its side window", 2581, 3872]
     ]
   }
 };

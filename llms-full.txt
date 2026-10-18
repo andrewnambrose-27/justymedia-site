@@ -51,6 +51,10 @@ The work hub currently publishes only supported projects: the Justy Media websit
 
 - Alfa Romeo GTV Cup: https://justymedia.co.uk/photography/rush-magazine/alfa-romeo-gtv-cup/
 - Eunos Roadster Mk1: https://justymedia.co.uk/photography/rush-magazine/eunos-roadster-mk1/
+- Subaru Impreza P1: https://justymedia.co.uk/photography/rush-magazine/subaru-impreza-p1/
+- Suzuki Swift Sport: https://justymedia.co.uk/photography/rush-magazine/suzuki-swift-sport/
+- Toyota GR Yaris: https://justymedia.co.uk/photography/rush-magazine/toyota-gr-yaris/
+- Lotus Exige V6 S: https://justymedia.co.uk/photography/rush-magazine/lotus-exige-v6-s/
 
 ### Free resource
 
@@ -73,4 +77,4 @@ The wallpaper downloads are for personal use. This discovery document does not g
 - Photographs and written content remain protected work.
 - Contact Justy Media directly for availability, scope, licensing and commercial use.
 
-Last updated: 2026-09-04
+Last updated: 2026-10-18
