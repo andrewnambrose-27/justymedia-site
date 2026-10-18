@@ -122,6 +122,22 @@ p { margin: 0 0 1.2rem; }
 .hero-content { position: relative; z-index: 1; align-self: end; width: min(100% - 40px, var(--max)); margin: 0 auto; padding: 90px 0 0; }
 .hero-copy { width: 54%; max-width: 660px; }
 .hero-content h1 { font-size: clamp(3.25rem, 4.8vw, 4.8rem); }
+/* Both heading versions share a grid cell, reserving space before JS runs.
+   Invisible service options size the typing line for every complete phrase. */
+.hero-heading { display: grid; }
+.hero-heading-fallback, .hero-heading-animation { grid-area: 1 / 1; min-width: 0; }
+.hero-heading-animation { visibility: hidden; }
+.hero-location { display: block; }
+.hero-service-stage, .hero-service-options { display: grid; min-width: 0; text-wrap: wrap; }
+.hero-service-options, .hero-service-current, .hero-service-options > span { grid-area: 1 / 1; min-width: 0; overflow-wrap: anywhere; }
+.hero-service-options { visibility: hidden; pointer-events: none; user-select: none; }
+.hero-service-current { align-self: start; }
+.hero-service-current::after, .hero-service-options > span::after { display: inline-block; width: 0; height: .8em; margin-left: .08em; border-left: .025em solid currentColor; vertical-align: -.03em; content: ""; }
+.hero-service-current::after { animation: hero-cursor-blink 1.1s step-end infinite; }
+.hero-heading.is-typewriter .hero-heading-fallback { opacity: 0; pointer-events: none; user-select: none; }
+.hero-heading.is-typewriter .hero-heading-animation { visibility: visible; }
+@keyframes hero-cursor-blink { 50% { opacity: 0; } }
+
 .hero-copy > p:not(.eyebrow) { margin: 28px 0 34px; color: #e7e2d9; font-size: clamp(1.03rem, 1.7vw, 1.28rem); }
 .clients-projects { --clients-spacing: 72px; margin: 0; padding-block: var(--clients-spacing); }
 .clients-projects .eyebrow { display: flex; align-items: center; gap: 24px; margin: 0 0 28px; color: #d4cfc5; font-family: inherit; font-size: .8rem; line-height: 1.5; letter-spacing: .24em; text-align: center; white-space: nowrap; }
@@ -516,6 +532,9 @@ a.website-preview:hover img { transform: scale(1.012); }
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .hero-heading.is-typewriter .hero-heading-fallback { opacity: 1; }
+  .hero-heading.is-typewriter .hero-heading-animation { visibility: hidden; }
+  .hero-service-current::after { animation: none; }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
