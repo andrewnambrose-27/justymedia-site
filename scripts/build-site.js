@@ -225,7 +225,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="icon" href="/favicons/favicon-96x96.png?v=20260818-2" type="image/png" sizes="96x96">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
-${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261018-2">
+${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261018-3">
     <link rel="stylesheet" href="/site-components.css?v=20260904-2">
     <script src="/site-components.js?v=20260904-4" defer></script>
     ${jsonLd(schemas)}
@@ -272,7 +272,7 @@ function homePage() {
   const pathName = "/";
   const title = "Web Design & Digital Marketing, Peak District | Justy Media";
   const description = "Web design, graphic design, branding and SEO for small UK businesses. Work directly with Andrew Ambrose at Justy Media, based in the Peak District.";
-  const hero = ownedPhoto("/Automotive Photography/_DSC5553.jpg", "Classic Mini photographed by Justy Media", 3271, 5815, { loading: "eager", sizes: "100vw" });
+  const hero = ownedPhoto("/hero-images/subaru-impreza-p1.JPG", "Blue Subaru Impreza P1 driving along a Peak District road, shown in greyscale", 3872, 2581, { loading: "eager", sizes: "100vw" });
   const vulcan = websiteProjects.find((project) => project.slug === "vulcan-sports");
   const projectImage = { src: vulcan.screenshot, alt: vulcan.screenshotAlt, width: vulcan.width, height: vulcan.height };
   const editorialPhoto = ownedPhoto("/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8112-Edit-2.JPG", "Alfa Romeo badge on the red GTV Cup bodywork", 3706, 4632);
@@ -287,7 +287,7 @@ function homePage() {
   const body = `<main id="main-content">
     <section class="hero studio-hero">
       <div class="hero-media">${responsiveImage(hero)}</div>
-      <div class="hero-content"><p class="eyebrow">Independent Creative Studio</p><h1>Web design, graphic design &amp; digital marketing in the Peak District</h1><p>I help small businesses explain their offer, build a consistent identity and make it easier for customers to enquire. Websites, branding and practical SEO support, delivered directly by Andrew Ambrose.</p><div class="button-row"><a class="button button-primary" href="/contact-us/">Discuss your project</a><a class="button button-secondary" href="/work/">View Selected Work</a></div>${clientsProjects}</div>
+      <div class="hero-content"><div class="hero-copy"><p class="eyebrow">Independent Creative Studio</p><h1>Web design, graphic design &amp; digital marketing in the Peak District</h1><p>I help small businesses explain their offer, build a consistent identity and make it easier for customers to enquire. Websites, branding and practical SEO support, delivered directly by Andrew Ambrose.</p><div class="button-row"><a class="button button-primary" href="/contact-us/">Discuss your project</a><a class="button button-secondary" href="/work/">View Selected Work</a></div></div>${clientsProjects}</div>
     </section>
     <section class="intro-section"><div class="content-width split-intro"><div><p class="eyebrow">Justy Media</p><h2>Creative thinking, made practical.</h2></div><div><p>Justy Media is my independent creative studio in the Peak District. I work with businesses in Buxton, Leek and the surrounding area, and across the UK, on clearer websites, recognisable branding and useful digital marketing.</p><p>Whether you are starting a business or improving an established one, I connect the design, content and technical details around what your customers need. You work directly with me, Andrew Ambrose, from the first conversation through to delivery, keeping decisions and communication straightforward.</p></div></div></section>
     <section class="section-block services-overview"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Services</p><h2>Design and marketing, with photography alongside.</h2></div><a class="text-link" href="/services/">View all services</a></div><div class="service-grid">${serviceCard("/services/web-design/", "01", "Web design & development", "Clear, responsive websites, landing pages, redesigns and lightweight tools built around your goals.")}${serviceCard("/services/graphic-design/", "02", "Graphic design & branding", "Identity, print and digital artwork that gives your business a consistent and recognisable visual voice.")}${serviceCard("/services/digital-marketing/", "03", "SEO & digital marketing", "Understandable SEO, analytics, content improvements and ongoing support without inflated promises.")}${serviceCard("/services/photography-content/", "04", "Photography & content", "Distinctive automotive, editorial, product and brand imagery for websites, campaigns and social media.")}</div></div></section>
@@ -305,7 +305,7 @@ function homePage() {
   return documentHtml({
     path: pathName, title, description, body, bodyClass: "home-page",
     preload: `<link rel="preload" as="image" href="${imageUrl(hero.src, 960)}" imagesrcset="${imageUrl(hero.src, 640)} 640w, ${imageUrl(hero.src, 960)} 960w, ${imageUrl(hero.src, 1400)} 1400w" imagesizes="100vw" fetchpriority="high">`,
-    shareImage: defaultShareImage, shareAlt: "Red Honda NSX photographed by Justy Media",
+    shareImage: hero.src, shareAlt: hero.alt,
     structuredImages: [hero, editorialPhoto, nsxPhoto],
     schemas: [
       { "@type": "WebSite", "@id": `${origin}/#website`, url: `${origin}/`, name: "Justy Media", description, publisher: { "@id": `${origin}/#business` }, inLanguage: "en-GB" },
