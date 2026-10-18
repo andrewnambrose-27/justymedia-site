@@ -254,6 +254,12 @@ p { margin: 0 0 1.2rem; }
 .gallery-trigger:hover img { transform: scale(1.025); opacity: .88; }
 .gallery-grid figcaption { display: flex; min-height: 92px; flex-direction: column; justify-content: space-between; gap: 12px; padding: 16px; color: var(--muted); font-size: .78rem; }
 .gallery-grid figcaption a { color: #fff; font-weight: 800; }
+/* Fill each row in source order, using the original image proportions. */
+.photo-gallery { display: flex; flex-wrap: wrap; }
+/* Growth weights above one let a final portrait fill the remaining row. */
+.photo-gallery figure { display: flex; flex: calc(var(--photo-ratio) * 10) 1 calc(var(--photo-ratio) * 300px); flex-direction: column; }
+.photo-gallery .gallery-trigger img { aspect-ratio: auto; }
+.photo-gallery figcaption { flex: 1; }
 .wallpaper-grid { grid-template-columns: repeat(4, 1fr); }
 .wallpaper-grid .gallery-trigger img { aspect-ratio: 9 / 16; }
 .resource-note { max-width: 720px; margin-bottom: 32px; }
@@ -422,6 +428,7 @@ a.website-preview:hover img { transform: scale(1.012); }
   .tool-card { min-height: 0; }
   .service-grid, .capability-grid, .work-grid, .gallery-grid, .wallpaper-grid, .enquiry-form { grid-template-columns: 1fr; }
   .gallery-grid .gallery-landscape { grid-column: span 1; }
+  .photo-gallery figure { flex-basis: 100%; }
   .work-card-wide { grid-row: auto; }
   .work-card-wide > img, .work-card > img, .work-card .logo-panel { height: 430px; }
   .service-card { min-height: 320px; }

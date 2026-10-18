@@ -483,10 +483,10 @@ function portfolioPage(page) {
       return `<a class="collection-card" href="${card.href}">${responsiveImage({ src: image, alt, width, height })}<div><p class="work-type">${card.description}</p><h2>${card.title}</h2><span class="text-link">View collection</span></div></a>`;
     }).join("")}</div></div></section>`;
   } else {
-    content = `<section class="section-block gallery-section"><div class="wide-width"><div class="gallery-grid" data-gallery>${page.images.map(([file, alt, width, height]) => {
+    content = `<section class="section-block gallery-section"><div class="wide-width"><div class="gallery-grid photo-gallery" data-gallery>${page.images.map(([file, alt, width, height]) => {
       const source = `${page.folder}${file}`;
       const orientationClass = width > height ? ' class="gallery-landscape"' : "";
-      return `<figure${orientationClass}><a class="gallery-trigger" href="${encodedPath(source)}" data-full="${encodedPath(source)}" data-alt="${escapeHtml(alt)}">${responsiveImage({ src: source, alt, width, height })}<span class="sr-only">View larger image</span></a><figcaption><span>${escapeHtml(alt)}</span><a href="${encodedPath(source)}" download>Download original</a></figcaption></figure>`;
+      return `<figure${orientationClass} style="--photo-ratio: ${(width / height).toFixed(6)}"><a class="gallery-trigger" href="${encodedPath(source)}" data-full="${encodedPath(source)}" data-alt="${escapeHtml(alt)}">${responsiveImage({ src: source, alt, width, height })}<span class="sr-only">View larger image</span></a><figcaption><span>${escapeHtml(alt)}</span><a href="${encodedPath(source)}" download>Download original</a></figcaption></figure>`;
     }).join("")}</div></div></section>`;
   }
   const photographyResource = page.path === "/photography/"
