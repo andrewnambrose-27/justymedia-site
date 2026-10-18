@@ -134,6 +134,30 @@ p { margin: 0 0 1.2rem; }
 .client-logos .client-logo-rush { max-width: 250px; }
 .client-logos .client-logo-vulcan { max-width: 180px; }
 
+/* Homepage spacing: a shorter hero lead-in and a roomier page rhythm. */
+.home-page { --home-gutter: clamp(24px, 4vw, 64px); --home-section-space: clamp(96px, 12vw, 160px); }
+.home-page :is(.wide-width, .content-width, .split-intro, .hero-content) { width: min(100% - var(--home-gutter) * 2, var(--max)); }
+.home-page .content-width:not(.split-intro) { max-width: var(--content); }
+.home-page .hero { min-height: 0; }
+.home-page .hero-content { align-self: start; padding-top: clamp(64px, 6vw, 112px); }
+.home-page .hero-copy > .eyebrow { margin-bottom: 18px; }
+.home-page .hero-copy > p:not(.eyebrow) { margin-block: 32px 40px; }
+.home-page .clients-projects { --clients-spacing: clamp(64px, 7vw, 88px); }
+.home-page .clients-projects .eyebrow { margin-bottom: 32px; }
+.home-page .intro-section { padding-block: clamp(112px, 13vw, 176px); }
+.home-page .section-block { padding-block: var(--home-section-space); }
+.home-page .section-heading { gap: 36px; margin-bottom: 48px; }
+.home-page .service-card { padding: clamp(28px, 3vw, 40px); }
+.home-page .work-grid { gap: 28px; }
+.home-page .work-card > div:last-child { padding: clamp(28px, 3vw, 40px); }
+.home-page .photo-feature-copy { padding: clamp(64px, 9vw, 144px) clamp(24px, 6vw, 96px); }
+.home-page .process-list li { padding-block: 34px; }
+.home-page .feature-list { gap: 28px; }
+.home-page .feature-list article { padding: 32px; }
+.home-page .final-cta { padding-block: clamp(112px, 15vw, 208px); }
+.home-page .resource-strip { padding-block: clamp(72px, 8vw, 96px); }
+.home-page .site-footer { padding-top: 88px; }
+
 .intro-section { padding: clamp(80px, 11vw, 145px) 0; background: var(--charcoal); }
 .split-intro, .prose-grid { display: grid; grid-template-columns: minmax(0, .92fr) minmax(0, 1.08fr); gap: clamp(40px, 8vw, 100px); }
 .split-intro { width: min(100% - 40px, var(--max)); }
@@ -471,6 +495,24 @@ a.website-preview:hover img { transform: scale(1.012); }
 
 @media (max-width: 360px) {
   .discipline-nav a { padding-inline: 5px; font-size: .6rem; letter-spacing: .035em; }
+}
+
+
+@media (max-width: 900px) {
+  .home-page .hero-copy { width: min(100% - var(--home-gutter) * 2, 660px); padding-top: 56px; }
+  .home-page .clients-projects { width: min(100% - var(--home-gutter) * 2, var(--max)); }
+}
+
+@media (max-width: 560px) {
+  .home-page .hero-copy { padding-top: 48px; }
+  .home-page .hero-copy > p:not(.eyebrow) { margin-block: 28px 32px; }
+  .home-page .clients-projects { --clients-spacing: 56px; }
+  .home-page .clients-projects .eyebrow { margin-bottom: 28px; }
+  .home-page .section-heading { gap: 28px; margin-bottom: 36px; }
+}
+
+@media (min-width: 901px) {
+  .home-page .hero-media img { object-position: 35% center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
