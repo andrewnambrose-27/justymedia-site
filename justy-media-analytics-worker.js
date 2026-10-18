@@ -171,6 +171,46 @@ function isVulcanFooterArrival(href) {
   }
 }
 
+// Kept separate from legacy pageviews so existing data needs no schema migration.
+async function ensureJourneyStorage(env) {
+  await env.DB.prepare(`
+    CREATE TABLE IF NOT EXISTS analytics_journey_events (
+      id INTEGER PRIMARY KEY,
+      ts TEXT NOT NULL,
+      session_id TEXT NOT NULL,
+      path TEXT NOT NULL,
+      is_bot INTEGER NOT NULL DEFAULT 0
+    )
+  `).run();
+  await env.DB.prepare(`
+    CREATE INDEX IF NOT EXISTS analytics_journey_session
+    ON analytics_journey_events (session_id, id)
+  `).run();
+}
+
+function interactionWithPage(item) {
+  const path = normalizePath(item.pagePath);
+  const knownNames = { "/": "Home", "/contact-us": "Contact us", "/phone-wallpapers": "Phone wallpapers" };
+  const title = String(item.title || "").split("|")[0].trim().replace(/\s+photography$/i, "");
+  const fallback = path.split("/").pop().replace(/\.html$/, "").split("-")
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(" ");
+  return { ...item, pagePath: path, pageName: knownNames[path] || title || fallback };
+}
+
+const DEVICE_TYPE_SQL = `CASE
+  WHEN trim(COALESCE(user_agent, '')) = '' THEN 'Unknown'
+  WHEN lower(user_agent) LIKE '%ipad%' OR lower(user_agent) LIKE '%tablet%'
+    OR lower(user_agent) LIKE '%kindle%' OR lower(user_agent) LIKE '%silk/%'
+    OR lower(user_agent) LIKE '%playbook%'
+    OR (lower(user_agent) LIKE '%android%' AND lower(user_agent) NOT LIKE '%mobile%') THEN 'Tablet'
+  WHEN lower(user_agent) LIKE '%mobile%' OR lower(user_agent) LIKE '%iphone%'
+    OR lower(user_agent) LIKE '%ipod%' OR lower(user_agent) LIKE '%android%' THEN 'Mobile'
+  WHEN lower(user_agent) LIKE '%windows%' OR lower(user_agent) LIKE '%macintosh%'
+    OR lower(user_agent) LIKE '%x11%' OR lower(user_agent) LIKE '%cros%'
+    OR lower(user_agent) LIKE '%linux%' THEN 'Desktop'
+  ELSE 'Unknown'
+END`;
+
 async function recordAnalyticsEvent(request, env, event) {
   const userAgent = request.headers.get("User-Agent") || "";
   await env.DB.prepare(`
@@ -191,6 +231,14 @@ async function recordAnalyticsEvent(request, env, event) {
     event.toolId,
     event.title
   ).run();
+
+  if (event.eventType === "pageview" && /^[a-f0-9-]{36}$/i.test(event.sessionId || "")) {
+    await ensureJourneyStorage(env);
+    await env.DB.prepare(`
+      INSERT INTO analytics_journey_events (ts, session_id, path, is_bot)
+      VALUES (?, ?, ?, ?)
+    `).bind(new Date().toISOString(), event.sessionId, normalizePath(event.path), isBotUserAgent(userAgent) ? 1 : 0).run();
+  }
 }
 
 function contactJsonResponse(request, data, status = 200) {
@@ -504,7 +552,8 @@ export default {
           referrer,
           referrerHost: footerArrival ? VULCAN_REFERRAL.source : getReferrerHost(referrer),
           toolId: footerArrival ? VULCAN_REFERRAL.id : toolId,
-          title
+          title,
+          sessionId: typeof data.sessionId === "string" ? data.sessionId : ""
         });
 
         return jsonResponse({ ok: true });
@@ -531,6 +580,7 @@ export default {
     if (url.pathname === "/api/stats" && request.method === "GET") {
       try {
         await ensureContactStorage(env);
+        await ensureJourneyStorage(env);
         const trafficFilter = url.searchParams.get("traffic") || "human";
         const botClause = trafficFilter === "all"
           ? "1 = 1"
@@ -609,12 +659,14 @@ export default {
         const topInteractions = await env.DB.prepare(`
           SELECT
             COALESCE(NULLIF(tool_id, ''), event_type) AS interaction,
+            COALESCE(NULLIF(normalized_path, ''), path, '/') AS pagePath,
+            MAX(NULLIF(title, '')) AS title,
             COUNT(*) AS total
           FROM pageviews
           WHERE COALESCE(event_type, 'pageview') <> 'pageview'
             AND ${botClause}
-          GROUP BY interaction
-          ORDER BY total DESC, interaction ASC
+          GROUP BY pagePath, interaction
+          ORDER BY total DESC, pagePath ASC, interaction ASC
           LIMIT 10
         `).all();
 
@@ -628,6 +680,41 @@ export default {
           ORDER BY views DESC, country ASC
           LIMIT 10
         `).all();
+
+        const devices = await env.DB.prepare(`
+          SELECT ${DEVICE_TYPE_SQL} AS device, COUNT(*) AS views
+          FROM pageviews
+          WHERE ${pageviewClause}
+          GROUP BY device
+          ORDER BY views DESC, device ASC
+        `).all();
+
+        // A session must view Home before Contact; intermediate pages are optional.
+        // IDs break timestamp ties and avoid matching Contact visits before Home.
+        const funnel = await env.DB.prepare(`
+          WITH home_sessions AS (
+            SELECT session_id, MIN(id) AS home_id, MIN(ts) AS home_at
+            FROM analytics_journey_events
+            WHERE path = '/' AND ${botClause}
+            GROUP BY session_id
+          ), conversions AS (
+            SELECT home.session_id, home.home_at,
+              EXISTS (
+                SELECT 1 FROM analytics_journey_events contact
+                WHERE contact.session_id = home.session_id
+                  AND contact.path = '/contact-us'
+                  AND contact.id > home.home_id AND ${botClause}
+              ) AS reached_contact
+            FROM home_sessions home
+            WHERE date(home.home_at) >= date(?, '-29 days')
+          )
+          SELECT COUNT(*) AS homeSessions, COALESCE(SUM(reached_contact), 0) AS contactSessions
+          FROM conversions
+        `).bind(today).first();
+
+        const journeyStart = await env.DB.prepare(`
+          SELECT MIN(ts) AS startedAt FROM analytics_journey_events
+        `).first();
 
         const topReferrers = await env.DB.prepare(`
           SELECT
@@ -662,6 +749,7 @@ export default {
             country,
             COALESCE(referrer_host, 'direct') AS referrer,
             COALESCE(is_bot, 0) AS isBot,
+            ${DEVICE_TYPE_SQL} AS device,
             COALESCE(NULLIF(tool_id, ''), '') AS tool
           FROM pageviews
           WHERE ${pageviewClause}
@@ -682,12 +770,14 @@ export default {
           SELECT
             COALESCE(event_type, 'pageview') AS event,
             COALESCE(NULLIF(tool_id, ''), COALESCE(normalized_path, path, '/')) AS interaction,
+            COALESCE(NULLIF(normalized_path, ''), path, '/') AS pagePath,
+            MAX(NULLIF(title, '')) AS title,
             COUNT(*) AS total
           FROM pageviews
           WHERE COALESCE(event_type, 'pageview') <> 'pageview'
             AND ${botClause}
-          GROUP BY event, interaction
-          ORDER BY total DESC, interaction ASC
+          GROUP BY pagePath, event, interaction
+          ORDER BY total DESC, pagePath ASC, interaction ASC
           LIMIT 20
         `).all();
 
@@ -746,7 +836,14 @@ export default {
           monthly: monthlyViews.results || [],
           daily: dailyViews.results || [],
           topPages: topPages.results || [],
-          topInteractions: topInteractions.results || [],
+          topInteractions: (topInteractions.results || []).map(interactionWithPage),
+          devices: devices.results || [],
+          funnel: {
+            homeSessions: funnel?.homeSessions || 0,
+            contactSessions: funnel?.contactSessions || 0,
+            conversionRate: funnel?.homeSessions ? Math.round(funnel.contactSessions / funnel.homeSessions * 1000) / 10 : 0,
+            startedAt: journeyStart?.startedAt || null
+          },
           topCountries: topCountries.results || []
           ,
           topReferrers: topReferrers.results || [],
@@ -760,7 +857,7 @@ export default {
           }],
           recentVisits: recentVisits.results || [],
           trafficMix: trafficMix.results || [],
-          interactionEvents: interactionEvents.results || [],
+          interactionEvents: (interactionEvents.results || []).map(interactionWithPage),
           enquiries: {
             total: contactTotals?.total || 0,
             unread: contactTotals?.unread || 0,
@@ -1087,6 +1184,39 @@ export default {
       color: var(--muted);
     }
 
+    .interaction-page {
+      display: block;
+      margin-bottom: 5px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .interaction-detail {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    #topToolsWrap td:first-child, #toolEventsWrap td:first-child {
+      overflow-wrap: anywhere;
+      padding-right: 16px;
+    }
+
+    .funnel-list {
+      display: grid;
+      gap: 24px;
+    }
+
+    .funnel-list .progress-track {
+      height: 22px;
+      margin-top: 10px;
+    }
+
+    .funnel-list .goal-meta {
+      flex-wrap: wrap;
+    }
+
     .empty {
       color: var(--muted);
       padding: 10px 0 2px;
@@ -1380,6 +1510,25 @@ export default {
 
       <div class="card chart-card">
         <div class="card-title-row">
+          <h2 class="card-title">Home to Contact funnel</h2>
+          <div class="pill">Last 30 days</div>
+        </div>
+        <div id="funnelWrap"></div>
+        <p class="footer-note">Counts sessions that view Home, then reach Contact us in the same tab, directly or through other pages. Each session counts once and expires after 30 minutes without a tracked page view or interaction. Reaching Contact is a page visit, not an enquiry.</p>
+        <p class="footer-note" id="funnelTrackingNote">Session tracking begins when the updated tracker is published; earlier journeys cannot be reconstructed.</p>
+      </div>
+
+      <div class="card table-card">
+        <div class="card-title-row">
+          <h2 class="card-title">Visitor devices</h2>
+          <div class="pill">All time</div>
+        </div>
+        <div id="devicesWrap"></div>
+        <p class="footer-note">Page views by device category, estimated from browser information. Includes existing visits; unknown devices stay unclassified.</p>
+      </div>
+
+      <div class="card chart-card">
+        <div class="card-title-row">
           <h2 class="card-title">Daily page views</h2>
           <div class="pill">Live from /api/stats</div>
         </div>
@@ -1578,7 +1727,7 @@ export default {
           <div class="visit-row">
             <div>
               <div class="visit-path">\${escapeHtml(visit.path)}</div>
-              <div class="visit-meta">\${escapeHtml(visit.referrer)} - \${escapeHtml(visit.country || "unknown")}\${visit.tool ? " - " + escapeHtml(visit.tool) : ""}</div>
+              <div class="visit-meta">\${escapeHtml(visit.referrer)} - \${escapeHtml(visit.country || "unknown")} - \${escapeHtml(visit.device || "Unknown")}\${visit.tool ? " - " + escapeHtml(visit.tool) : ""}</div>
             </div>
             <span>\${escapeHtml(label)}</span>
           </div>
@@ -1615,9 +1764,33 @@ export default {
       }).join("") + '</div>';
     }
 
+    function renderInteraction(item, includeEvent) {
+      const detail = (includeEvent ? item.event.replace(/_/g, " ") + " · " : "") + item.interaction;
+      return '<strong class="interaction-page" title="' + escapeHtml(item.pagePath || "/") + '">'
+        + escapeHtml(item.pageName || item.pagePath || "Unknown page") + '</strong>'
+        + '<span class="interaction-detail">' + escapeHtml(detail) + '</span>';
+    }
+
+    function renderFunnel(funnel) {
+      if (!funnel || !funnel.homeSessions) {
+        return '<div class="empty">No tracked Home sessions in the last 30 days yet. The funnel will fill as visitors browse from Home.</div>';
+      }
+      const home = Number(funnel.homeSessions) || 0;
+      const contact = Number(funnel.contactSessions) || 0;
+      const rate = Number(funnel.conversionRate) || 0;
+      return '<div class="funnel-list">'
+        + '<div><div class="goal-meta"><strong>1. Viewed Home</strong><span>' + home + ' sessions · 100%</span></div>'
+        + '<div class="progress-track"><div class="progress-fill" style="width:100%"></div></div></div>'
+        + '<div><div class="goal-meta"><strong>2. Reached Contact us</strong><span>' + contact + ' sessions · ' + rate + '%</span></div>'
+        + '<div class="progress-track"><div class="progress-fill" style="width:' + rate + '%"></div></div></div></div>'
+        + '<p class="footer-note"><strong>' + rate + '% reached Contact us</strong> · ' + (home - contact) + ' sessions have not reached Contact us.</p>';
+    }
+
     let activeTraffic = "human";
+    let dashboardRequest = 0;
 
     async function loadDashboard() {
+      const requestId = ++dashboardRequest;
       try {
         const res = await fetch("/api/stats?traffic=" + encodeURIComponent(activeTraffic), {
           headers: {
@@ -1630,6 +1803,7 @@ export default {
         }
 
         const data = await res.json();
+        if (requestId !== dashboardRequest) return;
 
         document.getElementById("allTimeViews").textContent = data.totals?.allTimeViews ?? "0";
         document.getElementById("thisMonthViews").textContent = data.totals?.thisMonthViews ?? "0";
@@ -1651,7 +1825,7 @@ export default {
 
         const topInteraction = data.topInteractions && data.topInteractions.length ? data.topInteractions[0] : null;
         document.getElementById("topToolValue").textContent = topInteraction ? topInteraction.total : "—";
-        document.getElementById("topToolLabel").textContent = topInteraction ? topInteraction.interaction : "No interactions tracked yet";
+        document.getElementById("topToolLabel").textContent = topInteraction ? topInteraction.pageName + " · " + topInteraction.interaction : "No interactions tracked yet";
 
         const topCountry = data.topCountries && data.topCountries.length ? data.topCountries[0] : null;
         document.getElementById("topCountryValue").textContent = topCountry ? topCountry.views : "—";
@@ -1660,6 +1834,21 @@ export default {
         renderChart("monthlyChart", [...(data.monthly || [])].reverse(), "month", "views", formatMonthLabel, "No monthly data yet.");
         renderChart("dailyChart", data.daily || [], "day", "views", formatDayLabel, "No daily data yet.");
         document.getElementById("goalsWrap").innerHTML = renderGoals(data.totals?.activeGoals || []);
+        document.getElementById("funnelWrap").innerHTML = renderFunnel(data.funnel);
+        document.getElementById("funnelTrackingNote").textContent = data.funnel?.startedAt
+          ? "Session data available from " + new Date(data.funnel.startedAt).toLocaleDateString("en-GB") + ". Earlier journeys cannot be reconstructed. Browsers blocking session storage may leave journeys incomplete."
+          : "Session tracking begins when the updated tracker is published; earlier journeys cannot be reconstructed.";
+
+        const deviceTotal = (data.devices || []).reduce((total, item) => total + Number(item.views), 0);
+        document.getElementById("devicesWrap").innerHTML = renderSimpleTable(
+          data.devices || [],
+          [
+            { label: "Device", render: item => escapeHtml(item.device) },
+            { label: "Views", render: item => escapeHtml(item.views) },
+            { label: "Share", render: item => deviceTotal ? (Number(item.views) / deviceTotal * 100).toFixed(1) + "%" : "0%" }
+          ],
+          "No device data yet."
+        );
 
         document.getElementById("topPagesWrap").innerHTML = renderSimpleTable(
           data.topPages || [],
@@ -1691,7 +1880,7 @@ export default {
         document.getElementById("topToolsWrap").innerHTML = renderSimpleTable(
           data.topInteractions || [],
           [
-            { label: "Interaction", render: item => escapeHtml(item.interaction) },
+            { label: "Page / interaction", render: item => renderInteraction(item, false) },
             { label: "Total", render: item => escapeHtml(item.total) }
           ],
           "No interaction data yet."
@@ -1712,7 +1901,7 @@ export default {
         document.getElementById("toolEventsWrap").innerHTML = renderSimpleTable(
           data.interactionEvents || [],
           [
-            { label: "Event", render: item => escapeHtml(item.event + " - " + item.interaction) },
+            { label: "Page / event", render: item => renderInteraction(item, true) },
             { label: "Total", render: item => escapeHtml(item.total) }
           ],
           "No interaction events yet."
@@ -1730,6 +1919,9 @@ export default {
         document.getElementById("recentVisitsWrap").innerHTML = renderRecentVisits(data.recentVisits || []);
         document.getElementById("enquiriesWrap").innerHTML = renderEnquiries(data.enquiries?.recent || []);
       } catch (error) {
+        if (requestId !== dashboardRequest) return;
+        document.getElementById("funnelWrap").innerHTML = '<div class="empty">Could not load the funnel.</div>';
+        document.getElementById("devicesWrap").innerHTML = '<div class="empty">Could not load device data.</div>';
         document.getElementById("dailyChart").innerHTML = '<div class="empty">Could not load daily analytics data.</div>';
         document.getElementById("monthlyChart").innerHTML = '<div class="empty">Could not load analytics data.</div>';
         document.getElementById("topPagesWrap").innerHTML = '<div class="empty">Could not load top pages.</div>';

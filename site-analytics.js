@@ -3,6 +3,28 @@
   window.__justyAnalyticsLoaded = true;
 
   const endpoint = "https://analytics.justymedia.co.uk/collect";
+  const sessionKey = "justy-analytics-session";
+  const sessionTimeout = 30 * 60 * 1000;
+  let memorySession;
+
+  function getSessionId() {
+    const now = Date.now();
+    let session = memorySession;
+    try {
+      session = JSON.parse(window.sessionStorage.getItem(sessionKey)) || session;
+    } catch {}
+    if (!session || !/^[a-f0-9-]{36}$/i.test(session.id) || !Number.isFinite(session.lastActive)
+      || now - session.lastActive >= sessionTimeout || now < session.lastActive) {
+      if (typeof window.crypto?.randomUUID !== "function") return "";
+      session = { id: window.crypto.randomUUID(), lastActive: now };
+    }
+    session.lastActive = now;
+    memorySession = session;
+    try {
+      window.sessionStorage.setItem(sessionKey, JSON.stringify(session));
+    } catch {}
+    return session.id;
+  }
 
   function sendAnalytics(payload) {
     fetch(endpoint, {
@@ -15,6 +37,7 @@
         href: window.location.href,
         referrer: document.referrer || "",
         title: document.title || "",
+        sessionId: getSessionId(),
         toolId: ""
       }, payload)),
       keepalive: true

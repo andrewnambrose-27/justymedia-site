@@ -6,6 +6,7 @@
     "check": "node scripts/verify-site.js",
     "test:contact": "node scripts/test-contact-worker.js",
     "test:referrals": "node scripts/test-referral-worker.js",
+    "test:analytics": "node scripts/test-analytics-worker.js",
     "serve": "node scripts/serve-site.js"
   }
 }
