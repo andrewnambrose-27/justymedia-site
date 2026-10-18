@@ -25,14 +25,14 @@
       const service = services[index];
       length += deleting ? -1 : 1;
       current.textContent = service.slice(0, length);
-      let delay = deleting ? 45 : 75;
+      let delay = deleting ? 25 : 40;
       if (!length) {
         index = (index + 1) % services.length;
         deleting = false;
-        delay = 350;
+        delay = 150;
       } else if (length === service.length) {
         deleting = true;
-        delay = 2500;
+        delay = 1200;
       }
       timer = setTimeout(tick, delay);
     } catch {
@@ -48,7 +48,7 @@
     deleting = true;
     current.textContent = services[0];
     heading.classList.add('is-typewriter');
-    if (!document.hidden) timer = setTimeout(tick, 2500);
+    if (!document.hidden) timer = setTimeout(tick, 1200);
   }
 
   try {
@@ -56,7 +56,7 @@
     document.addEventListener('visibilitychange', () => {
       clearTimeout(timer);
       if (!document.hidden && heading.classList.contains('is-typewriter')) {
-        timer = setTimeout(tick, 2500);
+        timer = setTimeout(tick, 1200);
       }
     });
     start();

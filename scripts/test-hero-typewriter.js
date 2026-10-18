@@ -5,10 +5,10 @@ const path = require('node:path');
 const root = path.resolve(__dirname, '..');
 const html = fs.readFileSync(path.join(root, 'index.html'), 'utf8');
 const script = fs.readFileSync(path.join(root, 'hero-typewriter.js'), 'utf8');
-const expected = ['Web Design', 'Graphic Design', 'Photography', 'Digital Marketing', 'SEO', 'GEO', 'AI Integration', 'Branding & Identity', 'E-commerce Development', 'Content Creation', 'Website Maintenance'];
+const expected = ['Web Design', 'Graphic Design', 'Photography', 'Digital Marketing', 'SEO', 'GEO', 'AI Integration', 'Brand Identity', 'E-commerce', 'Content Creation', 'Website Maintenance'];
 const names = [...html.matchAll(/<span data-hero-service>(.*?)<\/span>/g)].map(match => match[1].replaceAll('&amp;', '&'));
 assert.deepEqual(names, expected, 'All requested services must be server-rendered in order');
-assert.match(html, /class="hero-heading-fallback">Web Design, Graphic Design &amp; Digital Marketing <span class="hero-location">in the Peak District<\/span>/);
+assert.match(html, /class="hero-heading-fallback">Web Design, Graphic Design &amp; Digital Marketing <span class="hero-location">Based in the Peak District<\/span>/);
 assert.match(html, /class="hero-heading-animation" aria-hidden="true"/);
 assert.doesNotMatch(html.match(/<h1\b.*?<\/h1>/s)[0], /aria-live|role="status"/);
 
@@ -47,7 +47,7 @@ function setup(reduced = false) {
 
 const loop = setup();
 assert.equal(loop.current.textContent, names[0]);
-assert.equal(loop.timers.values().next().value.delay, 2500);
+assert.equal(loop.timers.values().next().value.delay, 1200);
 const completed = [names[0]];
 const speeds = new Set();
 for (let step = 0; step < 1000 && completed.length < names.length + 1; step++) {
@@ -59,7 +59,7 @@ for (let step = 0; step < 1000 && completed.length < names.length + 1; step++) {
   if (after.length > before.length && names.includes(after)) completed.push(after);
 }
 assert.deepEqual(completed, [...names, names[0]], 'The complete service loop must return to the first name');
-for (const delay of [75, 45, 2500, 350]) assert.ok(speeds.has(delay));
+for (const delay of [40, 25, 1200, 150]) assert.ok(speeds.has(delay));
 loop.document.hidden = true;
 loop.handlers.visibility();
 assert.equal(loop.timers.size, 0, 'Background tabs must stop scheduling');
@@ -81,4 +81,4 @@ const reduced = setup(true);
 assert.equal(reduced.timers.size, 0);
 assert.ok(!reduced.classes.has('is-typewriter'), 'Initial reduced motion must never start the animation');
 vm.runInNewContext(script, { document: { querySelector: () => null } });
-console.log('Verified HTML services, static accessible H1, complete loop, 75/45ms speeds, pauses, reduced-motion changes, background pause, and failure recovery.');
+console.log('Verified HTML services, static accessible H1, complete loop, 40/25ms speeds, pauses, reduced-motion changes, background pause, and failure recovery.');
