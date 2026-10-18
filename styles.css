@@ -541,3 +541,46 @@ a.website-preview:hover img { transform: scale(1.012); }
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+/* Homepage detail and motion styles: no geometry changes or hidden initial state. */
+.home-page .service-card { position: relative; }
+.home-page .service-card::before { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--gold); opacity: .8; transform: scaleX(.14); transform-origin: left; pointer-events: none; content: ""; }
+.home-page .service-card:focus-within { background: #1b1b1b; border-color: rgba(255,195,47,.35); }
+.home-page .service-card:focus-within::before { transform: scaleX(1); }
+.home-page .service-card:focus-within h3, .home-page .work-card:focus-visible h3 { color: var(--gold); }
+.home-page .work-image { width: 100%; height: 380px; overflow: hidden; }
+.home-page .work-card-wide .work-image { height: 600px; }
+.home-page .work-image > img { width: 100%; height: 100%; object-fit: cover; }
+.home-page .work-card-website .work-image > img { object-fit: contain; padding: 24px; background: #0b0b0b; }
+.home-page .work-card .logo-panel { overflow: hidden; }
+.home-page .home-accent { position: relative; }
+.home-page .home-accent::after { position: absolute; left: 0; bottom: -7px; width: 32px; height: 2px; background: var(--gold); opacity: .8; transform-origin: left; pointer-events: none; content: ""; }
+
+@media (hover: hover) and (pointer: fine) {
+  .home-page .service-card:hover { border-color: rgba(255,195,47,.35); }
+  .home-page .service-card:hover::before { transform: scaleX(1); }
+  .home-page .service-card:hover h3 { color: var(--gold); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .home-page .home-reveal { animation: home-fade-up 600ms cubic-bezier(.22,1,.36,1) var(--home-reveal-delay, 0ms) backwards; }
+  .home-page .home-reveal .home-accent::after, .home-page .home-reveal.home-accent::after { animation: home-gold-line 600ms ease-out var(--home-reveal-delay, 0ms) backwards; }
+  .home-page .service-card.home-reveal::before { animation: home-service-line 600ms ease-out var(--home-reveal-delay, 0ms) backwards; }
+  .home-page .work-card.home-reveal .work-image, .home-page .work-card.home-reveal .logo-panel, .home-page .photo-feature-media.home-reveal > img { animation: home-image-reveal 650ms ease-out var(--home-reveal-delay, 0ms) backwards; }
+  .home-page .service-card { transition: background 220ms ease, border-color 220ms ease; }
+  .home-page .service-card::before { transition: transform 320ms ease-out; }
+  .home-page .service-card h3, .home-page .work-card h3 { transition: color 220ms ease; }
+  .home-page .work-image > img, .home-page .work-card .logo-panel img, .home-page .photo-feature-media > img { transition: transform 650ms cubic-bezier(.22,1,.36,1); }
+  .home-page .work-card:focus-visible .work-image > img, .home-page .work-card:focus-visible .logo-panel img, .home-page .photo-feature:focus-within .photo-feature-media > img { transform: scale(1.035); }
+  @media (hover: hover) and (pointer: fine) {
+    .home-page .work-card:hover .work-image > img, .home-page .work-card:hover .logo-panel img, .home-page .photo-feature-media:hover > img { transform: scale(1.035); }
+  }
+}
+
+@keyframes home-fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+@keyframes home-gold-line { from { opacity: 0; transform: scaleX(0); } to { opacity: .8; transform: scaleX(1); } }
+@keyframes home-service-line { from { transform: scaleX(0); } to { transform: scaleX(.14); } }
+@keyframes home-image-reveal { from { opacity: .4; clip-path: inset(0 0 6% 0); } to { opacity: 1; clip-path: inset(0); } }
+
+@media (max-width: 560px) {
+  .home-page .work-card .work-image { height: 430px; }
+}
