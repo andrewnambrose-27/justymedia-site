@@ -565,7 +565,6 @@ a.website-preview:hover img { transform: scale(1.012); }
   .home-page .home-reveal { animation: home-fade-up 600ms cubic-bezier(.22,1,.36,1) var(--home-reveal-delay, 0ms) backwards; }
   .home-page .home-reveal .home-accent::after, .home-page .home-reveal.home-accent::after { animation: home-gold-line 600ms ease-out var(--home-reveal-delay, 0ms) backwards; }
   .home-page .service-card.home-reveal::before { animation: home-service-line 600ms ease-out var(--home-reveal-delay, 0ms) backwards; }
-  .home-page .work-card.home-reveal .work-image, .home-page .work-card.home-reveal .logo-panel, .home-page .photo-feature-media.home-reveal > img { animation: home-image-reveal 650ms ease-out var(--home-reveal-delay, 0ms) backwards; }
   .home-page .service-card { transition: background 220ms ease, border-color 220ms ease; }
   .home-page .service-card::before { transition: transform 320ms ease-out; }
   .home-page .service-card h3, .home-page .work-card h3 { transition: color 220ms ease; }
@@ -579,7 +578,6 @@ a.website-preview:hover img { transform: scale(1.012); }
 @keyframes home-fade-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
 @keyframes home-gold-line { from { opacity: 0; transform: scaleX(0); } to { opacity: .8; transform: scaleX(1); } }
 @keyframes home-service-line { from { transform: scaleX(0); } to { transform: scaleX(.14); } }
-@keyframes home-image-reveal { from { opacity: .4; clip-path: inset(0 0 6% 0); } to { opacity: 1; clip-path: inset(0); } }
 
 @media (max-width: 560px) {
   .home-page .work-card .work-image { height: 430px; }

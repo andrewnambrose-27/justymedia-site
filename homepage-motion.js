@@ -1,4 +1,4 @@
-/* Content stays visible by default. Finite entrance animations start only on entry. */
+/* Content stays visible by default. Prepare entrances below the visible viewport. */
 (function () {
   const main = document.querySelector('.home-page main');
   if (!main || !window.IntersectionObserver || !window.matchMedia) return;
@@ -27,7 +27,9 @@
     if (shown.has(element)) return;
     shown.add(element);
     observer.unobserve(element);
-    if (animate && !motion.matches && !element.contains(document.activeElement)) {
+    // Never reset the opacity of content the visitor can already see.
+    const stillBelowViewport = element.getBoundingClientRect().top >= window.innerHeight;
+    if (animate && stillBelowViewport && !motion.matches && !element.contains(document.activeElement)) {
       element.classList.add('home-reveal');
     }
   }
@@ -62,7 +64,7 @@
       } catch {
         finish();
       }
-    }, { threshold: 0.08, rootMargin: '0px 0px -24px 0px' });
+    }, { threshold: 0, rootMargin: '0px 0px 120px 0px' });
 
     targets.forEach(element => {
       // Skip content already on screen, including pages opened at an anchor.

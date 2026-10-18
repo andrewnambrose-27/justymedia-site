@@ -225,7 +225,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="icon" href="/favicons/favicon-96x96.png?v=20260818-2" type="image/png" sizes="96x96">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
-${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261018-7">
+${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261018-8">
     <link rel="stylesheet" href="/site-components.css?v=20260904-2">
     <script src="/site-components.js?v=20260904-4" defer></script>
     ${jsonLd(schemas)}
@@ -234,7 +234,7 @@ ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261018-7">
     ${header(page.path)}
     ${page.body}
     ${footer()}
-    <script src="/script.js?v=20260904-1"></script>${galleryScript}${page.bodyClass === "home-page" ? '\n    <script src="/hero-typewriter.js?v=20261018-2"></script>\n    <script src="/homepage-motion.js?v=20261018-1"></script>' : ""}
+    <script src="/script.js?v=20260904-1"></script>${galleryScript}${page.bodyClass === "home-page" ? '\n    <script src="/hero-typewriter.js?v=20261018-2"></script>\n    <script src="/homepage-motion.js?v=20261018-2"></script>' : ""}
   </body>
 </html>
 `;
