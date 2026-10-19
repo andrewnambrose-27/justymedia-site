@@ -142,13 +142,13 @@ p { margin: 0 0 1.2rem; }
 .clients-projects { --clients-spacing: 72px; margin: 0; padding-block: var(--clients-spacing); }
 .clients-projects .eyebrow { display: flex; align-items: center; gap: 24px; margin: 0 0 28px; color: #d4cfc5; font-family: inherit; font-size: .8rem; line-height: 1.5; letter-spacing: .24em; text-align: center; white-space: nowrap; }
 .clients-projects .eyebrow::before, .clients-projects .eyebrow::after { flex: 1; height: 1px; content: ""; background: rgba(255,255,255,.35); }
-.client-logos { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); align-items: center; gap: clamp(24px, 4vw, 56px); margin: 0; padding: 0; list-style: none; }
+.client-logos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); align-items: center; gap: clamp(20px, 3vw, 44px); margin: 0; padding: 0; list-style: none; }
 .client-logos li { display: flex; min-width: 0; height: 104px; align-items: center; justify-content: center; }
-.client-logos img { width: 100%; max-width: 280px; max-height: 100px; object-fit: contain; opacity: .8; transition: opacity 180ms ease; }
+.client-logos img { width: 100%; max-width: 224px; max-height: 80px; object-fit: contain; opacity: .8; transition: opacity 180ms ease; }
 .client-logos img:hover { opacity: 1; }
-.client-logos .client-logo-norman { max-width: 260px; }
-.client-logos .client-logo-rush { max-width: 250px; }
-.client-logos .client-logo-vulcan { max-width: 180px; }
+.client-logos .client-logo-norman { max-width: 208px; }
+.client-logos .client-logo-rush { max-width: 200px; }
+.client-logos .client-logo-vulcan { max-width: 144px; }
 
 /* Homepage spacing: a shorter hero lead-in and a roomier page rhythm. */
 .home-page { --home-gutter: clamp(24px, 4vw, 64px); --home-section-space: clamp(96px, 12vw, 160px); }
@@ -435,7 +435,9 @@ a.website-preview:hover img { transform: scale(1.012); }
 
 @media (max-width: 900px) {
   .clients-projects { --clients-spacing: 56px; position: relative; z-index: 1; width: min(100% - 40px, var(--max)); margin: 0 auto; }
-  .client-logos { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 48px; }
+  .client-logos { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 28px 32px; }
+  .client-logos li { grid-column: span 2; }
+  .client-logos li:nth-last-child(-n+2) { grid-column: span 3; }
   .hero { min-height: 0; }
   .hero::after { background: none; }
   .hero-content { display: contents; }
@@ -468,10 +470,10 @@ a.website-preview:hover img { transform: scale(1.012); }
 @media (max-width: 560px) {
   .clients-projects { --clients-spacing: 48px; }
   .clients-projects .eyebrow { gap: 12px; margin-bottom: 22px; font-size: .74rem; }
-  .client-logos { gap: 18px 24px; }
+  .client-logos { gap: 18px 16px; }
   .client-logos li { height: 78px; }
-  .client-logos img { max-height: 76px; }
-  .client-logos .client-logo-vulcan { max-width: 140px; }
+  .client-logos img { max-width: 176px; max-height: 60px; }
+  .client-logos .client-logo-vulcan { max-width: 112px; }
   h1 { font-size: clamp(2.8rem, 15vw, 4.4rem); }
   h2 { font-size: clamp(2.15rem, 12vw, 3.2rem); }
   .section-heading, .resource-strip > div, .portfolio-next > div { align-items: flex-start; flex-direction: column; }

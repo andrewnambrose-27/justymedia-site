@@ -281,7 +281,8 @@ function homePage() {
     { name: "27tools", file: "27tools logo greyscale.png", className: "client-logo-tools", width: 1634, height: 173 },
     { name: "Norman Ferns Removals", file: "Norman Ferns Removals Logo.png", className: "client-logo-norman", width: 1533, height: 499 },
     { name: "RUSH", file: "rush logo ai transparent website.png", className: "client-logo-rush", width: 2520, height: 375 },
-    { name: "Vulcan Sports", file: "VULCAN-SPORTS-COMPLETE-LOGO-WHITE.png", className: "client-logo-vulcan", width: 1917, height: 1029 }
+    { name: "Vulcan Sports", file: "VULCAN-SPORTS-COMPLETE-LOGO-WHITE.png", className: "client-logo-vulcan", width: 1917, height: 1029 },
+    { name: "Peloton", file: "peloton logo white (1).png", className: "client-logo-peloton", width: 3755, height: 527 }
   ];
   const clientsProjects = `<section class="clients-projects" aria-labelledby="clients-projects-heading"><h2 id="clients-projects-heading" class="eyebrow">Clients &amp; Projects</h2><ul class="client-logos" role="list">${clientLogos.map((brand) => `<li><img class="${brand.className}" src="${encodedPath(`/brand-logos/${brand.file}`)}" width="${brand.width}" height="${brand.height}" alt="${escapeHtml(brand.name)}" loading="lazy" decoding="async"></li>`).join("")}</ul></section>`;
   const body = `<main id="main-content">
