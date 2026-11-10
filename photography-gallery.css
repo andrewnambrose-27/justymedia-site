@@ -1,0 +1,106 @@
+/* Photography exhibition. Layout controls inherit the site's original .button styles. */
+.photography-page { --gallery-gutter: clamp(20px, 4.8vw, 88px); background: var(--charcoal); }
+.photography-page .page-hero { padding: 48px 0 30px; background: none; border: 0; }
+.photography-page .page-hero .content-width { width: auto; max-width: none; margin-inline: var(--gallery-gutter); display: grid; grid-template-columns: 1.5fr 1fr; column-gap: 5vw; align-items: end; }
+.photography-page .page-hero .eyebrow { grid-column: 1 / -1; margin-bottom: 16px; }
+.photography-page .page-hero h1 { font-size: clamp(3rem, 7.6vw, 7.2rem); max-width: 950px; }
+.photography-page .page-hero .lede { margin: 0; max-width: 680px; color: var(--muted); font-size: .94rem; line-height: 1.65; }
+.photography-work-page .page-hero h1 { font-size: clamp(3rem, 4.8vw, 5rem); }
+.photography-page .discipline-nav { margin-bottom: 12px; }
+.exhibition { position: relative; overflow-anchor: none; }
+.exhibition-stage { background: var(--charcoal); }
+.exhibition-toolbar, .exhibition-footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px 24px; padding: 20px var(--gallery-gutter); }
+.exhibition-toolbar { border-top: 1px solid var(--line); }
+.exhibition-hint { margin: 0; color: var(--muted); font-size: .75rem; }
+.exhibition-switch { margin-left: auto; gap: 8px; }
+.exhibition-switch [aria-pressed="true"] { color: var(--gold); border-color: var(--gold); }
+.exhibition [hidden] { display: none !important; }
+.exhibition-track { display: grid; gap: 64px; padding: 12px var(--gallery-gutter) 20px; }
+.exhibition-panel { min-width: 0; margin: 0; }
+.exhibition-panel .gallery-trigger, .exhibition-media { display: block; position: relative; background: #111; }
+.exhibition-panel img { width: 100%; height: auto; aspect-ratio: auto; object-fit: contain; }
+.exhibition-panel .gallery-trigger:hover img { transform: none; opacity: 1; }
+.exhibition-open { position: absolute; right: 20px; bottom: 20px; background: rgba(12,12,12,.85); opacity: 0; transition: opacity 180ms ease; }
+.gallery-trigger:hover .exhibition-open, .gallery-trigger:focus-visible .exhibition-open { opacity: 1; }
+.exhibition-caption { display: flex; align-items: baseline; gap: 18px; padding-top: 18px; color: var(--muted); }
+.exhibition-number { flex: 0 0 auto; color: var(--gold); font-size: .78rem; letter-spacing: .08em; font-variant-numeric: tabular-nums; }
+.exhibition-copy { min-width: 0; flex: 1; }
+.exhibition-copy p { margin: 0; font-size: .84rem; line-height: 1.6; }
+.exhibition-copy .text-link { display: inline-block; margin-top: 8px; font-size: .64rem; }
+.exhibition-copy h2 { margin-bottom: 10px; font-size: clamp(1.8rem, 2.5vw, 2.8rem); }
+.exhibition-copy h2 a { text-decoration: none; }
+.exhibition-copy h2 a:hover { color: var(--gold); }
+.exhibition-copy .button { margin-top: 16px; }
+.exhibition-copy .tag-list { margin: 14px 0; }
+.exhibition-footer { border-top: 1px solid var(--line); padding-block: 18px; }
+.exhibition-count { flex: 0 0 auto; margin: 0; color: var(--muted); font-size: .75rem; font-variant-numeric: tabular-nums; }
+.exhibition-count [data-gallery-current] { color: var(--gold); }
+.exhibition-count > span:last-child { margin-left: 14px; }
+.exhibition-progress { flex: 1; max-width: 520px; height: 2px; background: var(--line); }
+.exhibition-progress > span { display: block; width: 100%; height: 100%; background: var(--gold); transform: scaleX(0); transform-origin: left; }
+.exhibition-step { gap: 8px; }
+.exhibition .button:disabled, .gallery-viewer .button:disabled { opacity: .35; cursor: default; transform: none; }
+
+/* Sticky stays inside a shell whose added height is exactly the measured travel.
+   All horizontal clipping happens BELOW the sticky element. */
+@media (min-width: 1000px) and (min-height: 600px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .exhibition.is-pinned .exhibition-stage { position: sticky; top: 0; height: var(--gallery-height); display: flex; flex-direction: column; }
+  .exhibition.is-pinned .exhibition-toolbar, .exhibition.is-pinned .exhibition-footer { flex: 0 0 auto; }
+  .exhibition.is-pinned .exhibition-viewport { min-height: 0; flex: 1; overflow: hidden; }
+  .exhibition.is-pinned .exhibition-track { display: flex; width: max-content; height: 100%; align-items: flex-start; gap: clamp(56px, 7vw, 128px); padding-block: 12px 20px; will-change: transform; }
+  .exhibition.is-pinned .exhibition-panel { flex: 0 0 var(--panel-width); width: var(--panel-width); }
+  .exhibition.is-pinned .gallery-trigger, .exhibition.is-pinned .exhibition-media { height: var(--media-height); }
+  .exhibition.is-pinned .exhibition-panel img { width: 100%; height: 100%; object-fit: contain; }
+  .exhibition-collections.is-pinned .exhibition-media img { object-fit: cover; }
+  .exhibition.is-pinned .exhibition-caption { max-height: none; }
+}
+
+/* Grid, reduced motion, touch, small screens and no-JS all retain normal flow. */
+.exhibition.is-grid .exhibition-track { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 42px 32px; }
+.exhibition.is-grid .exhibition-copy h2 { font-size: 1.8rem; }
+.exhibition.is-grid .exhibition-open { display: none; }
+@media (min-width: 1000px) {
+  .exhibition:not(.is-pinned):not(.is-grid) .exhibition-track { max-width: 1500px; margin-inline: auto; }
+  .exhibition:not(.is-pinned):not(.is-grid) .exhibition-panel img { max-height: 82vh; }
+}
+@media (max-width: 999px) {
+  .photography-page .page-hero { padding-top: 40px; }
+  .photography-page .page-hero .content-width { display: block; }
+  .photography-page .page-hero .lede { margin-top: 22px; }
+  .exhibition-toolbar { gap: 16px; }
+  .exhibition-hint { order: 3; width: 100%; }
+  .exhibition.is-grid .exhibition-track { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 36px 20px; }
+}
+@media (max-width: 560px) {
+  .photography-page .page-hero { padding-block: 28px 24px; }
+  .photography-page .page-hero h1 { font-size: clamp(2.6rem, 11vw, 3.6rem); }
+  .photography-page .page-hero .lede { margin-top: 16px; font-size: .9rem; }
+  .exhibition-toolbar { align-items: flex-start; padding-block: 12px; gap: 8px; }
+  .exhibition-hint { display: none; }
+  .exhibition-switch { width: 100%; margin: 0; }
+  .exhibition-caption { gap: 12px; }
+  .exhibition.is-grid .exhibition-caption { display: block; }
+  .exhibition.is-grid .exhibition-copy h2 { font-size: 1.4rem; }
+  .exhibition.is-grid .exhibition-copy .button { padding-inline: 12px; font-size: .65rem; }
+  .exhibition-progress { max-width: 100px; }
+}
+
+/* Native dialog supplies modality, focus containment and Escape handling. */
+.image-lightbox.gallery-viewer { position: fixed; inset: 0; width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 20px clamp(16px, 3vw, 48px); border: 0; background: #0c0c0c; overflow: auto; }
+.gallery-viewer[open] { display: flex; flex-direction: column; gap: 16px; }
+.gallery-viewer .viewer-toolbar, .gallery-viewer .viewer-footer { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.gallery-viewer .viewer-count { margin: 0; color: var(--gold); font-size: .8rem; font-variant-numeric: tabular-nums; }
+.gallery-viewer .lightbox-media { position: relative; display: grid; flex: 1; min-height: 0; height: auto; }
+.gallery-viewer .lightbox-media img { width: 100%; height: 100%; min-height: 0; max-height: 100%; object-fit: contain; }
+.gallery-viewer .lightbox-caption { display: block; width: 100%; max-width: 840px; margin: 0; font-size: .82rem; }
+.gallery-viewer .viewer-message { position: absolute; inset: 0; display: grid; place-content: center; background: #0c0c0c; color: var(--muted); text-align: center; }
+.gallery-viewer .viewer-message[hidden] { display: none; }
+@media (max-width: 560px) {
+  .image-lightbox.gallery-viewer { padding: 12px; }
+  .gallery-viewer .button { min-height: 44px; padding: 8px 12px; font-size: .66rem; }
+  .gallery-viewer .viewer-footer { gap: 10px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html:has(.photography-page) { scroll-behavior: auto; }
+  .photography-page *, .gallery-viewer * { scroll-behavior: auto !important; transition: none !important; animation: none !important; }
+}

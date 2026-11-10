@@ -249,11 +249,30 @@ for (const url of urls) {
     }
   }
 
-  if (/data-gallery/.test(html)) {
-    if (!/<script src="\/portfolio-page\.js"><\/script>/.test(html)) fail(`${route} gallery lacks progressive enhancement script`);
+  if (/data-gallery(?:\s|>)/.test(html)) {
+    if (!/<script src="\/portfolio-page\.js(?:\?v=[^"]+)?"><\/script>/.test(html)) fail(`${route} gallery lacks progressive enhancement script`);
     const alts = [...html.matchAll(/<a class="gallery-trigger"[^>]*data-alt="([^"]+)"/g)].map((match) => decode(match[1]));
     if (!alts.length) fail(`${route} gallery has no initial figures`);
     if (new Set(alts).size !== alts.length) fail(`${route} gallery contains duplicate image descriptions`);
+  }
+
+  if (/data-exhibition(?:\s|>)/.test(html)) {
+    if (!html.includes('/photography-gallery.css?') || !html.includes('/photography-gallery.js?')) fail(`${route} exhibition lacks shared styling or scrolling enhancement`);
+    if (!html.includes('data-gallery-layout="grid"') || !html.includes('role="progressbar"')) fail(`${route} exhibition lacks grid or progress controls`);
+    const page = Object.values(portfolioPages).find((entry) => entry.path === route);
+    if (page) {
+      const expected = (page.images || page.cards).length;
+      if (count(html, /class="exhibition-panel"/g) !== expected) fail(`${route} exhibition lost portfolio items`);
+      if (!decode(html).includes(page.intro)) fail(`${route} exhibition lost its original introduction`);
+      const images = page.images ? page.images.map((image) => portfolioRecord(page, image)) : page.cards.map((card) => card.image ? { src: card.image, alt: card.alt } : portfolioRecord(portfolioPages[card.galleryKey], portfolioPages[card.galleryKey].images[0]));
+      const tags = [...html.matchAll(/<img\b[^>]*data-original="[^"]+"[^>]*>/g)].map((match) => match[0]);
+      for (const image of images) {
+        if (!tags.some((tag) => tagContent(tag, /data-original="([^"]+)"/) === image.src && tagContent(tag, /alt="([^"]+)"/) === image.alt)) fail(`${route} exhibition changed image source or alt text: ${image.src}`);
+      }
+      for (const card of page.cards || []) {
+        if (!decode(html).includes(card.description) || !html.includes(`href="${card.href}"`)) fail(`${route} exhibition lost collection content or link: ${card.title}`);
+      }
+    }
   }
 }
 

@@ -198,7 +198,8 @@ function documentHtml(page) {
   }
   const robotsTag = page.robots ? `    <meta name="robots" content="${page.robots}">\n` : "";
   const preloadTag = page.preload ? `    ${page.preload}\n` : "";
-  const galleryScript = page.gallery ? '\n    <script src="/portfolio-page.js"></script>' : "";
+  const galleryScript = page.gallery ? '\n    <script src="/portfolio-page.js?v=20261110-1"></script>' : "";
+  const exhibitionScript = page.photography ? '\n    <script src="/photography-gallery.js?v=20261110-1"></script>' : "";
   if (page.breadcrumbs && page.breadcrumbs.length > 1) schemas.push(breadcrumbSchema(page.breadcrumbs));
   return `<!doctype html>
 <html lang="en-GB">
@@ -226,7 +227,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
 ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261018-8">
-    <link rel="stylesheet" href="/site-components.css?v=20260904-2">
+    <link rel="stylesheet" href="/site-components.css?v=20260904-2">${page.gallery || page.photography ? '\n    <link rel="stylesheet" href="/photography-gallery.css?v=20261110-1">' : ""}
     <script src="/site-components.js?v=20260904-4" defer></script>
     ${jsonLd(schemas)}
   </head>
@@ -234,7 +235,7 @@ ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261018-8">
     ${header(page.path)}
     ${page.body}
     ${footer()}
-    <script src="/script.js?v=20260904-1"></script>${galleryScript}${page.bodyClass === "home-page" ? '\n    <script src="/hero-typewriter.js?v=20261018-2"></script>\n    <script src="/homepage-motion.js?v=20261018-2"></script>' : ""}
+    <script src="/script.js?v=20260904-1"></script>${galleryScript}${exhibitionScript}${page.bodyClass === "home-page" ? '\n    <script src="/hero-typewriter.js?v=20261018-2"></script>\n    <script src="/homepage-motion.js?v=20261018-2"></script>' : ""}
   </body>
 </html>
 `;
@@ -427,10 +428,12 @@ function photographyWorkPage() {
   const title = "Photography Portfolio & Editorial Work | Justy Media";
   const description = "Explore automotive collections and editorial photography created by Justy Media, including complete features for RUSH Magazine.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "Work", href: "/work/" }, { label: "Photography", href: pagePath }];
-  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Photography portfolio", "Automotive stories built from complete collections.", "Editorial features and vehicle studies that move beyond isolated hero images to show character, detail, place and atmosphere.")}${disciplineNav("photography")}
-    <section class="case-study"><div class="wide-width case-study-grid"><div class="case-study-media">${responsiveImage({ src: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", alt: "Driver's view into the Alfa Romeo GTV Cup cabin", width: 4000, height: 5000 })}</div><div class="case-study-copy"><p class="eyebrow">Editorial photography</p><h2>RUSH Magazine features</h2><p>Six complete automotive editorials covering the Alfa Romeo GTV Cup, Eunos Roadster Mk1, Subaru Impreza P1, Suzuki Swift Sport, Toyota GR Yaris and Lotus Exige V6 S. Each feature combines details, portraits and road imagery into a coherent visual sequence.</p><ul class="tag-list"><li>Editorial photography</li><li>Automotive</li><li>Location work</li><li>Image editing</li></ul><a class="text-link" href="/photography/rush-magazine/">View all RUSH Magazine features</a></div></div></section>
-    <section class="case-study contrast"><div class="wide-width case-study-grid reverse"><div class="case-study-media">${responsiveImage({ src: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", alt: "Close view of a red Honda NSX bonnet", width: 2828, height: 3535 })}</div><div class="case-study-copy"><p class="eyebrow">Photography &amp; content</p><h2>Automotive collections</h2><p>Six published vehicle collections ranging from moorland and woodland portraits to road, cabin and mechanical details.</p><ul class="tag-list"><li>Automotive photography</li><li>Location portraits</li><li>Detail imagery</li><li>Image delivery</li></ul><a class="text-link" href="/photography/automotive-photography/">Browse all collections</a></div></div></section>${cta()}</main>`;
-  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, bodyClass: "work-discipline-page photography-work-page", shareImage: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", shareAlt: "Close view of a red Honda NSX bonnet", schemas: [{ "@type": "CollectionPage", name: "Justy Media photography work", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
+  const items = [
+    { src: "/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8098-Edit.JPG", alt: "Driver's view into the Alfa Romeo GTV Cup cabin", width: 4000, height: 5000, title: "RUSH Magazine features", description: "Six complete automotive editorials covering the Alfa Romeo GTV Cup, Eunos Roadster Mk1, Subaru Impreza P1, Suzuki Swift Sport, Toyota GR Yaris and Lotus Exige V6 S. Each feature combines details, portraits and road imagery into a coherent visual sequence.", tags: ["Editorial photography", "Automotive", "Location work", "Image editing"], href: "/photography/rush-magazine/", action: "View all RUSH Magazine features" },
+    { src: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", alt: "Close view of a red Honda NSX bonnet", width: 2828, height: 3535, title: "Automotive collections", description: "Six published vehicle collections ranging from moorland and woodland portraits to road, cabin and mechanical details.", tags: ["Automotive photography", "Location portraits", "Detail imagery", "Image delivery"], href: "/photography/automotive-photography/", action: "Browse all collections" }
+  ];
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Photography portfolio", "Automotive stories built from complete collections.", "Editorial features and vehicle studies that move beyond isolated hero images to show character, detail, place and atmosphere.")}${disciplineNav("photography")}${exhibitionGallery(items, { heading: "Photography work", collections: true })}${cta()}</main>`;
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, photography: true, bodyClass: "work-discipline-page photography-work-page photography-page", shareImage: "/photography/automotive-photography/honda-nsx/_DSC8923-Edit-2.jpg", shareAlt: "Close view of a red Honda NSX bonnet", schemas: [{ "@type": "CollectionPage", name: "Justy Media photography work", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
 }
 
 function graphicDesignWorkPage() {
@@ -472,6 +475,23 @@ function websiteCaseStudyPage(project) {
   });
 }
 
+// Every photography route uses the same exhibition markup and enhancement.
+// Content, image order, alt text and destinations still come from portfolio-data.js.
+function exhibitionGallery(items, { heading, collections = false, backHref = "/photography/", backLabel = "All photography" }) {
+  const number = (index) => String(index + 1).padStart(2, "0");
+  const panels = items.map((item, index) => {
+    const image = responsiveImage({ ...item, loading: index < 2 ? "eager" : "lazy", sizes: "(max-width: 760px) 100vw, 85vw" });
+    const caption = collections
+      ? `<div class="exhibition-copy"><h2><a href="${item.href}">${escapeHtml(item.title)}</a></h2><p>${escapeHtml(item.description)}</p>${item.tags ? `<ul class="tag-list">${item.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join("")}</ul>` : ""}<a class="button button-secondary" href="${item.href}">${escapeHtml(item.action || "View collection")}</a></div>`
+      : `<div class="exhibition-copy"><p>${escapeHtml(item.alt)}</p><a class="text-link" href="${encodedPath(item.src)}" download>Download original</a></div>`;
+    const media = collections
+      ? `<a class="exhibition-media" href="${item.href}">${image}</a>`
+      : `<a class="gallery-trigger" href="${encodedPath(item.src)}" data-full="${encodedPath(item.src)}" data-alt="${escapeHtml(item.alt)}">${image}<span class="button button-secondary exhibition-open">View full screen</span></a>`;
+    return `<figure class="exhibition-panel" data-ratio="${item.width / item.height}">${media}<figcaption class="exhibition-caption"><span class="exhibition-number">${number(index)}</span>${caption}</figcaption></figure>`;
+  }).join("");
+  return `<section class="exhibition${collections ? " exhibition-collections" : ""}" data-exhibition aria-label="${escapeHtml(heading)} gallery"><div class="exhibition-stage"><div class="exhibition-toolbar"><a class="button button-secondary" href="${backHref}">${escapeHtml(backLabel)}</a><p class="exhibition-hint" data-gallery-hint>${collections ? "Explore the collections" : "Select a photograph to view full screen"}</p><div class="button-row exhibition-switch" role="group" aria-label="Gallery layout" hidden><button class="button button-secondary" type="button" data-gallery-layout="gallery" aria-pressed="true">Gallery</button><button class="button button-secondary" type="button" data-gallery-layout="grid" aria-pressed="false">Overview / grid</button></div></div><div class="exhibition-viewport"><div class="exhibition-track"${collections ? "" : " data-gallery"}>${panels}</div></div><div class="exhibition-footer"><p class="exhibition-count"><span data-gallery-current>01</span><span aria-hidden="true"> / </span><span class="sr-only"> of </span>${String(items.length).padStart(2, "0")} <span>${collections ? "collections" : "photographs"}</span></p><div class="exhibition-progress" role="progressbar" aria-label="Gallery progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><span></span></div><div class="button-row exhibition-step" hidden><button class="button button-secondary" type="button" data-gallery-previous>Previous</button><button class="button button-secondary" type="button" data-gallery-next>Next</button></div></div></div></section>`;
+}
+
 function portfolioPage(page) {
   const gallery = Array.isArray(page.images);
   const shareImage = gallery ? `${page.folder}${page.images[0][0]}` : (page.cards[0].image || `${portfolioPages[page.cards[0].galleryKey].folder}${portfolioPages[page.cards[0].galleryKey].images[0][0]}`);
@@ -480,23 +500,12 @@ function portfolioPage(page) {
     const collection = portfolioPages[card.galleryKey];
     return portfolioPhoto(collection, collection.images[0]);
   });
-  let content;
-  if (page.cards) {
-    content = `<section class="section-block"><div class="wide-width"><div class="collection-grid">${page.cards.map((card) => {
-      const details = card.galleryKey ? portfolioPages[card.galleryKey] : null;
-      const image = card.image || `${details.folder}${details.images[0][0]}`;
-      const alt = card.alt || details.images[0][1];
-      const width = card.width || details.images[0][2];
-      const height = card.height || details.images[0][3];
-      return `<a class="collection-card" href="${card.href}">${responsiveImage({ src: image, alt, width, height })}<div><p class="work-type">${card.description}</p><h2>${card.title}</h2><span class="text-link">View collection</span></div></a>`;
-    }).join("")}</div></div></section>`;
-  } else {
-    content = `<section class="section-block gallery-section"><div class="wide-width"><div class="gallery-grid photo-gallery" data-gallery>${page.images.map(([file, alt, width, height]) => {
-      const source = `${page.folder}${file}`;
-      const orientationClass = width > height ? ' class="gallery-landscape"' : "";
-      return `<figure${orientationClass} style="--photo-ratio: ${(width / height).toFixed(6)}"><a class="gallery-trigger" href="${encodedPath(source)}" data-full="${encodedPath(source)}" data-alt="${escapeHtml(alt)}">${responsiveImage({ src: source, alt, width, height })}<span class="sr-only">View larger image</span></a><figcaption><span>${escapeHtml(alt)}</span><a href="${encodedPath(source)}" download>Download original</a></figcaption></figure>`;
-    }).join("")}</div></div></section>`;
-  }
+  const parent = page.breadcrumbs[page.breadcrumbs.length - 2];
+  const content = exhibitionGallery(gallery ? page.images.map((image) => portfolioPhoto(page, image)) : page.cards.map((card, index) => ({ ...cardPhotos[index], ...card })), {
+    heading: page.heading, collections: !gallery,
+    backHref: gallery ? parent.href : page.path === "/photography/" ? "/work/" : "/photography/",
+    backLabel: gallery ? `All ${parent.label === "RUSH Magazine" ? "RUSH features" : "automotive collections"}` : page.path === "/photography/" ? "Selected work" : "Photography overview"
+  });
   const photographyResource = page.path === "/photography/"
     ? `<aside class="photography-resource-panel"><div class="content-width"><div><p class="eyebrow">Free resource</p><h2>Planning a shoot or checking camera equipment?</h2><p>Use free tools for depth of field, shutter counts, video shutter speed and recording-time calculations.</p></div><a class="button button-secondary" href="/resources/camera-tools/">Explore Free Camera Tools</a></div></aside>`
     : "";
@@ -504,7 +513,7 @@ function portfolioPage(page) {
   const schema = gallery
     ? { "@type": "ImageGallery", name: page.heading, url: absolute(page.path), description: page.description, author: { "@id": `${origin}/#business` }, associatedMedia: imageObjects(page.images.map((image) => portfolioPhoto(page, image))) }
     : { "@type": "CollectionPage", name: page.heading, url: absolute(page.path), description: page.description, isPartOf: { "@id": `${origin}/#website` }, associatedMedia: imageObjects(cardPhotos) };
-  return documentHtml({ path: page.path, title: page.title, description: page.description, breadcrumbs: page.breadcrumbs, body, gallery, shareImage, shareAlt: gallery ? page.images[0][1] : page.cards[0].alt, schemas: [schema] });
+  return documentHtml({ path: page.path, title: page.title, description: page.description, breadcrumbs: page.breadcrumbs, body, bodyClass: "photography-page", photography: true, gallery, shareImage, shareAlt: gallery ? page.images[0][1] : cardPhotos[0].alt, schemas: [schema] });
 }
 
 function aboutPage() {
