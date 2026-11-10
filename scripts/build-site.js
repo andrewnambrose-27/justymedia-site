@@ -227,8 +227,8 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
 ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261110-2">
-    <link rel="stylesheet" href="/site-components.css?v=20261110-3">${page.gallery || page.photography ? '\n    <link rel="stylesheet" href="/photography-gallery.css?v=20261110-1">' : ""}
-    <script src="/site-components.js?v=20261110-3" defer></script>
+    <link rel="stylesheet" href="/site-components.css?v=20261110-4">${page.gallery || page.photography ? '\n    <link rel="stylesheet" href="/photography-gallery.css?v=20261110-1">' : ""}
+    <script src="/site-components.js?v=20261110-4" defer></script>
     ${jsonLd(schemas)}
   </head>
   <body class="${page.bodyClass || ""}">
