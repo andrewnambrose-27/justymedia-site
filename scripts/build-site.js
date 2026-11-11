@@ -228,7 +228,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
 ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261110-2">
     <link rel="stylesheet" href="/site-components.css?v=20261110-4">${page.gallery || page.photography ? '\n    <link rel="stylesheet" href="/photography-gallery.css?v=20261110-1">' : ""}
-    <script src="/site-components.js?v=20261110-4" defer></script>
+    ${page.localCoverage ? '<link rel="stylesheet" href="/about-local.css?v=20261111-1">\n    <script src="/about-local.js?v=20261111-1" defer></script>\n    ' : ""}<script src="/site-components.js?v=20261110-4" defer></script>
     ${jsonLd(schemas)}
   </head>
   <body class="${page.bodyClass || ""}">
@@ -520,16 +520,64 @@ function portfolioPage(page) {
   return documentHtml({ path: page.path, title: page.title, description: page.description, breadcrumbs: page.breadcrumbs, body, bodyClass: "photography-page", photography: true, gallery, shareImage, shareAlt: gallery ? page.images[0][1] : cardPhotos[0].alt, schemas: [schema] });
 }
 
+function localCoverage() {
+  // Approximate town-centre coordinates, projected schematically north-up.
+  // These are reference towns, never studio or office locations.
+  const towns = [
+    { name: "Buxton", x: 263, y: 119, label: "right", reference: true },
+    { name: "Leek", x: 198, y: 257, label: "right" },
+    { name: "Congleton", x: 86, y: 204, label: "right" },
+    { name: "Macclesfield", x: 136, y: 118, label: "above" },
+    { name: "Stoke-on-Trent", x: 105, y: 350, label: "right" },
+    { name: "Matlock", x: 476, y: 228, label: "left" },
+    { name: "Bakewell", x: 406, y: 160, label: "right" },
+    { name: "Whaley Bridge", x: 223, y: 56, label: "right" }
+  ];
+  return `<section class="section-block local-coverage" aria-labelledby="local-coverage-title" data-local-coverage>
+      <div class="wide-width local-coverage-layout">
+        <div class="local-coverage-copy">
+          <p class="eyebrow">Rooted in the Peak District</p>
+          <h2 id="local-coverage-title">Local knowledge.<br>A direct connection.</h2>
+          <p>Based near Buxton, I’m within easy reach of businesses in Leek, Congleton, Macclesfield, Stoke-on-Trent, Matlock, Bakewell and Whaley Bridge.</p>
+          <p>Working with someone local means we can meet, talk through ideas and get a better understanding of your business in person. Whether you need a new website, photography or ongoing creative support, you’ll work directly with me throughout the project.</p>
+          <p>I also work remotely with clients further afield, so you don’t need to be nearby to get in touch.</p>
+          <p class="local-coverage-signoff">Based near Buxton.<br><span>Working locally and further afield.</span></p>
+        </div>
+        <div class="local-coverage-card">
+          <figure class="coverage-figure">
+            <div class="coverage-map-heading"><p class="eyebrow">The local picture</p><span data-map-instruction hidden>Select a town</span></div>
+            <div class="coverage-atlas" role="group" aria-label="Local towns" aria-describedby="coverage-map-caption">
+              <svg class="coverage-map-art" viewBox="0 0 560 420" aria-hidden="true" focusable="false">
+                <defs><pattern id="coverage-grid" width="40" height="40" patternUnits="userSpaceOnUse"><circle cx="20" cy="20" r="1" fill="currentColor"/></pattern></defs>
+                <rect width="560" height="420" fill="url(#coverage-grid)"/>
+                <path d="M20 35V20H35 M525 20H540V35 M20 385V400H35 M525 400H540V385" fill="none" stroke="currentColor"/>
+              </svg>
+              <span class="coverage-north" aria-hidden="true">N<span>↑</span></span>
+              ${towns.map((town) => `<button class="coverage-town coverage-label-${town.label}${town.reference ? " coverage-reference" : ""}" type="button" style="--town-x:${town.x / 560 * 100}%;--town-y:${town.y / 420 * 100}%" data-town="${town.name}" aria-pressed="false" aria-controls="coverage-enquiry" disabled><span class="coverage-town-name">${town.name}${town.reference ? '<small>Town reference</small>' : ""}</span></button>`).join("\n              ")}
+            </div>
+            <figcaption id="coverage-map-caption">Schematic town positions, not a service boundary. Buxton is a reference point, not a studio address.</figcaption>
+          </figure>
+          <div class="coverage-enquiry" id="coverage-enquiry">
+            <h3 data-town-heading aria-live="polite" aria-atomic="true">Have a project nearby?</h3>
+            <p>Let’s talk about your website, design, photography or digital marketing project.</p>
+            <a class="button button-primary" href="/contact-us/">Start an enquiry</a>
+          </div>
+        </div>
+      </div>
+    </section>`;
+}
+
 function aboutPage() {
   const pagePath = "/about-us/";
   const title = "About Justy Media | Peak District Creative Studio";
   const description = "Meet Justy Media, an independent Peak District creative studio combining website development, graphic design, photography and digital marketing.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "About", href: pagePath }];
-  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("About Justy Media", "Independent by design.", "Justy Media is Andrew Ambrose’s independent creative studio, based in the Peak District and working with businesses across the UK.")}
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("About Justy Media", "Independent by design.", "Justy Media is Andrew Ambrose’s independent creative studio, based in the Peak District near Buxton, offering website design, graphic design, photography and digital marketing to local businesses and clients across the UK.")}
     <section class="section-block"><div class="content-width story-layout"><div class="logo-panel about-mark"><img src="${logo}" width="2639" height="1511" alt="Justy Media logo" loading="lazy"></div><div><h2>From photography to a broader creative studio.</h2><p>Andrew’s interest in image-making started with a five-megapixel point-and-shoot camera and developed through years of photographing cars, landscapes, products and editorial features.</p><p>Justy Media was founded in 2020 as a home for that photography. Over time, the work expanded naturally into graphic design, websites and the practical digital support that helps creative work perform in the real world.</p><p>Today, Justy Media brings those disciplines together: website development, graphic design, photography and digital marketing, delivered directly by Andrew rather than presented as the output of a large team.</p></div></div></section>
     <section class="section-block contrast"><div class="content-width"><div class="prose-grid"><div><p class="eyebrow">The approach</p><h2>Good creative work should also be useful.</h2></div><div><p>The visual result matters, but so do clarity, accessibility, performance, maintainability and the experience someone has when they encounter it.</p><p>That is why the studio works across connected disciplines. Photography can be planned around a website. A visual identity can carry through campaign assets. SEO can inform better page structure and content without flattening the creative idea.</p></div></div></div></section>
+    ${localCoverage()}
     <section class="section-block"><div class="wide-width"><p class="eyebrow">Established work</p><h2>See where the studio started.</h2><div class="link-card-grid"><a href="/photography/automotive-photography/"><span>Automotive photography</span><strong>Six vehicle collections</strong></a><a href="/photography/rush-magazine/"><span>Editorial photography</span><strong>RUSH Magazine features</strong></a><a href="/work/"><span>Studio work</span><strong>Website, identity and digital systems</strong></a></div></div></section>${cta("Work directly with Justy Media.", "If you have a website, design, photography or digital project in mind, tell me where you are and what you would like to improve.")}</main>`;
-  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "AboutPage", name: title, url: absolute(pagePath), description, mainEntity: { "@id": `${origin}/#business` }, isPartOf: { "@id": `${origin}/#website` } }, organisationSchema()] });
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, localCoverage: true, schemas: [{ "@type": "AboutPage", name: title, url: absolute(pagePath), description, mainEntity: { "@id": `${origin}/#business` }, isPartOf: { "@id": `${origin}/#website` } }, organisationSchema()] });
 }
 
 function contactPage() {
