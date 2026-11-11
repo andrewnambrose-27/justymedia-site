@@ -47,65 +47,8 @@ const cameraTools = [
   }
 ];
 
-const websiteProjects = [
-  {
-    slug: "27tools",
-    name: "27tools",
-    eyebrow: "Independent product · web application",
-    title: "A focused home for fast, useful browser tools.",
-    description: "Website design and development for 27tools, a growing collection of free, fast and privacy-friendly browser tools for creators, developers and everyday tasks.",
-    summary: "A dark, product-led platform that makes a growing library of camera, design and web utilities easy to search, understand and use.",
-    screenshot: "/website-screenshots/27tools/27tools homepage screenshot.png",
-    screenshotAlt: "27tools homepage showing the tool search, featured utilities and dark orange visual system",
-    width: 2539,
-    height: 1263,
-    liveUrl: "https://27tools.co/",
-    liveLabel: "Visit 27tools",
-    fact: "Compatible files are processed directly in the browser.",
-    challenge: "A broad set of specialist utilities needed to feel like one coherent product. The homepage had to help returning users reach a tool quickly while still giving first-time visitors enough context to explore with confidence.",
-    approach: "The experience is organised around direct search, clear categories and task-focused cards. A black and orange visual system gives the platform a distinctive identity, while concise interface copy keeps attention on the tools themselves.",
-    outcome: "The finished platform gives every utility a consistent place within a recognisable product family, with browser-based processing foregrounded as a practical privacy benefit.",
-    tags: ["Product design", "Web development", "Search UX", "Content architecture", "Technical SEO"]
-  },
-  {
-    slug: "compradar",
-    name: "CompRadar",
-    eyebrow: "Independent platform · data-led website",
-    title: "Making UK competitions easier to compare.",
-    description: "Website design and development for CompRadar, an independent UK platform for comparing live car, cash and prize competitions in one consistent format.",
-    summary: "A calm, data-led comparison experience that brings prices, availability, closing times and estimated odds into one clear place.",
-    screenshot: "/website-screenshots/compradar/compradar homepage screenshot.png",
-    screenshotAlt: "CompRadar homepage with live competition search, quick links and featured comparison cards",
-    width: 2539,
-    height: 1269,
-    liveUrl: "https://compradar.co/",
-    liveLabel: "Visit CompRadar",
-    fact: "Listings use a consistent format for prices, availability, closing times and estimated odds.",
-    challenge: "Competition listings vary widely between providers and can change quickly. The interface needed to present useful comparison data without overwhelming visitors or implying certainty where the source information may move.",
-    approach: "A restrained cream and green system keeps the dense subject matter approachable. Search, category shortcuts and a repeatable listing structure create a clear path from broad discovery to detailed comparison.",
-    outcome: "The resulting platform turns scattered listing information into a consistent browsing experience, supported by plain-language guidance and responsible-participation context.",
-    tags: ["UX/UI design", "Responsive development", "Data presentation", "Search experience", "Content strategy"]
-  },
-  {
-    slug: "vulcan-sports",
-    name: "Vulcan Sports",
-    eyebrow: "Client website · teamwear",
-    title: "A sharper digital storefront for UK-made teamwear.",
-    description: "Website design and development for Vulcan Sports, a family-run Staffordshire manufacturer of bespoke sports kits, training gear and leisurewear.",
-    summary: "A confident, product-led website that connects Vulcan Sports' UK manufacturing story with clear routes into kit design, teamwear ranges and direct support.",
-    screenshot: "/website-screenshots/vulcansports/vulcan sports homepage screenshot.png",
-    screenshotAlt: "Vulcan Sports homepage featuring bespoke orange and black teamwear and clear product routes",
-    width: 2543,
-    height: 1251,
-    liveUrl: "https://vulcansports.co.uk/",
-    liveLabel: "Visit Vulcan Sports",
-    fact: "The experience connects kit design, product ranges and direct support.",
-    challenge: "The website needed to serve clubs ready to create a kit as well as visitors still comparing ranges, lead times and manufacturing options. It also needed to retain the energy of a performance-sports brand.",
-    approach: "High-impact product imagery, bold orange calls to action and compact proof points establish the offer quickly. Navigation separates bespoke kit design, ready-to-browse ranges and support content without losing the brand's direct tone.",
-    outcome: "The finished experience presents the product range and Staffordshire manufacturing story as one connected proposition, with clearer next steps for both confident buyers and early-stage enquiries.",
-    tags: ["Web design", "Responsive development", "Ecommerce UX", "Content structure", "Brand application"]
-  }
-];
+const websiteProjects = require("../website-projects.js");
+const { websitePreview } = require("./website-preview.js");
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>\"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[character]);
@@ -227,7 +170,7 @@ ${robotsTag}    <link rel="canonical" href="${canonical}">
     <link rel="apple-touch-icon" href="/favicons/apple-touch-icon.png?v=20260818-2" sizes="180x180">
     <link rel="manifest" href="/favicons/site.webmanifest?v=20260818-2">
 ${preloadTag}    <link rel="stylesheet" href="/styles.css?v=20261110-2">
-    <link rel="stylesheet" href="/site-components.css?v=20261110-4">${page.gallery || page.photography ? '\n    <link rel="stylesheet" href="/photography-gallery.css?v=20261110-1">' : ""}
+    <link rel="stylesheet" href="/site-components.css?v=20261110-4">${page.gallery || page.photography ? '\n    <link rel="stylesheet" href="/photography-gallery.css?v=20261110-1">' : ""}${page.journey ? '\n    <link rel="stylesheet" href="/portfolio-journey.css?v=20261111-1">' : ""}${page.preview ? '\n    <script src="/website-preview.js?v=20261111-1" defer></script>' : ""}
     ${page.localCoverage ? '<link rel="stylesheet" href="/about-local.css?v=20261111-1">\n    <script src="/about-local.js?v=20261111-1" defer></script>\n    ' : ""}<script src="/site-components.js?v=20261110-4" defer></script>
     ${jsonLd(schemas)}
   </head>
@@ -248,8 +191,8 @@ function writeRoute(route, content) {
   fs.writeFileSync(destination, content);
 }
 
-function pageIntro(eyebrow, heading, intro) {
-  return `<section class="page-hero"><div class="content-width">${eyebrow ? `<p class="eyebrow">${escapeHtml(eyebrow)}</p>` : ""}<h1>${escapeHtml(heading)}</h1><p class="lede">${escapeHtml(intro)}</p></div></section>`;
+function pageIntro(eyebrow, heading, intro, actions = []) {
+  return `<section class="page-hero"><div class="content-width">${eyebrow ? `<p class="eyebrow">${escapeHtml(eyebrow)}</p>` : ""}<h1>${escapeHtml(heading)}</h1><p class="lede">${escapeHtml(intro)}</p>${actions.length ? `<div class="button-row intro-actions">${actions.map(([href, label], index) => `<a class="button button-${index ? 'secondary' : 'primary'}" href="${href}">${escapeHtml(label)}</a>`).join('')}</div>` : ''}</div></section>`;
 }
 
 function disciplineNav(current) {
@@ -280,6 +223,7 @@ function homePage() {
   const hero = ownedPhoto("/hero-images/subaru-impreza-p1.JPG", "Blue Subaru Impreza P1 driving along a Peak District road, shown in greyscale", 3872, 2581, { loading: "eager", sizes: "100vw" });
   const vulcan = websiteProjects.find((project) => project.slug === "vulcan-sports");
   const projectImage = { src: vulcan.screenshot, alt: vulcan.screenshotAlt, width: vulcan.width, height: vulcan.height };
+  const independent = websiteProjects.find((project) => project.slug === "compradar");
   const editorialPhoto = ownedPhoto("/photography/rush-magazine/alfa-romeo-gtv-cup/_DSC8112-Edit-2.JPG", "Alfa Romeo badge on the red GTV Cup bodywork", 3706, 4632);
   const nsxPhoto = ownedPhoto("/photography/automotive-photography/honda-nsx/_DSC8937-Edit-2.jpg", "Red Honda NSX in woodland sunlight", 2828, 3535);
   const clientLogos = [
@@ -298,8 +242,8 @@ function homePage() {
     <section class="intro-section"><div class="content-width split-intro"><div><p class="eyebrow">Justy Media</p><h2>Creative thinking, made practical.</h2></div><div><p>Justy Media is my independent creative studio in the Peak District. I work with businesses in Buxton, Leek and the surrounding area, and across the UK, on clearer websites, recognisable branding and useful digital marketing.</p><p>Whether you are starting a business or improving an established one, I connect the design, content and technical details around what your customers need. You work directly with me, Andrew Ambrose, from the first conversation through to delivery, keeping decisions and communication straightforward.</p></div></div></section>
     <section class="section-block services-overview"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Services</p><h2>Design and marketing, with photography alongside.</h2></div><a class="text-link" href="/services/">View all services</a></div><div class="service-grid">${serviceCard("/services/web-design/", "01", "Web design & development", "Clear, responsive websites, landing pages, redesigns and lightweight tools built around your goals.")}${serviceCard("/services/graphic-design/", "02", "Graphic design & branding", "Identity, print and digital artwork that gives your business a consistent and recognisable visual voice.")}${serviceCard("/services/digital-marketing/", "03", "SEO & digital marketing", "Understandable SEO, analytics, content improvements and ongoing support without inflated promises.")}${serviceCard("/services/photography-content/", "04", "Photography & content", "Distinctive automotive, editorial, product and brand imagery for websites, campaigns and social media.")}</div></div></section>
     <section class="section-block selected-work"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Selected work</p><h2>Real work, across disciplines.</h2></div><a class="text-link" href="/work/">Explore the work</a></div><div class="work-grid">
-      <a class="work-card work-card-wide work-card-website" href="/work/vulcan-sports/"><div class="work-image">${responsiveImage(projectImage)}</div><div><p class="work-type">Web design &amp; brand application</p><h3>Vulcan Sports</h3><p>A product-led website connecting UK-made teamwear with clear routes into kit design, product ranges and enquiries.</p></div></a>
-      <a class="work-card" href="/work/graphic-design/#justy-media-identity"><div class="logo-panel"><img src="${logo}" width="2639" height="1511" alt="Justy Media identity mark" loading="lazy"></div><div><p class="work-type">Brand identity</p><h3>Justy Media identity</h3><p>The established monochrome mark, carried through a dark visual system with warm gold accents.</p></div></a>
+      <a class="work-card work-card-wide work-card-website" href="/work/vulcan-sports/"><div class="work-image">${responsiveImage(projectImage)}</div><div><p class="work-type">Client website · design &amp; development</p><h3>Vulcan Sports</h3><p>A product-led website connecting UK-made teamwear with clear routes into kit design, product ranges and enquiries.</p></div></a>
+      <a class="work-card work-card-website" href="/work/compradar/"><div class="work-image">${responsiveImage({src:independent.screenshot,alt:independent.screenshotAlt,width:independent.width,height:independent.height})}</div><div><p class="work-type">Independent project · comparison platform</p><h3>CompRadar</h3><p>Search, filters and consistent competition listings brought together in a practical comparison website.</p></div></a>
       <a class="work-card" href="/photography/rush-magazine/alfa-romeo-gtv-cup/"><div class="work-image">${responsiveImage(editorialPhoto)}</div><div><p class="work-type">Editorial photography</p><h3>RUSH Magazine</h3><p>Automotive features combining detail, portrait and road imagery.</p></div></a>
     </div></div></section>
     <section class="photo-feature"><div class="photo-feature-media">${responsiveImage(nsxPhoto)}</div><div class="photo-feature-copy"><p class="eyebrow">Photography</p><h2>Automotive work with a point of view.</h2><p>Photography is where Justy Media started, and it remains a genuine strength. Browse complete vehicle collections and commissioned editorial work for RUSH Magazine.</p><div class="button-row"><a class="button button-primary" href="/photography/">Photography portfolio</a><a class="text-link" href="/services/photography-content/">Photography services</a></div></div></section>
@@ -309,7 +253,7 @@ function homePage() {
     <aside class="resource-strip"><div class="wide-width"><div><p class="eyebrow">Free Resources</p><h2>Useful tools and downloads.</h2><p>Download automotive phone wallpapers or use practical browser-based camera tools for photography, video and used-equipment checks.</p></div><div class="resource-strip-links"><a class="button button-secondary" href="/phone-wallpapers/">Browse Phone Wallpapers</a><a class="text-link" href="/resources/camera-tools/">Explore Camera Tools</a></div></div></aside>
   </main>`;
   return documentHtml({
-    path: pathName, title, description, body, bodyClass: "home-page",
+    path: pathName, title, description, body, bodyClass: "home-page", journey: true,
     preload: `<link rel="preload" as="image" href="${imageUrl(hero.src, 960)}" imagesrcset="${imageUrl(hero.src, 640)} 640w, ${imageUrl(hero.src, 960)} 960w, ${imageUrl(hero.src, 1400)} 1400w" imagesizes="100vw" fetchpriority="high">`,
     shareImage: hero.src, shareAlt: hero.alt,
     structuredImages: [hero, editorialPhoto, nsxPhoto],
@@ -377,9 +321,15 @@ function servicePage(service) {
   const crumbs = [{ label: "Home", href: "/" }, { label: "Services", href: "/services/" }, { label: service.heading, href: service.path }];
   const relatedServices = servicePages.filter((item) => item.path !== service.path);
   const related = `<section class="section-block related-services"><div class="content-width"><p class="eyebrow">Work directly with Andrew</p><h2>Connect the parts your project needs.</h2><p>I handle the brief, creative work and practical details with you. Your project may need more than one service; we can discuss those connections when agreeing the scope.</p><div class="button-row">${relatedServices.map((item) => `<a class="text-link" href="${item.path}">${escapeHtml(item.serviceType)}</a>`).join("")}</div></div></section>`;
-  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro(service.eyebrow, service.heading, service.intro)}${service.content}${related}${cta("Have a project in mind?", service.enquiry || "Share the brief, the stage you are at and what would make the work useful. I’ll come back with a practical next step.")}</main>`;
+  const introActions = {
+    "/services/web-design/": [["/contact-us/", "Discuss your website"], ["/work/websites/", "See website projects"]],
+    "/services/graphic-design/": [["/contact-us/", "Discuss your design"], ["/work/graphic-design/", "See design work"]],
+    "/services/photography-content/": [["/contact-us/", "Discuss your photography"], ["/work/photography/", "See photography work"]],
+    "/services/digital-marketing/": [["/contact-us/", "Discuss your digital marketing"], ["/work/websites/#justy-media-platform", "See website & analytics work"]]
+  };
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro(service.eyebrow, service.heading, service.intro, introActions[service.path])}${service.content}${related}${cta("Have a project in mind?", service.enquiry || "Share the brief, the stage you are at and what would make the work useful. I’ll come back with a practical next step.")}</main>`;
   return documentHtml({
-    ...service, breadcrumbs: crumbs, body,
+    ...service, breadcrumbs: crumbs, body, bodyClass: "service-page", journey: true,
     schemas: [{ "@type": "Service", "@id": `${origin}${service.path}#service`, name: service.heading, serviceType: service.serviceType, description: service.description, url: absolute(service.path), provider: { "@id": `${origin}/#business` }, areaServed: { "@type": "Country", name: "United Kingdom" } }, organisationSchema()]
   });
 }
@@ -424,7 +374,7 @@ function websiteWorkPage() {
   const projectSections = orderedProjects.map((project, index) => `<section class="case-study${index % 2 ? " contrast" : ""}"><div class="wide-width case-study-grid${index % 2 ? " reverse" : ""}"><a class="case-study-media website-preview" href="/work/${project.slug}/" aria-label="Read the ${escapeHtml(project.name)} case study">${responsiveImage({ src: project.screenshot, alt: project.screenshotAlt, width: project.width, height: project.height })}</a><div class="case-study-copy"><p class="eyebrow">${escapeHtml(project.eyebrow)}</p><h2>${escapeHtml(project.name)}</h2><p>${escapeHtml(project.summary)}</p><p class="project-fact">${escapeHtml(project.fact)}</p><ul class="tag-list">${project.tags.slice(0, 4).map((tag) => `<li>${escapeHtml(tag)}</li>`).join("")}</ul><div class="button-row"><a class="button button-secondary" href="/work/${project.slug}/">View case study</a><a class="text-link" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a></div></div></div></section>`).join("");
   const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Website portfolio", "Digital experiences with a clear job to do.", "Product platforms, comparison tools and commercial websites shaped around distinct audiences and practical user journeys.")}${disciplineNav("websites")}${projectSections}
     <section id="justy-media-platform" class="platform-feature"><div class="wide-width"><div class="platform-feature-heading"><p class="eyebrow">Website · publishing system · analytics</p><h2>Justy Media web platform</h2></div><div class="platform-feature-copy"><p>The platform behind this portfolio, built for fast image delivery, flexible project publishing, technical SEO and privacy-conscious first-party analytics.</p><ul class="tag-list"><li>Web design</li><li>Static development</li><li>Responsive image delivery</li><li>Technical SEO</li><li>First-party analytics</li><li>Content architecture</li></ul><a class="text-link" href="/services/web-design/">Explore web design services</a></div></div></section>${cta()}</main>`;
-  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, bodyClass: "work-discipline-page websites-work-page", shareImage: orderedProjects[0].screenshot, shareAlt: orderedProjects[0].screenshotAlt, schemas: [{ "@type": "CollectionPage", name: "Justy Media website portfolio", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, bodyClass: "work-discipline-page websites-work-page", journey: true, shareImage: orderedProjects[0].screenshot, shareAlt: orderedProjects[0].screenshotAlt, schemas: [{ "@type": "CollectionPage", name: "Justy Media website portfolio", url: absolute(pagePath), description, isPartOf: { "@id": `${origin}/#website` } }] });
 }
 
 function photographyWorkPage() {
@@ -461,17 +411,23 @@ function websiteCaseStudyPage(project) {
     ...(project.slug === "27tools" ? [["/services/digital-marketing/", "Technical SEO & digital marketing"]] : [])
   ];
   const serviceLinks = `<section class="section-block contrast related-services"><div class="content-width"><p class="eyebrow">Services behind the work</p><h2>Plan a similar project.</h2><div class="button-row">${relatedServices.map(([href, label]) => `<a class="text-link" href="${href}">${escapeHtml(label)}</a>`).join("")}</div></div></section>`;
-  const body = `<main id="main-content">${breadcrumbs(crumbs)}<section class="project-hero"><div class="wide-width"><div class="project-hero-copy"><p class="eyebrow">${escapeHtml(project.eyebrow)}</p><h1>${escapeHtml(project.name)}</h1><p class="lede">${escapeHtml(project.title)}</p><div class="button-row"><a class="button button-primary" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a><a class="text-link" href="/work/websites/">All website work</a></div></div><div class="project-hero-media website-preview">${responsiveImage(screenshot)}</div></div></section>
-    <section class="project-summary section-block contrast"><div class="wide-width"><p class="eyebrow">Project overview</p><p class="project-statement">${escapeHtml(project.summary)}</p><ul class="tag-list">${project.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join("")}</ul></div></section>
-    <section class="project-details section-block"><div class="wide-width project-detail-grid"><article><p class="eyebrow">The challenge</p><h2>Make the next step feel obvious.</h2><p>${escapeHtml(project.challenge)}</p></article><article><p class="eyebrow">The approach</p><h2>Build clarity into the experience.</h2><p>${escapeHtml(project.approach)}</p></article><article><p class="eyebrow">The outcome</p><h2>A coherent digital destination.</h2><p>${escapeHtml(project.outcome)}</p></article></div></section>
-    <section class="project-visit"><div class="content-width"><p class="eyebrow">See it live</p><h2>${escapeHtml(project.name)}</h2><p>Explore the live website to see the complete experience, content and responsive interface.</p><a class="button button-primary" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a></div></section>${serviceLinks}${cta("Need a website with a clearer job to do?", "Share what you are building, who it needs to serve and where the current experience is falling short.")}</main>`;
+  const actions = `<div class="button-row"><a class="button button-primary" href="/contact-us/">Discuss a similar project</a><a class="text-link" href="/work/websites/">All website work</a></div>`;
+  const hero = project.preview ? `<section class="project-showcase"><div class="wide-width"><div class="project-showcase-intro"><div><p class="eyebrow">${escapeHtml(project.eyebrow)}</p><h1>${escapeHtml(project.name)}</h1><p class="lede">${escapeHtml(project.title)}</p></div><div><p>${escapeHtml(project.summary)}</p>${actions}</div></div>${websitePreview(project)}<div class="preview-external"><a class="text-link" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">Visit live website <span class="sr-only">${escapeHtml(project.name)}</span> <span aria-hidden="true">↗</span></a><span class="note">${escapeHtml(project.domain)} · Opens in a new tab</span></div></div></section>` : `<section class="project-hero"><div class="wide-width"><div class="project-hero-copy"><p class="eyebrow">${escapeHtml(project.eyebrow)}</p><h1>${escapeHtml(project.name)}</h1><p class="lede">${escapeHtml(project.title)}</p><div class="button-row"><a class="button button-primary" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">${escapeHtml(project.liveLabel)} <span aria-hidden="true">↗</span></a><a class="text-link" href="/work/websites/">All website work</a></div></div><div class="project-hero-media website-preview">${responsiveImage(screenshot)}</div></div></section>`;
+  const detail = project.caseStudy;
+  const detailFigure = (image) => `<figure class="case-detail-image">${responsiveImage({ ...image, sizes: "(max-width: 900px) calc(100vw - 40px), 60vw" })}<figcaption>${escapeHtml(image.caption)}</figcaption></figure>`;
+  const story = detail ? `<section class="section-block contrast project-brief"><div class="wide-width"><dl class="project-facts">${detail.facts.map(([label, value]) => `<div><dt>${escapeHtml(label)}</dt><dd>${escapeHtml(value)}</dd></div>`).join('')}</dl><p class="project-scope">${escapeHtml(detail.scope)}</p><ul class="tag-list">${project.tags.map(tag => `<li>${escapeHtml(tag)}</li>`).join('')}</ul></div></section>
+    <section class="section-block"><div class="wide-width case-story-grid"><div><p class="eyebrow">The business challenge</p><h2>One range.<br>Different starting points.</h2></div><div><p class="case-lede">${escapeHtml(project.challenge)}</p><p>Clubs, schools and organisations need different levels of support. The website has to connect the product choice with the next useful action, while making the manufacturing story easy to understand.</p></div></div></section>
+    <section class="section-block contrast case-decisions"><div class="wide-width"><div class="section-heading"><div><p class="eyebrow">Design &amp; development decisions</p><h2>A clearer path through the offer.</h2></div></div><div class="case-decisions-layout"><div class="case-decision-list">${detail.decisions.map((decision, index) => `<article><p class="eyebrow">0${index + 1}</p><h3>${escapeHtml(decision.title)}</h3><p>${escapeHtml(decision.copy)}</p></article>`).join('')}</div>${detailFigure(detail.productDetail)}</div></div></section>
+    <section class="section-block case-manufacturing"><div class="wide-width">${detailFigure(detail.storyDetail)}<div class="case-story-grid"><div><p class="eyebrow">The manufacturing story</p><h2>From the factory to the customer.</h2></div><p class="case-lede">${escapeHtml(detail.story)}</p></div></div></section>
+    <section class="section-block contrast"><div class="wide-width case-outcome-grid"><article><p class="eyebrow">Delivered improvements</p><h2>A connected presentation.</h2><p>${escapeHtml(detail.delivered)}</p></article><article><p class="eyebrow">Ongoing improvement</p><h2>Keep learning from the journey.</h2><p>${escapeHtml(detail.next)}</p></article></div></section>` : `<section class="project-summary section-block contrast"><div class="wide-width"><p class="eyebrow">Project overview</p><p class="project-statement">${escapeHtml(project.summary)}</p><ul class="tag-list">${project.tags.map((tag) => `<li>${escapeHtml(tag)}</li>`).join("")}</ul></div></section><section class="project-details section-block"><div class="wide-width project-detail-grid"><article><p class="eyebrow">The challenge</p><h2>Make the next step feel obvious.</h2><p>${escapeHtml(project.challenge)}</p></article><article><p class="eyebrow">The approach</p><h2>Build clarity into the experience.</h2><p>${escapeHtml(project.approach)}</p></article><article><p class="eyebrow">The outcome</p><h2>A coherent digital destination.</h2><p>${escapeHtml(project.outcome)}</p></article></div></section>`;
+  const body = `<main id="main-content">${breadcrumbs(crumbs)}${hero}${story}<section class="project-visit"><div class="content-width"><p class="eyebrow">See it live</p><h2>${escapeHtml(project.name)}</h2><p>Explore the live website to see the complete experience, content and responsive interface.</p><a class="button button-primary" href="${project.liveUrl}" target="_blank" rel="noopener noreferrer">Visit live website <span aria-hidden="true">↗</span></a></div></section>${serviceLinks}${cta("Need a website with a clearer job to do?", "Share what you are building, who it needs to serve and where the current experience is falling short.")}</main>`;
   return documentHtml({
     path: pagePath,
     title,
     description: project.description,
     breadcrumbs: crumbs,
     body,
-    bodyClass: "work-project-page",
+    bodyClass: "work-project-page", journey: Boolean(project.preview), preview: Boolean(project.preview),
     shareImage: project.screenshot,
     shareAlt: project.screenshotAlt,
     structuredImages: [screenshot],
@@ -586,7 +542,7 @@ function contactPage() {
   const description = "Contact Andrew Ambrose at Justy Media to discuss web design, branding, SEO or photography. Based in the Peak District and working with businesses across the UK.";
   const crumbs = [{ label: "Home", href: "/" }, { label: "Contact", href: pagePath }];
   const body = `<main id="main-content">${breadcrumbs(crumbs)}${pageIntro("Start a conversation", "Tell me what you’re working on.", "Enquire about a website, graphic design, photography, SEO, digital marketing or ongoing creative support. You do not need a finished brief.")}
-    <section class="section-block"><div class="wide-width contact-layout"><div class="contact-details"><p class="eyebrow">Start a project</p><h2>Based in the Peak District, working across the UK.</h2><p>Use the form to share where the project is now and what you would like to improve. I work with businesses in Buxton, Leek and the surrounding Peak District, as well as across the UK.</p><p><strong>Social</strong><br><a href="https://www.instagram.com/justymedia/" target="_blank" rel="noopener noreferrer">Instagram</a> · <a href="https://www.facebook.com/justymedia/" target="_blank" rel="noopener noreferrer">Facebook</a></p><p class="note">Your enquiry is sent privately through this website. Your email address is used only to reply to you.</p></div>
+    <section class="section-block contact-section"><div class="wide-width contact-layout">
       <form class="enquiry-form" action="https://analytics.justymedia.co.uk/contact" method="post" data-contact-form>
         <div class="form-row"><label for="name">Name <span aria-hidden="true">*</span></label><input id="name" name="name" type="text" autocomplete="name" required></div>
         <div class="form-row"><label for="email">Email <span aria-hidden="true">*</span></label><input id="email" name="email" type="email" autocomplete="email" required></div>
@@ -597,8 +553,8 @@ function contactPage() {
         <div class="form-trap" aria-hidden="true"><label for="company-website">Leave this field empty</label><input id="company-website" name="company-website" type="text" tabindex="-1" autocomplete="off"></div>
         <input type="hidden" name="started-at" value="" data-form-started-at>
         <div class="form-row full"><button class="button button-primary" type="submit">Send enquiry</button><p class="form-help">Your details are sent securely so I can respond. Read the <a href="/privacy-policy">privacy policy</a>.</p><p class="form-status" role="status" aria-live="polite" data-form-status></p></div>
-      </form></div></section></main>`;
-  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, schemas: [{ "@type": "ContactPage", name: title, url: absolute(pagePath), description, mainEntity: { "@id": `${origin}/#business` }, isPartOf: { "@id": `${origin}/#website` } }] });
+      </form><div class="contact-details"><p class="eyebrow">Start a project</p><h2>A direct conversation.</h2><p>Based in the Peak District, working across the UK. Share where the project is now and what you would like to improve.</p><p>Start with a message using the form. I’ll reply by email, and we can arrange a local meeting if useful.</p><p><strong>Social</strong><br><a href="https://www.instagram.com/justymedia/" target="_blank" rel="noopener noreferrer">Instagram</a> · <a href="https://www.facebook.com/justymedia/" target="_blank" rel="noopener noreferrer">Facebook</a></p><p class="note">Your enquiry is sent privately through this website. Your email address is used only to reply to you.</p></div></div></section></main>`;
+  return documentHtml({ path: pagePath, title, description, breadcrumbs: crumbs, body, bodyClass: "contact-page", journey: true, schemas: [{ "@type": "ContactPage", name: title, url: absolute(pagePath), description, mainEntity: { "@id": `${origin}/#business` }, isPartOf: { "@id": `${origin}/#website` } }] });
 }
 
 function resourcesPage() {
